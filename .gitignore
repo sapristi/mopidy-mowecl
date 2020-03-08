@@ -7,3 +7,7 @@
 /build/
 /dist/
 /MANIFEST
+
+mowecl_react/node_modules
+mowecl_react/build
+.tern-port

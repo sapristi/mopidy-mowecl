@@ -1,0 +1,29 @@
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  height: 100%;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+html, #root, .App {
+    height: 100%;
+    font-size: 14px;
+}
+
+.tracklist_current {
+    /* margin-left: 20px */
+}
+
+
+/* .box { */
+/*   display: flex; */
+/*   flex-flow: column; */
+/*   height: 100%; */
+/* } */
