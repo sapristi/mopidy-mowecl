@@ -24,7 +24,7 @@ const HelpPanel = () => {
             <Typography>
               Made with ♥ by Mathias Millet.
             </Typography>
-            <a href="https://github.com/sapristi/mowecl"><GitHubIcon/></a><br/>
+            <a href="https://github.com/sapristi/mopidy-mowecl"><GitHubIcon/></a><br/>
             <Typography variant="caption">
               Remarks, suggestions and bug reports are welcome.
             </Typography>
