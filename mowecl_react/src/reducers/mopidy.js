@@ -167,17 +167,12 @@ const initMopidyEventsDispatcher = (state, mopidy, dispatch) => {
     })
 
     mopidy.on("event:trackPlaybackEnded", (data) => {
+        dispatch({type: "CLEAR_PLAYBACK_INFO"})
         dispatch({
             type: 'PLAYBACK_INFO',
             target: 'state',
             data: 'stopped'
-        })
-        dispatch({
-            type: 'PLAYBACK_INFO',
-            target: 'time_position',
-            data: data.time_position
-        })
-    })
+        })    })
 
     mopidy.on("event:trackPlaybackStarted", (data) => {
         dispatch({type: 'INCR_PLAYBACK_RESET'})

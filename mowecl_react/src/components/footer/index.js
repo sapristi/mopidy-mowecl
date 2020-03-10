@@ -65,11 +65,17 @@ let Footer = ({tltrack, state, time_position,
               <div style={{display: 'flex', flexDirection: 'column',
                            flex: 1,
                            paddingLeft: '5%', paddingRight: '5%'}}>
-                <TrackInfo track={tltrack.track}/>
-                <PlaybackSlider time_position={time_position}
-                                track_length={tltrack.track ? tltrack.track.length : null}
-                                dispatch={dispatch}
-                />
+                {
+                    (state !== "stopped") && (
+                        <>
+                          <TrackInfo track={tltrack.track}/>
+                          <PlaybackSlider time_position={time_position}
+                                          track_length={tltrack.track ? tltrack.track.length : null}
+                                          dispatch={dispatch}
+                          />
+                        </>
+                    )
+                }
                 <div/>
               </div>
             </Paper>
