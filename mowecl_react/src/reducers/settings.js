@@ -1,10 +1,34 @@
 
 import { getDefaultWS } from '../utils'
 
-const persistantSettings = JSON.parse(localStorage.getItem("settings")) || {
-    mopidy_ws: getDefaultWS(),
-    seek_update_interval: 1000
+const saved_settings = JSON.parse(localStorage.getItem("settings")) || {}
+
+const defaultPersistantSettings = {
+    mopidy_ws: {
+        name: 'Modidy WebSocker URL',
+        default: getDefaultWS(),
+        help: 'Modidy WebSocker URL. Do not modify unless you know what you are doing.'
+    },
+    seek_update_interval: {
+        name: "Seek update interval",
+        default: 500,
+        help: 'Time interval (ms) at which the song progress bar will update.',
+    },
+    search_history_length: {
+        name: "Search history length",
+        default: 10,
+        help: 'Number of items in search history. Set 0 to disable.',
+    }
 }
+
+const persistantSettings = Object.fromEntries(
+    Object.entries(defaultPersistantSettings).map(
+        ([k, v]) => {
+            const current = saved_settings[k] || v.default
+            return [k, {...v, current}]
+        }))
+
+
 const defaultSettings = {
     active_panel: 'library',
     persistant: persistantSettings,
@@ -15,8 +39,28 @@ export const settingsReducer = (state=defaultSettings, action) => {
     case 'ACTIVATE_PANEL':
         return {...state, active_panel: action.target}
 
-    case 'COMMIT_PERSISTANT':
-        localStorage.setItem("settings", JSON.stringify(action.data))
+    case 'CLEAR_SETTINGS':
+        localStorage.removeItem("settings")
+        return {
+            ...state,
+            persistant:
+            Object.fromEntries(
+                Object.entries(defaultPersistantSettings).map(
+                    ([k, v]) => {
+                        const current = v.default
+                        return [k, {...v, current}]
+                    }))
+
+        }
+
+
+    case 'COMMIT_SETTINGS':
+        localStorage.setItem("settings",
+                             JSON.stringify(
+                                 Object.fromEntries(
+                                     Object.entries(action.data).map(
+                                         ([k,v]) => [k, v.current]
+                                     ))))
         // console.log("Set", state.persistant)
         return {...state, persistant: action.data}
 

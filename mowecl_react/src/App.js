@@ -8,7 +8,7 @@ import Footer from './components/footer'
 import SidePanel from './components/sidePanel'
 import TracklistPanel from './components/tracklist'
 import LibraryPanel from './components/library'
-import ControlPanel from './components/controlPanel'
+import SettingsPanel from './components/settingsPanel'
 import HelpPanel from './components/helpPanel'
 
 import CircularProgress from '@material-ui/core/CircularProgress';
@@ -34,7 +34,7 @@ let App = ({settings, mopidy, dispatch}) => {
     let activePanel = null
     switch (settings.active_panel) {
     case 'control':
-        activePanel = <ControlPanel/>
+        activePanel = <SettingsPanel/>
         break
     case 'help':
         activePanel = <HelpPanel/>
@@ -59,7 +59,7 @@ let App = ({settings, mopidy, dispatch}) => {
             return (
                 <AppContainer>
                   <div style={{ width: '50%', height: '100%', overflow: 'auto'}}>
-                    <ControlPanel/>
+                    <SettingsPanel/>
                   </div>
 
                   <div style={{display: 'flex', flexDirection: 'column'}}>
@@ -68,7 +68,7 @@ let App = ({settings, mopidy, dispatch}) => {
                                                              style={{margin: 'auto'}}
                                            /></div>
                     <div style={{flex: 1}}>
-                      <div>Trying to reach mopidy at {settings.persistant.mopidy_ws}</div>
+                      <div>Trying to reach mopidy at {settings.persistant.mopidy_ws.current}</div>
                       <div>{mopidy.error}</div>
                     </div>
                     <div style={{flex: 1}}/>

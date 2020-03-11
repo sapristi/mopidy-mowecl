@@ -18,7 +18,7 @@ import {mopidyReducer, libraryReducer, playbackReducer, settingsReducer, trackli
 
 let MopidyApp = ({mopidy, settings, dispatch}) => {
     if (!mopidy.connected && !mopidy.connecting && !mopidy.error) {
-        dispatch({type: 'CONNECT', mopidy_ws: settings.persistant.mopidy_ws, dispatch})
+        dispatch({type: 'CONNECT', mopidy_ws: settings.persistant.mopidy_ws.current, dispatch})
     }
 
     return (

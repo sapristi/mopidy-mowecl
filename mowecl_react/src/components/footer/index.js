@@ -42,11 +42,10 @@ let Footer = ({tltrack, state, time_position,
                seek_update_interval, dispatch}) =>
     {
 
-
         if (state === 'playing' && typeof(time_position) === 'number' &&
             !time_position_updater.pending){
             dispatch({type: 'INCR_PLAYBACK_START'});
-            setTimeout(() => dispatch({type: 'INCR_PLAYBACK'}), seek_update_interval);
+            setTimeout(() => dispatch({type: 'INCR_PLAYBACK'}), parseInt(seek_update_interval));
         }
 
         return (
@@ -85,7 +84,7 @@ let Footer = ({tltrack, state, time_position,
 
 const getPlaybackState = (state) => {
     return {...state.playback_state, 
-            seek_update_interval: state.settings.persistant.seek_update_interval
+            seek_update_interval: state.settings.persistant.seek_update_interval.current
            }};
 Footer = connect(getPlaybackState)(Footer);
 export default Footer;
