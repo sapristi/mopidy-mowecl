@@ -98,4 +98,4 @@ const SettingsPanel = ({persistant, dispatch}) => {
 
 }
 
-export default connect(state => state.settings)(SettingsPanel)
+export default connect(state => ({persistant: state.settings.persistant}))(SettingsPanel)

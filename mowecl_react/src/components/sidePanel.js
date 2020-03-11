@@ -17,7 +17,7 @@ import Select from '@material-ui/core/Select';
 
 import {getSearchUris} from '../utils.js'
 
-const SearchPopOver = ({mopidy, searchUris, dispatch, closePopover}) => {
+const SearchPopOver = ({mopidy, searchUris, dispatch, closePopover, search_history_length}) => {
 
     const initialSelecterUri = localStorage.getItem("searchSelectedURI") || "all"
 
@@ -25,7 +25,7 @@ const SearchPopOver = ({mopidy, searchUris, dispatch, closePopover}) => {
     const [input, setInput] = React.useState('')
 
     const triggerSearch = (key) => {
-        if (key !== 'Enter') return 
+        if (key !== 'Enter') return
         if (input.length === 0) return
 
         const uri = (selectedUri === "all") ? {} : {uris: [selectedUri + ':']}
@@ -33,18 +33,35 @@ const SearchPopOver = ({mopidy, searchUris, dispatch, closePopover}) => {
         mopidy.library.search({query: {any: input}, ...uri}).then(
             search_result => {
 
-                const children = search_result.map(
+                const search_results = search_result.map(
                     item => ({...item, name: item.uri, children: item.tracks,
                               type: 'search_result', expanded: true}))
                 dispatch({
                     type: 'LIBRARY_SET_CHILDREN',
-                    fun: () => children,
+                    fun: () => search_results,
                     target: ['search:'],
                 })
                 dispatch({
                     type: 'LIBRARY_SET_EXPANDED',
                     target: ['search:'],
                     data: true
+                })
+
+                if (search_history_length <= 0)
+                    return
+
+                const search_history_name = input + '/' + selectedUri
+                dispatch({
+                    type: 'LIBRARY_SET_CHILDREN',
+                    fun: (c) => [{name: search_history_name, uri: search_history_name},
+                                 ...c].slice(0, search_history_length),
+                    target: ['search_history:']
+                })
+
+                dispatch({
+                    type: 'LIBRARY_SET_CHILDREN',
+                    fun: () => search_results,
+                    target: ['search_history:', search_history_name]
                 })
             }
         )
@@ -113,7 +130,7 @@ const MopidyStatus = ({pendingRequestsNb, connected}) => {
 }
 
 
-const SidePanel = ({dispatch, mopidy, uri_schemes, pendingRequestsNb, connected}) => {
+const SidePanel = ({dispatch, mopidy, uri_schemes, pendingRequestsNb, connected, search_history_length}) => {
 
     const anchorEl = React.useRef(null)
     const [open, setOpen] = React.useState(false)
@@ -169,7 +186,9 @@ const SidePanel = ({dispatch, mopidy, uri_schemes, pendingRequestsNb, connected}
               }}
             >
               <SearchPopOver searchUris={searchUris} mopidy={mopidy}
-                             dispatch={dispatch} closePopover={() => setOpen(false)} />
+                             dispatch={dispatch} closePopover={() => setOpen(false)}
+                             search_history_length={search_history_length}
+              />
             </Popover>
 
           </ButtonGroup>
@@ -187,4 +206,7 @@ const SidePanel = ({dispatch, mopidy, uri_schemes, pendingRequestsNb, connected}
     )
 }
 
-export default connect(state => state.mopidy )(SidePanel)
+export default connect(state => ({...state.mopidy,
+                                  search_history_length:
+                                  state.settings.persistant.search_history_length.current
+                                 }) )(SidePanel)

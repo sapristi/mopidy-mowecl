@@ -179,6 +179,11 @@ let LibraryPanel = ({library, dispatch}) => {
         library.playlists,
         library.search_results,
     ]
+
+    if (library.search_history.children.length > 0) {
+        full_lib.push(library.search_history)
+    }
+
     if (library.bookmarks.children.length > 0) {
         full_lib.push(library.bookmarks)
     }

@@ -91,10 +91,20 @@ const searchResultsReducer =
           return defaultNodeReducer(state, action)
       }
 
+
+const searchHistoryReducer = 
+    (state = {name: "Search history", uri: 'search_history:',
+              type: 'search_history_root', path: ['search_history:'], children: []},
+     action ) =>
+        {
+            return defaultNodeReducer(state, action)
+        }
+
 export const libraryReducer = (
     combineReducers({
         mopidyLibrary: mopidyLibraryReducer,
         playlists: playlistReducer,
         search_results: searchResultsReducer,
+        search_history: searchHistoryReducer,
         bookmarks: bookMarksReducer
     }))
