@@ -3,9 +3,6 @@ import { combineReducers } from 'redux'
 import { setChildren, setExpanded, defaultNodeReducer, updateChildren } from './aux_functions'
 
 
-
-import localforage from 'localforage'
-
 const mopidyLibraryReducer = (state = [], action) => {
 
     switch (action.type) {

@@ -3,22 +3,15 @@ import { connect } from 'react-redux'
 
 import { ReactSortable } from "react-sortablejs";
 
-import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 
 import ButtonGroup from '@material-ui/core/ButtonGroup';
-import Tooltip from '@material-ui/core/Tooltip';
 
-import Button from '@material-ui/core/Button';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import ExpandLessIcon from '@material-ui/icons/ExpandLess';
 
-import PlaylistAddIcon from '@material-ui/icons/PlaylistAdd';
-import PlaylistPlayIcon from '@material-ui/icons/PlaylistPlay';
 
 import styled from 'styled-components'
 
@@ -40,7 +33,7 @@ const getButtons = (node, dispatch) => {
         return <PLsRootButtons/>
     }
     // first level of tree; 
-    if (node.path && node.path.length == 1) return null
+    if (node.path && node.path.length === 1) return null
 
     if (node.type === "tracklist") {
         return <TLButtons node={node}/>

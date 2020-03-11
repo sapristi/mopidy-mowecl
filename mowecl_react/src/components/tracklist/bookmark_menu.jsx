@@ -17,7 +17,7 @@ let BookmarkMenu = ({dispatch, bookmarks, tracklist, menuState, setMenuState, an
             type: 'LIBRARY_SET_CHILDREN',
             target: ["bookmark:"],
             fun: (bookmarks) => {
-                if (bookmarks.find(bk => bk.name == bookmarkName)) {
+                if (bookmarks.find(bk => bk.name === bookmarkName)) {
                     return bookmarks.map(
                         bookmark => {
                             if (bookmark.name === bookmarkName) {

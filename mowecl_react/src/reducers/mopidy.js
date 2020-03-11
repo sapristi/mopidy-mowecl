@@ -1,6 +1,5 @@
 import { obj_reducer, listEquals } from '../utils'
 import Mopidy from "../mopidy-js/mopidy.js"
-import localforage from 'localforage'
 
 const fetchPlaybackInfo = async (dispatch, mopidy) => {
 
@@ -213,23 +212,6 @@ const initMopidyEventsDispatcher = (state, mopidy, dispatch) => {
     })
 }
 
-
-const makeMopidyDispatcher = (fun_path, base) => {
-
-    return () => {
-        return function(dispatch, getState) {
-            const mopidy = getState().mopidy
-            const fun = fun_path.reduce(obj_reducer, mopidy)
-            fun().then(
-                (res) => {
-                    dispatch(
-                        Object.assign({}, base, {data: res})
-                    )
-                }
-            )
-        }
-    }
-}
 
 
 export const mopidyReducer = (state={
