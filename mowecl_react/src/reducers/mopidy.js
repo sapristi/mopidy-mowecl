@@ -30,6 +30,7 @@ const fetchPlaybackInfo = async (dispatch, mopidy) => {
 
 }
 
+
 const initMopidyEventsDispatcher = (state, mopidy, dispatch) => {
     // console.log("STATE", state)
 

@@ -169,11 +169,21 @@ const SidePanel = ({dispatch, mopidy, uri_schemes, pendingRequestsNb, connected,
     const refreshAll = async function () {
         await Promise.all( [mopidy.library.refresh(),
                             mopidy.playlists.refresh()])
-        dispatch({
-            type: 'CONNECT',
-            mopidy_ws: mopidy._settings.webSocketUrl,
-            dispatch
-        })
+
+        mopidy.library.browse({uri: null}).then(
+            library =>
+                dispatch({
+                    type: 'MOPIDY_LIBRARY_INITIALISE',
+                    data: library
+                }))
+
+        mopidy.playlists.asList().then(
+            playlists => 
+                dispatch({
+                    type: 'LIBRARY_SET_CHILDREN',
+                    target: ["playlist:"],
+                    fun: () => playlists,
+                }))
     }
 
     return (
