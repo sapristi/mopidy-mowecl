@@ -11,6 +11,7 @@ import Cached from '@material-ui/icons/Cached';
 import Paper from '@material-ui/core/Paper';
 import Popover from '@material-ui/core/Popover';
 import TextField from '@material-ui/core/TextField';
+import Tooltip from '@material-ui/core/Tooltip';
 
 import CircularProgress from '@material-ui/core/CircularProgress';
 import FormControl from '@material-ui/core/FormControl';
@@ -99,12 +100,14 @@ const SearchInput = ({mopidy, searchUris, dispatch, closePopover, search_history
 
 const MopidyStatus = ({pendingRequestsNb, connected}) => {
 
+    const style = {marginTop: '15px', marginBottom: '10px'}
+
     if (!connected)
         return (
             <div>
               <CircularProgress size={30}
                                 thickness={5}
-                                style={{marginTop: '10px', marginBottom: '10px'}}
+                                style={style}
                                 color="secondary"
               />
             </div>
@@ -114,7 +117,7 @@ const MopidyStatus = ({pendingRequestsNb, connected}) => {
             <div>
               <CircularProgress size={30}
                                 thickness={5}
-                                style={{marginTop: '10px', marginBottom: '10px'}}
+                                style={style}
                                 variant="determinate" value={100}
               />
             </div>
@@ -124,7 +127,7 @@ const MopidyStatus = ({pendingRequestsNb, connected}) => {
         <div>
           <CircularProgress size={30}
                             thickness={5}
-                            style={{marginTop: '10px', marginBottom: '10px'}}
+                            style={style}
           />
         </div>
     )
@@ -197,28 +200,32 @@ const SidePanel = ({dispatch, mopidy, uri_schemes, pendingRequestsNb, connected,
                           connected={connected}
             />
 
+            <Tooltip title="Quick search">
             <Button ref={anchorEl}
                     id='popover-search-button'
                     onClick={() => setOpen(true)}
             >
               <SearchIcon/>
-            </Button>
+            </Button></Tooltip>
             <SearchPopover/>
 
+            <Tooltip title="Refresh lib and playlists">
             <Button onClick={refreshAll}>
               <Cached/>
-            </Button>
+            </Button></Tooltip>
           </ButtonGroup>
           <ButtonGroup orientation='vertical'>
 
+            <Tooltip title="Library panel">
             <Button onClick={activatePanel('library')}>
               <ListIcon/>
-            </Button>
+            </Button></Tooltip>
 
+            <Tooltip title="Settings panel">
             <Button style={{height: 'auto'}}
                     onClick={activatePanel('control')}>
               <SettingsIcon/>
-            </Button>
+            </Button></Tooltip>
 
           </ButtonGroup>
 
