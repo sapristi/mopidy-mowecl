@@ -10,10 +10,6 @@ Mopidy-Mowecl
     :target: https://circleci.com/gh/sapristi/mopidy-mowecl
     :alt: CircleCI build status
 
-.. image:: https://img.shields.io/codecov/c/gh/sapristi/mopidy-mowecl
-    :target: https://codecov.io/gh/sapristi/mopidy-mowecl
-    :alt: Test coverage
-
 Web client for Mopidy
 
 
