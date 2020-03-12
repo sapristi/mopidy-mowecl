@@ -12,20 +12,11 @@ import ClearAllIcon from '@material-ui/icons/ClearAll';
 import ClearIcon from '@material-ui/icons/Clear';
 import SyncIcon from '@material-ui/icons/Sync';
 import SaveAltIcon from '@material-ui/icons/SaveAlt';
-import SaveIcon from '@material-ui/icons/Save';
 import BookmarkBorderIcon from '@material-ui/icons/BookmarkBorder';
-
-
-
-import Menu from '@material-ui/core/Menu';
-import MenuItem from '@material-ui/core/MenuItem';
 
 import Tooltip from '@material-ui/core/Tooltip';
 import Chip from '@material-ui/core/Chip';
 import Paper from '@material-ui/core/Paper';
-import TextField from '@material-ui/core/TextField';
-import InputAdornment from '@material-ui/core/InputAdornment';
-import IconButton from '@material-ui/core/IconButton';
 
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';

@@ -3,9 +3,6 @@ import { combineReducers } from 'redux'
 import { setChildren, setExpanded, defaultNodeReducer, updateChildren } from './aux_functions'
 
 
-
-import localforage from 'localforage'
-
 const mopidyLibraryReducer = (state = [], action) => {
 
     switch (action.type) {
@@ -51,7 +48,6 @@ const playlistReducer =
           case "PLAYLIST_SYNCED_UPDATE":
               if (!state.synced) return state
 
-
           default:
               return state
           }
@@ -91,10 +87,20 @@ const searchResultsReducer =
           return defaultNodeReducer(state, action)
       }
 
+
+const searchHistoryReducer = 
+    (state = {name: "Search history", uri: 'search_history:',
+              type: 'search_history_root', path: ['search_history:'], children: []},
+     action ) =>
+        {
+            return defaultNodeReducer(state, action)
+        }
+
 export const libraryReducer = (
     combineReducers({
         mopidyLibrary: mopidyLibraryReducer,
         playlists: playlistReducer,
         search_results: searchResultsReducer,
+        search_history: searchHistoryReducer,
         bookmarks: bookMarksReducer
     }))

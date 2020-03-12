@@ -41,13 +41,13 @@ let Footer = ({tltrack, state, time_position,
                time_position_updater, updating, volume,
                seek_update_interval, dispatch}) =>
     {
-
-
-        if (state === 'playing' && typeof(time_position) === 'number' &&
-            !time_position_updater.pending){
-            dispatch({type: 'INCR_PLAYBACK_START'});
-            setTimeout(() => dispatch({type: 'INCR_PLAYBACK'}), seek_update_interval);
-        }
+        React.useEffect( () => {
+            if (state === 'playing' && typeof(time_position) === 'number' &&
+                !time_position_updater.pending){
+                dispatch({type: 'INCR_PLAYBACK_START'});
+                setTimeout(() => dispatch({type: 'INCR_PLAYBACK'}), parseInt(seek_update_interval));
+            }
+        })
 
         return (
             <Paper
@@ -65,11 +65,17 @@ let Footer = ({tltrack, state, time_position,
               <div style={{display: 'flex', flexDirection: 'column',
                            flex: 1,
                            paddingLeft: '5%', paddingRight: '5%'}}>
-                <TrackInfo track={tltrack.track}/>
-                <PlaybackSlider time_position={time_position}
-                                track_length={tltrack.track ? tltrack.track.length : null}
-                                dispatch={dispatch}
-                />
+                {
+                    (state !== "stopped") && (
+                        <>
+                          <TrackInfo track={tltrack.track}/>
+                          <PlaybackSlider time_position={time_position}
+                                          track_length={tltrack.track ? tltrack.track.length : null}
+                                          dispatch={dispatch}
+                          />
+                        </>
+                    )
+                }
                 <div/>
               </div>
             </Paper>
@@ -79,7 +85,7 @@ let Footer = ({tltrack, state, time_position,
 
 const getPlaybackState = (state) => {
     return {...state.playback_state, 
-            seek_update_interval: state.settings.persistant.seek_update_interval
+            seek_update_interval: state.settings.persistant.seek_update_interval.current
            }};
 Footer = connect(getPlaybackState)(Footer);
 export default Footer;

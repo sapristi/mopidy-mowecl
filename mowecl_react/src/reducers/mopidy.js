@@ -1,6 +1,5 @@
 import { obj_reducer, listEquals } from '../utils'
 import Mopidy from "../mopidy-js/mopidy.js"
-import localforage from 'localforage'
 
 const fetchPlaybackInfo = async (dispatch, mopidy) => {
 
@@ -30,6 +29,7 @@ const fetchPlaybackInfo = async (dispatch, mopidy) => {
     }))
 
 }
+
 
 const initMopidyEventsDispatcher = (state, mopidy, dispatch) => {
     // console.log("STATE", state)
@@ -167,17 +167,12 @@ const initMopidyEventsDispatcher = (state, mopidy, dispatch) => {
     })
 
     mopidy.on("event:trackPlaybackEnded", (data) => {
+        dispatch({type: "CLEAR_PLAYBACK_INFO"})
         dispatch({
             type: 'PLAYBACK_INFO',
             target: 'state',
             data: 'stopped'
-        })
-        dispatch({
-            type: 'PLAYBACK_INFO',
-            target: 'time_position',
-            data: data.time_position
-        })
-    })
+        })    })
 
     mopidy.on("event:trackPlaybackStarted", (data) => {
         dispatch({type: 'INCR_PLAYBACK_RESET'})
@@ -218,23 +213,6 @@ const initMopidyEventsDispatcher = (state, mopidy, dispatch) => {
     })
 }
 
-
-const makeMopidyDispatcher = (fun_path, base) => {
-
-    return () => {
-        return function(dispatch, getState) {
-            const mopidy = getState().mopidy
-            const fun = fun_path.reduce(obj_reducer, mopidy)
-            fun().then(
-                (res) => {
-                    dispatch(
-                        Object.assign({}, base, {data: res})
-                    )
-                }
-            )
-        }
-    }
-}
 
 
 export const mopidyReducer = (state={

@@ -10,11 +10,25 @@ Mopidy-Mowecl
     :target: https://circleci.com/gh/sapristi/mopidy-mowecl
     :alt: CircleCI build status
 
-.. image:: https://img.shields.io/codecov/c/gh/sapristi/mopidy-mowecl
-    :target: https://codecov.io/gh/sapristi/mopidy-mowecl
-    :alt: Test coverage
+Web client providing a clean and ergonomic interface to Mopidy.
 
-Web client for Mopidy
+Presentation
+============
+
+- dual panel library / tracklist
+- library / playlists / search results displayed as a single tree view
+- drag and drop from library to tracklist
+- save tracklist + current track as a bookmark (virtual playlist)
+
+.. image:: https://mopidy.com/media/ext/mowecl.png
+   :target: https://mopidy.com/media/ext/mowecl.png
+   :alt: Preview
+   :width: 700px
+
+Implementation
+..............
+
+Mopidy-Mowecl is written in Javascript, and is built upon React, Redux and Material-ui.
 
 
 Installation
@@ -23,8 +37,6 @@ Installation
 Install by running::
 
     python3 -m pip install Mopidy-Mowecl
-
-See https://mopidy.com/ext/mowecl/ for alternative installation methods.
 
 
 Configuration
@@ -40,6 +52,7 @@ Mopidy-Mowecl to your Mopidy configuration file::
 Project resources
 =================
 
+- `Mopidy extension page <https://mopidy.com/ext/mowecl>`_
 - `Source code <https://github.com/sapristi/mopidy-mowecl>`_
 - `Issue tracker <https://github.com/sapristi/mopidy-mowecl/issues>`_
 - `Changelog <https://github.com/sapristi/mopidy-mowecl/blob/master/CHANGELOG.rst>`_

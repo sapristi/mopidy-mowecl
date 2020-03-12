@@ -3,22 +3,15 @@ import { connect } from 'react-redux'
 
 import { ReactSortable } from "react-sortablejs";
 
-import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 
 import ButtonGroup from '@material-ui/core/ButtonGroup';
-import Tooltip from '@material-ui/core/Tooltip';
 
-import Button from '@material-ui/core/Button';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import ExpandLessIcon from '@material-ui/icons/ExpandLess';
 
-import PlaylistAddIcon from '@material-ui/icons/PlaylistAdd';
-import PlaylistPlayIcon from '@material-ui/icons/PlaylistPlay';
 
 import styled from 'styled-components'
 
@@ -36,11 +29,8 @@ const dropTo = (lib_item, at_position, to_object, mopidy) => {
 
 const getButtons = (node, dispatch) => {
 
-    if (node.type === "playlists_root") {
-        return <PLsRootButtons/>
-    }
-    // first level of tree; 
-    if (node.path && node.path.length == 1) return null
+    // first level of tree;
+    if (node.path && node.path.length === 1) return null
 
     if (node.type === "tracklist") {
         return <TLButtons node={node}/>
@@ -50,7 +40,7 @@ const getButtons = (node, dispatch) => {
         return <BMButtons node={node}/>
     }
 
-    if (node.type === "playlist" && node.uri.endsWith('m3u8')) {
+    if (node.type === "playlist" && node.uri.startsWith('m3u:')) {
         return <PLButtons node={node}/>
     }
     return (
@@ -113,8 +103,8 @@ const NodeLeaves = ({node, dispatch, depth, typography}) => {
 
     const getChildrenNb = (node) => {
         if (isLeaf(node)) return ''
-        if (node.children === undefined) return '(?)'
-        return `(${node.children.length})`
+        if (Array.isArray(node.children)) return `(${node.children.length})`
+        return '(?)'
     }
 
 
@@ -138,13 +128,24 @@ const NodeLeaves = ({node, dispatch, depth, typography}) => {
         </ReactSortable>
     )
 
+    const LibLine = styled.div`
+display: flex;
+flex-direction: row;
+jutify-content: space-between;
+
+ :hover {
+background-color: rgba(63, 81, 181, 0.125);
+border-radius: 5px;
+}
+`
+
     return (
         <li style={{paddingTop: 0, paddingBottom: 0,
                     display: 'flex', flexDirection: 'column',
                     paddingLeft: '10px', marginLeft: 0, marginRight: 'auto',
                     textAlign: 'left',
                    }}>
-          <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between'}}>
+          <LibLine>
             <ListItemText onClick={() => toggleNode(node, dispatch, mopidy)}
         /* style={{marginLeft: 0, marginRight: 'auto'}} */
             >
@@ -155,7 +156,7 @@ const NodeLeaves = ({node, dispatch, depth, typography}) => {
               </Typography>
             </ListItemText>
             {getButtons(node, dispatch)}
-          </div>
+          </LibLine>
           <div>
             {  node.expanded && node.children &&
 
@@ -179,6 +180,11 @@ let LibraryPanel = ({library, dispatch}) => {
         library.playlists,
         library.search_results,
     ]
+
+    if (library.search_history.children.length > 0) {
+        full_lib.push(library.search_history)
+    }
+
     if (library.bookmarks.children.length > 0) {
         full_lib.push(library.bookmarks)
     }

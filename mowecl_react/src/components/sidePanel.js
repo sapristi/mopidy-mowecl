@@ -6,10 +6,12 @@ import SettingsIcon from '@material-ui/icons/Settings';
 import ListIcon from '@material-ui/icons/List';
 import SearchIcon from '@material-ui/icons/Search';
 import HelpOutlineIcon from '@material-ui/icons/HelpOutline';
+import Cached from '@material-ui/icons/Cached';
 
 import Paper from '@material-ui/core/Paper';
 import Popover from '@material-ui/core/Popover';
 import TextField from '@material-ui/core/TextField';
+import Tooltip from '@material-ui/core/Tooltip';
 
 import CircularProgress from '@material-ui/core/CircularProgress';
 import FormControl from '@material-ui/core/FormControl';
@@ -17,7 +19,7 @@ import Select from '@material-ui/core/Select';
 
 import {getSearchUris} from '../utils.js'
 
-const SearchPopOver = ({mopidy, searchUris, dispatch, closePopover}) => {
+const SearchInput = ({mopidy, searchUris, dispatch, closePopover, search_history_length}) => {
 
     const initialSelecterUri = localStorage.getItem("searchSelectedURI") || "all"
 
@@ -25,7 +27,7 @@ const SearchPopOver = ({mopidy, searchUris, dispatch, closePopover}) => {
     const [input, setInput] = React.useState('')
 
     const triggerSearch = (key) => {
-        if (key !== 'Enter') return 
+        if (key !== 'Enter') return
         if (input.length === 0) return
 
         const uri = (selectedUri === "all") ? {} : {uris: [selectedUri + ':']}
@@ -33,18 +35,35 @@ const SearchPopOver = ({mopidy, searchUris, dispatch, closePopover}) => {
         mopidy.library.search({query: {any: input}, ...uri}).then(
             search_result => {
 
-                const children = search_result.map(
+                const search_results = search_result.map(
                     item => ({...item, name: item.uri, children: item.tracks,
                               type: 'search_result', expanded: true}))
                 dispatch({
                     type: 'LIBRARY_SET_CHILDREN',
-                    fun: () => children,
+                    fun: () => search_results,
                     target: ['search:'],
                 })
                 dispatch({
                     type: 'LIBRARY_SET_EXPANDED',
                     target: ['search:'],
                     data: true
+                })
+
+                if (search_history_length <= 0)
+                    return
+
+                const search_history_name = input + '/' + selectedUri
+                dispatch({
+                    type: 'LIBRARY_SET_CHILDREN',
+                    fun: (c) => [{name: search_history_name, uri: search_history_name},
+                                 ...c].slice(0, search_history_length),
+                    target: ['search_history:']
+                })
+
+                dispatch({
+                    type: 'LIBRARY_SET_CHILDREN',
+                    fun: () => search_results,
+                    target: ['search_history:', search_history_name]
                 })
             }
         )
@@ -81,12 +100,14 @@ const SearchPopOver = ({mopidy, searchUris, dispatch, closePopover}) => {
 
 const MopidyStatus = ({pendingRequestsNb, connected}) => {
 
+    const style = {marginTop: '15px', marginBottom: '10px'}
+
     if (!connected)
         return (
             <div>
               <CircularProgress size={30}
                                 thickness={5}
-                                style={{marginTop: '10px', marginBottom: '10px'}}
+                                style={style}
                                 color="secondary"
               />
             </div>
@@ -96,7 +117,7 @@ const MopidyStatus = ({pendingRequestsNb, connected}) => {
             <div>
               <CircularProgress size={30}
                                 thickness={5}
-                                style={{marginTop: '10px', marginBottom: '10px'}}
+                                style={style}
                                 variant="determinate" value={100}
               />
             </div>
@@ -106,80 +127,110 @@ const MopidyStatus = ({pendingRequestsNb, connected}) => {
         <div>
           <CircularProgress size={30}
                             thickness={5}
-                            style={{marginTop: '10px', marginBottom: '10px'}}
+                            style={style}
           />
         </div>
     )
 }
 
 
-const SidePanel = ({dispatch, mopidy, uri_schemes, pendingRequestsNb, connected}) => {
+const SidePanel = ({dispatch, mopidy, uri_schemes, pendingRequestsNb, connected, search_history_length}) => {
 
     const anchorEl = React.useRef(null)
     const [open, setOpen] = React.useState(false)
     
     const searchUris = getSearchUris(uri_schemes)
 
+    const activatePanel = function (name) {
+        return () => dispatch({type: 'ACTIVATE_PANEL',
+                               target: name
+                              })}
+
+    const SearchPopover = () => (
+        <Popover
+          open={open}
+          anchorEl={anchorEl.current}
+          onClose={() => setOpen(false)}
+          anchorOrigin={{
+              vertical: 'top',
+              horizontal: 'right',
+          }}
+          transformOrigin={{
+              vertical: 'top',
+              horizontal: 'left',
+          }}
+        >
+          <SearchInput searchUris={searchUris} mopidy={mopidy}
+                       dispatch={dispatch} closePopover={() => setOpen(false)}
+                       search_history_length={search_history_length}
+          />
+        </Popover>
+
+    )
+
+
+    const refreshAll = async function () {
+        await Promise.all( [mopidy.library.refresh(),
+                            mopidy.playlists.refresh()])
+
+        mopidy.library.browse({uri: null}).then(
+            library =>
+                dispatch({
+                    type: 'MOPIDY_LIBRARY_INITIALISE',
+                    data: library
+                }))
+
+        mopidy.playlists.asList().then(
+            playlists => 
+                dispatch({
+                    type: 'LIBRARY_SET_CHILDREN',
+                    target: ["playlist:"],
+                    fun: () => playlists,
+                }))
+    }
+
     return (
         <Paper elevation={3}
         style={{display: 'flex', flexDirection: 'column', justifyContent: 'space-between'}}
         >
+
+
           <ButtonGroup orientation='vertical'>
             <MopidyStatus pendingRequestsNb={pendingRequestsNb}
                           connected={connected}
             />
 
-            <Button style={{height: 'auto'}}
-                    onClick={
-                        () =>
-                            dispatch({
-                                type: 'ACTIVATE_PANEL',
-                                target: 'control'
-                            })
-                    }
-            >
-              <SettingsIcon/>
-            </Button>
-            <Button onClick={
-                () => dispatch({
-                    type: 'ACTIVATE_PANEL',
-                    target: 'library'
-                    
-                })}>
-              <ListIcon/>
-            </Button>
+            <Tooltip title="Quick search">
             <Button ref={anchorEl}
                     id='popover-search-button'
                     onClick={() => setOpen(true)}
             >
               <SearchIcon/>
-            </Button>
-            <Popover
-              id="search-popover"
-              open={open}
-              anchorEl={anchorEl.current}
-              onClose={() => setOpen(false)}
-              anchorOrigin={{
-                  vertical: 'top',
-                  horizontal: 'right',
-              }}
-              transformOrigin={{
-                  vertical: 'top',
-                  horizontal: 'left',
-              }}
-            >
-              <SearchPopOver searchUris={searchUris} mopidy={mopidy}
-                             dispatch={dispatch} closePopover={() => setOpen(false)} />
-            </Popover>
+            </Button></Tooltip>
+            <SearchPopover/>
+
+            <Tooltip title="Refresh lib and playlists">
+            <Button onClick={refreshAll}>
+              <Cached/>
+            </Button></Tooltip>
+          </ButtonGroup>
+          <ButtonGroup orientation='vertical'>
+
+            <Tooltip title="Library panel">
+            <Button onClick={activatePanel('library')}>
+              <ListIcon/>
+            </Button></Tooltip>
+
+            <Tooltip title="Settings panel">
+            <Button style={{height: 'auto'}}
+                    onClick={activatePanel('control')}>
+              <SettingsIcon/>
+            </Button></Tooltip>
 
           </ButtonGroup>
-        <ButtonGroup>
 
-
-            <Button onClick={() => dispatch({
-                type: 'ACTIVATE_PANEL',
-                target: 'help'
-            })}>
+          <ButtonGroup>
+            <Button onClick={activatePanel('help')}>
               <HelpOutlineIcon/>
             </Button>
           </ButtonGroup>
@@ -187,4 +238,7 @@ const SidePanel = ({dispatch, mopidy, uri_schemes, pendingRequestsNb, connected}
     )
 }
 
-export default connect(state => state.mopidy )(SidePanel)
+export default connect(state => ({...state.mopidy,
+                                  search_history_length:
+                                  state.settings.persistant.search_history_length.current
+                                 }) )(SidePanel)

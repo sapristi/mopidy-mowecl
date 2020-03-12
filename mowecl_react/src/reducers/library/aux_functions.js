@@ -7,9 +7,12 @@ const setChildren_rec = (node, target, path, fun) => {
 
             // console.log("match:", node)
             const prev_children = node.children || []
-            const new_children = fun(prev_children).map(
-                child => {return {...child, path: [...path, child.uri]}}
-            )
+            let new_children = fun(prev_children)
+
+            if (Array.isArray(new_children))
+                new_children = new_children.map(
+                    child => {return {...child, path: [...path, child.uri]}}
+                )
             return {...node, children: new_children}
         } else {
             return {
