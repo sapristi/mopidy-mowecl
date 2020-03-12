@@ -128,13 +128,24 @@ const NodeLeaves = ({node, dispatch, depth, typography}) => {
         </ReactSortable>
     )
 
+    const LibLine = styled.div`
+display: flex;
+flex-direction: row;
+jutify-content: space-between;
+
+ :hover {
+background-color: rgba(63, 81, 181, 0.125);
+border-radius: 5px;
+}
+`
+
     return (
         <li style={{paddingTop: 0, paddingBottom: 0,
                     display: 'flex', flexDirection: 'column',
                     paddingLeft: '10px', marginLeft: 0, marginRight: 'auto',
                     textAlign: 'left',
                    }}>
-          <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between'}}>
+          <LibLine>
             <ListItemText onClick={() => toggleNode(node, dispatch, mopidy)}
         /* style={{marginLeft: 0, marginRight: 'auto'}} */
             >
@@ -145,7 +156,7 @@ const NodeLeaves = ({node, dispatch, depth, typography}) => {
               </Typography>
             </ListItemText>
             {getButtons(node, dispatch)}
-          </div>
+          </LibLine>
           <div>
             {  node.expanded && node.children &&
 
