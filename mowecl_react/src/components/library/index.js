@@ -29,10 +29,7 @@ const dropTo = (lib_item, at_position, to_object, mopidy) => {
 
 const getButtons = (node, dispatch) => {
 
-    if (node.type === "playlists_root") {
-        return <PLsRootButtons/>
-    }
-    // first level of tree; 
+    // first level of tree;
     if (node.path && node.path.length === 1) return null
 
     if (node.type === "tracklist") {
@@ -43,7 +40,7 @@ const getButtons = (node, dispatch) => {
         return <BMButtons node={node}/>
     }
 
-    if (node.type === "playlist" && node.uri.endsWith('m3u8')) {
+    if (node.type === "playlist" && node.uri.startsWith('m3u:')) {
         return <PLButtons node={node}/>
     }
     return (
@@ -106,8 +103,8 @@ const NodeLeaves = ({node, dispatch, depth, typography}) => {
 
     const getChildrenNb = (node) => {
         if (isLeaf(node)) return ''
-        if (node.children === undefined) return '(?)'
-        return `(${node.children.length})`
+        if (Array.isArray(node.children)) return `(${node.children.length})`
+        return '(?)'
     }
 
 

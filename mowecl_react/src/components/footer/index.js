@@ -41,12 +41,13 @@ let Footer = ({tltrack, state, time_position,
                time_position_updater, updating, volume,
                seek_update_interval, dispatch}) =>
     {
-
-        if (state === 'playing' && typeof(time_position) === 'number' &&
-            !time_position_updater.pending){
-            dispatch({type: 'INCR_PLAYBACK_START'});
-            setTimeout(() => dispatch({type: 'INCR_PLAYBACK'}), parseInt(seek_update_interval));
-        }
+        React.useEffect( () => {
+            if (state === 'playing' && typeof(time_position) === 'number' &&
+                !time_position_updater.pending){
+                dispatch({type: 'INCR_PLAYBACK_START'});
+                setTimeout(() => dispatch({type: 'INCR_PLAYBACK'}), parseInt(seek_update_interval));
+            }
+        })
 
         return (
             <Paper

@@ -6,6 +6,7 @@ import SettingsIcon from '@material-ui/icons/Settings';
 import ListIcon from '@material-ui/icons/List';
 import SearchIcon from '@material-ui/icons/Search';
 import HelpOutlineIcon from '@material-ui/icons/HelpOutline';
+import Cached from '@material-ui/icons/Cached';
 
 import Paper from '@material-ui/core/Paper';
 import Popover from '@material-ui/core/Popover';
@@ -17,7 +18,7 @@ import Select from '@material-ui/core/Select';
 
 import {getSearchUris} from '../utils.js'
 
-const SearchPopOver = ({mopidy, searchUris, dispatch, closePopover, search_history_length}) => {
+const SearchInput = ({mopidy, searchUris, dispatch, closePopover, search_history_length}) => {
 
     const initialSelecterUri = localStorage.getItem("searchSelectedURI") || "all"
 
@@ -137,68 +138,82 @@ const SidePanel = ({dispatch, mopidy, uri_schemes, pendingRequestsNb, connected,
     
     const searchUris = getSearchUris(uri_schemes)
 
+    const activatePanel = function (name) {
+        return () => dispatch({type: 'ACTIVATE_PANEL',
+                               target: name
+                              })}
+
+    const SearchPopover = () => (
+        <Popover
+          open={open}
+          anchorEl={anchorEl.current}
+          onClose={() => setOpen(false)}
+          anchorOrigin={{
+              vertical: 'top',
+              horizontal: 'right',
+          }}
+          transformOrigin={{
+              vertical: 'top',
+              horizontal: 'left',
+          }}
+        >
+          <SearchInput searchUris={searchUris} mopidy={mopidy}
+                       dispatch={dispatch} closePopover={() => setOpen(false)}
+                       search_history_length={search_history_length}
+          />
+        </Popover>
+
+    )
+
+
+    const refreshAll = async function () {
+        await Promise.all( [mopidy.library.refresh(),
+                            mopidy.playlists.refresh()])
+        dispatch({
+            type: 'CONNECT',
+            mopidy_ws: mopidy._settings.webSocketUrl,
+            dispatch
+        })
+    }
+
     return (
         <Paper elevation={3}
         style={{display: 'flex', flexDirection: 'column', justifyContent: 'space-between'}}
         >
+
+
           <ButtonGroup orientation='vertical'>
             <MopidyStatus pendingRequestsNb={pendingRequestsNb}
                           connected={connected}
             />
 
-            <Button style={{height: 'auto'}}
-                    onClick={
-                        () =>
-                            dispatch({
-                                type: 'ACTIVATE_PANEL',
-                                target: 'control'
-                            })
-                    }
-            >
-              <SettingsIcon/>
-            </Button>
-            <Button onClick={
-                () => dispatch({
-                    type: 'ACTIVATE_PANEL',
-                    target: 'library'
-                    
-                })}>
-              <ListIcon/>
-            </Button>
             <Button ref={anchorEl}
                     id='popover-search-button'
                     onClick={() => setOpen(true)}
             >
               <SearchIcon/>
             </Button>
-            <Popover
-              id="search-popover"
-              open={open}
-              anchorEl={anchorEl.current}
-              onClose={() => setOpen(false)}
-              anchorOrigin={{
-                  vertical: 'top',
-                  horizontal: 'right',
-              }}
-              transformOrigin={{
-                  vertical: 'top',
-                  horizontal: 'left',
-              }}
-            >
-              <SearchPopOver searchUris={searchUris} mopidy={mopidy}
-                             dispatch={dispatch} closePopover={() => setOpen(false)}
-                             search_history_length={search_history_length}
-              />
-            </Popover>
+            <SearchPopover/>
+
+            <Button onClick={refreshAll}>
+              <Cached/>
+            </Button>
+          </ButtonGroup>
+          <ButtonGroup orientation='vertical'>
+
+            <Button onClick={activatePanel('library')}>
+              <ListIcon/>
+            </Button>
+
+            <Button style={{height: 'auto'}}
+                    onClick={activatePanel('control')}>
+              <SettingsIcon/>
+            </Button>
 
           </ButtonGroup>
-        <ButtonGroup>
 
-
-            <Button onClick={() => dispatch({
-                type: 'ACTIVATE_PANEL',
-                target: 'help'
-            })}>
+          <ButtonGroup>
+            <Button onClick={activatePanel('help')}>
               <HelpOutlineIcon/>
             </Button>
           </ButtonGroup>

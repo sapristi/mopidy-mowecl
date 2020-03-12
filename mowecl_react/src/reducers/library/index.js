@@ -48,7 +48,6 @@ const playlistReducer =
           case "PLAYLIST_SYNCED_UPDATE":
               if (!state.synced) return state
 
-
           default:
               return state
           }
