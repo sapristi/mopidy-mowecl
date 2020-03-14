@@ -19,7 +19,7 @@ export const playbackReducer = (state = default_playback, action) => {
     switch (action.type) {
 
     case 'CLEAR_PLAYBACK_INFO':
-        return default_playback
+        return {...default_playback, volume: state.volume}
     case 'PLAYBACK_INFO':
         const res_target = {}
         res_target[action.target] = action.data
