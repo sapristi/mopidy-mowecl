@@ -57,6 +57,16 @@ const MyBar = styled.div`
       opacity: 0.5;
    }
 `
+const LibLine = styled.div`
+display: flex;
+flex-direction: row;
+justify-content: space-between;
+padding-left: 3px;
+ :hover {
+background-color: rgba(63, 81, 181, 0.125);
+border-radius: 5px;
+}
+`
 
 
 const ChildrenSideBar = ({callback}) => (
@@ -86,9 +96,8 @@ const ChildrenSideBar = ({callback}) => (
 
 
 
-const NodeLeaves = ({node, dispatch, depth, typography}) => {
+const NodeLeaves = ({node, dispatch, depth, rootElem}) => {
 
-    typography = typography || "body1"
     // console.log("node", node.uri)
     const { mopidy } = React.useContext(AppContext)
 
@@ -128,16 +137,6 @@ const NodeLeaves = ({node, dispatch, depth, typography}) => {
         </ReactSortable>
     )
 
-    const LibLine = styled.div`
-display: flex;
-flex-direction: row;
-jutify-content: space-between;
-
- :hover {
-background-color: rgba(63, 81, 181, 0.125);
-border-radius: 5px;
-}
-`
 
     return (
         <li style={{paddingTop: 0, paddingBottom: 0,
@@ -149,7 +148,8 @@ border-radius: 5px;
             <ListItemText onClick={() => toggleNode(node, dispatch, mopidy)}
         /* style={{marginLeft: 0, marginRight: 'auto'}} */
             >
-              <Typography variant={typography}>
+        {  /* <Typography variant={rootElem ? "h6": "body1"} style={rootElem ? {fontSize: "1em" }: {}}> */ }
+              <Typography style={rootElem ? {fontWeight: 500 }: {}}>
                 {node.name}
                 {getChildrenNb(node)}
                 {getIcon(node)}
@@ -198,7 +198,7 @@ let LibraryPanel = ({library, dispatch}) => {
                             <NodeLeaves node={node} dispatch={dispatch}
                                         depth={0}
                                         key={node.uri}
-                                        typography="button"
+                                        rootElem
                             />
                           )
           }

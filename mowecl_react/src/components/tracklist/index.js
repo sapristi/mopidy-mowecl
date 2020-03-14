@@ -27,6 +27,7 @@ import {AppContext, listEquals} from '../../utils'
 import {BookmarkMenu} from './bookmark_menu'
 import {SaveMenu, saveAsPlaylist} from './save_menu'
 
+import styled from 'styled-components'
 
 const tracklistSwap = (e, mopidy) => {
     // console.log(e)
@@ -41,6 +42,14 @@ const itemToText = (item) => {
         return item.track.name || item.track.uri
     }
 }
+
+const TracklistItem = styled(ListItem)`
+padding: 0;
+:hover {
+    background-color: rgba(63, 81, 181, 0.125);
+    border-radius: 5px;
+}
+`
 
 let TracklistListPanel = ({dispatch, tracklist, current_tlid}) => {
     // console.log("Tracklist", tracklist, current_tlid);
@@ -59,12 +68,10 @@ let TracklistListPanel = ({dispatch, tracklist, current_tlid}) => {
                id='tracklist'
              >
                {tracklist.map(item => (
-                   <ListItem
+                   <TracklistItem
                      key={item.tlid}
-                   className={(item.tlid === current_tlid) ?
-                   "tracklist_current" : "" }
-
-                     style={{padding: 0}}
+                     className={(item.tlid === current_tlid) ?
+                                "tracklist_current" : "" }
                    >
                      {(item.tlid === current_tlid) ?
                       <AudiotrackIcon fontSize="small"/>
@@ -85,7 +92,7 @@ let TracklistListPanel = ({dispatch, tracklist, current_tlid}) => {
                          <ClearIcon fontSize="small"/>
                        </Button></ButtonGroup>
                      </ListItemIcon>
-                   </ListItem>
+                   </TracklistItem>
               ))}
             </ReactSortable>
     );
@@ -114,7 +121,7 @@ let TracklistInfoPanel = ({tracklist, playlists, bookmarks, dispatch}) => {
             )
         }
         setPrevTracklist(tracklist)
-    }, [tracklist])
+    })
 
     return (
         <Paper style={{paddingLeft: '10px', display: 'flex',
