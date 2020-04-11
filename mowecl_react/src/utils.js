@@ -1,19 +1,19 @@
 import React from 'react'
 
 
-export const duration_to_human = (ms) => {
-    if (ms === undefined || ms === null) {return '??';}
+export const duration_to_human = (ms, default_value='??') => {
+    if (ms === undefined || ms === null) return default_value
 
-    const s_total = Math.ceil(ms / 1000);
-    const s = s_total % 60;
-    const m = ((s_total - s) / 60);
-    const s_str = (s < 10 ? '0' + s : '' + s);
-    return `${m}:${s_str}`;
-};
+    const s_total = Math.ceil(ms / 1000)
+    const s = s_total % 60
+    const m = ((s_total - s) / 60)
+    const s_str = (s < 10 ? '0' + s : '' + s)
+    return `${m}:${s_str}`
+}
 
-export const obj_reducer = (obj, prop_name) => obj[prop_name];
+export const obj_reducer = (obj, prop_name) => obj[prop_name]
 
-export const arrayEquals = (array1, array2) => (array1.length === array2.length && array1.every((value, index) => value === array2[index]));
+export const arrayEquals = (array1, array2) => (array1.length === array2.length && array1.every((value, index) => value === array2[index]))
 
 
 var uriHumanList = {

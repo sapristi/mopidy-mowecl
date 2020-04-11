@@ -32,4 +32,15 @@ const Input = ({label, action, icon}) => {
 }
 
 
-export {Input}
+const Track = ({text, duration}) => (
+    <div style={{
+        display: "flex", flexDirection: "row",
+        justifyContent: "space-between", alignItems: "center"}}>
+      <div>{text}</div>
+      <div style={{textAlign: "right"}}>
+        {duration}
+      </div>
+    </div>
+)
+
+export {Input, Track}

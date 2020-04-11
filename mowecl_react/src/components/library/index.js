@@ -15,10 +15,9 @@ import ExpandLessIcon from '@material-ui/icons/ExpandLess';
 
 import styled from 'styled-components'
 
-import {AppContext} from '../../utils'
-import {toggleNode} from './functions'
-
-import { isLeaf, rec_expand_file, addToTracklist } from './functions'
+import {AppContext, duration_to_human} from '../../utils'
+import {Track} from '../generic'
+import { isLeaf, rec_expand_file, addToTracklist, toggleNode } from './functions'
 import {DefaultButtons, PLsRootButtons, TLButtons, PLButtons, BMButtons} from './buttons'
 
 const dropTo = (lib_item, at_position, to_object, mopidy) => {
@@ -101,19 +100,32 @@ const NodeLeaves = ({node, dispatch, depth, rootElem}) => {
     // console.log("node", node.uri)
     const { mopidy } = React.useContext(AppContext)
 
+    // if (isLeaf(node)) console.log(node)
+
     if (!node) return null
+
+
+    const getChildrenNb = (node) => {
+        if (isLeaf(node)) return ''
+        if (Array.isArray(node.children)) return `(${node.children.length})`
+        return '(?)'
+    }
+    const getText = (node) => {
+        if (isLeaf(node)) {
+            if (node.length) return <Track text={node.name}
+                                           duration={duration_to_human(node.length)}/>
+            else return node.name
+        } else {
+            return `${node.name} ${getChildrenNb(node)}`
+        }
+    }
+
     const getIcon = (node) => {
         if (!isLeaf(node)) {
             if (node.expanded) {
                 return <ExpandLessIcon style={{verticalAlign: 'text-bottom'}}/>
             } else {return <ExpandMoreIcon style={{verticalAlign: 'text-bottom'}}/>}
         } else return ''
-    }
-
-    const getChildrenNb = (node) => {
-        if (isLeaf(node)) return ''
-        if (Array.isArray(node.children)) return `(${node.children.length})`
-        return '(?)'
     }
 
 
@@ -150,8 +162,7 @@ const NodeLeaves = ({node, dispatch, depth, rootElem}) => {
             >
         {  /* <Typography variant={rootElem ? "h6": "body1"} style={rootElem ? {fontSize: "1em" }: {}}> */ }
               <Typography style={rootElem ? {fontWeight: 500 }: {}}>
-                {node.name}
-                {getChildrenNb(node)}
+                {getText(node)}
                 {getIcon(node)}
               </Typography>
             </ListItemText>

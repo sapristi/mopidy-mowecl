@@ -31,8 +31,8 @@ const SearchInput = ({mopidy, searchUris, dispatch, closePopover, search_history
         if (input.length === 0) return
 
         const uri = (selectedUri === "all") ? {} : {uris: [selectedUri + ':']}
-        // console.log("Search:",  {query: {any: input}, ...uri})
-        mopidy.library.search({query: {any: input}, ...uri}).then(
+        // console.log("Search:",  {query: {any: [input]}, ...uri})
+        mopidy.library.search({query: {any: [input]}, ...uri}).then(
             search_result => {
 
                 const search_results = search_result.map(

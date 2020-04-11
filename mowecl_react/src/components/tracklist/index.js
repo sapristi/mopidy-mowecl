@@ -23,7 +23,8 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 
-import {AppContext, listEquals} from '../../utils'
+import {Track} from '../generic'
+import {AppContext, listEquals, duration_to_human} from '../../utils'
 import {BookmarkMenu} from './bookmark_menu'
 import {SaveMenu, saveAsPlaylist} from './save_menu'
 
@@ -79,7 +80,10 @@ let TracklistListPanel = ({dispatch, tracklist, current_tlid}) => {
 
                      }
                      <ListItemText>
-                       {itemToText(item)}
+                       <Track text={itemToText(item)}
+                              duration={duration_to_human(
+                                  item.track.length,
+                                  <span style={{fontSize: '100%'}}>∞</span>)} />
                      </ListItemText>
                      <ListItemIcon>
                        <ButtonGroup>
