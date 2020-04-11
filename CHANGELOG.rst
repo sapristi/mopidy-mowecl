@@ -5,9 +5,10 @@ Changelog
 v0.3.2
 ========================================
 
+- Global hotkeys: space for play/pause
 - Display track length in tracklist
-- light/dark theme
-- new version notification
+- Light/dark theme
+- New version notification
 
 
 v0.3.1

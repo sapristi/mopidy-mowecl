@@ -22,6 +22,7 @@ let AppContainer = ({theme, children}) => {
             type: theme
         },
     })
+
     return (
     <MuiThemeProvider theme={THEME}>
       <Paper className="App"
@@ -39,7 +40,6 @@ let AppContainer = ({theme, children}) => {
 }
 
 let App = ({settings, mopidy, dispatch}) => {
-
     // console.log("Main: ", settings)
     let activePanel = null
     switch (settings.active_panel) {

@@ -15,10 +15,11 @@ Web client providing a clean and ergonomic interface to Mopidy.
 Presentation
 ============
 
-- dual panel library / tracklist
-- library / playlists / search results displayed as a single tree view
-- drag and drop from library to tracklist
-- save tracklist + current track as a bookmark (virtual playlist)
+- Dual panel library / tracklist
+- Library / playlists / search results displayed as a single tree view
+- Drag and drop from library to tracklist, and inside tracklist
+- Save tracklist + current track as a bookmark (virtual playlist)
+- Space play/pause hotkey
 
 .. image:: https://mopidy.com/media/ext/mowecl.png
    :target: https://mopidy.com/media/ext/mowecl.png

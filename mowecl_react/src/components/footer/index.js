@@ -7,7 +7,6 @@ import PlaybackButtons from './playbackButtons.js'
 import PlaybackSlider from './playbackSlider.js'
 import VolumeSlider from './volumeSlider.js'
 
-
 const TrackInfo = ({track}) => {
     if (!track) return '...'
 
@@ -37,18 +36,9 @@ const TrackInfo = ({track}) => {
 }
 
 
-let Footer = ({tltrack, state, time_position,
-               time_position_updater, updating, volume,
-               seek_update_interval, dispatch}) =>
+let Footer = ({tltrack, state,
+               volume, dispatch}) =>
     {
-        React.useEffect( () => {
-            if (state === 'playing' && typeof(time_position) === 'number' &&
-                !time_position_updater.pending){
-                dispatch({type: 'INCR_PLAYBACK_START'});
-                setTimeout(() => dispatch({type: 'INCR_PLAYBACK'}), parseInt(seek_update_interval));
-            }
-        })
-
         return (
             <Paper
               elevation={3}
@@ -69,9 +59,8 @@ let Footer = ({tltrack, state, time_position,
                     (state !== "stopped") && (
                         <>
                           <TrackInfo track={tltrack.track}/>
-                          <PlaybackSlider time_position={time_position}
-                                          track_length={tltrack.track ? tltrack.track.length : null}
-                                          dispatch={dispatch}
+                          <PlaybackSlider
+                            track_length={tltrack.track ? tltrack.track.length : null}
                           />
                         </>
                     )
@@ -79,13 +68,15 @@ let Footer = ({tltrack, state, time_position,
                 <div/>
               </div>
             </Paper>
-            )
+        )
     };
 
 
 const getPlaybackState = (state) => {
-    return {...state.playback_state, 
-            seek_update_interval: state.settings.persistant.seek_update_interval.current
-           }};
+    return {
+        tltrack: state.playback_state.tltrack,
+        state: state.playback_state.state,
+        volume: state.playback_state.volume,
+    }};
 Footer = connect(getPlaybackState)(Footer);
 export default Footer;
