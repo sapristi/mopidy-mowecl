@@ -6,6 +6,7 @@ import SettingsIcon from '@material-ui/icons/Settings';
 import ListIcon from '@material-ui/icons/List';
 import SearchIcon from '@material-ui/icons/Search';
 import HelpOutlineIcon from '@material-ui/icons/HelpOutline';
+import ErrorOutlineIcon from '@material-ui/icons/ErrorOutline';
 import Cached from '@material-ui/icons/Cached';
 
 import Paper from '@material-ui/core/Paper';
@@ -18,13 +19,14 @@ import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 
 import {getSearchUris} from '../utils.js'
+import {version} from '../../package.json'
 
 const SearchInput = ({mopidy, searchUris, dispatch, closePopover, search_history_length}) => {
 
     const initialSelecterUri = localStorage.getItem("searchSelectedURI") || "all"
 
     const [selectedUri, setSelectedUri] = React.useState(initialSelecterUri)
-    const [input, setInput] = React.useState('')
+    const [input, setInput] = React.useState(() => '')
 
     const triggerSearch = (key) => {
         if (key !== 'Enter') return
@@ -138,7 +140,15 @@ const SidePanel = ({dispatch, mopidy, uri_schemes, pendingRequestsNb, connected,
 
     const anchorEl = React.useRef(null)
     const [open, setOpen] = React.useState(false)
-    
+
+    const [availableVersion, setAvailableVersion] = React.useState(() => null)
+
+    if (!availableVersion) {
+        fetch('https://pypi.org/pypi/Mopidy-Mowecl/json').then(
+            response =>  response.json().then(
+                data => setAvailableVersion(data.info.version)
+            ))}
+
     const searchUris = getSearchUris(uri_schemes)
 
     const activatePanel = function (name) {
@@ -229,7 +239,15 @@ const SidePanel = ({dispatch, mopidy, uri_schemes, pendingRequestsNb, connected,
 
           </ButtonGroup>
 
-          <ButtonGroup>
+          <ButtonGroup orientation="vertical">
+            {
+            (version != availableVersion) &&
+            <Tooltip title={`Version ${availableVersion} available on Pypi.`}>
+              <Button>
+                <ErrorOutlineIcon/>
+              </Button>
+            </Tooltip>
+            }
             <Button onClick={activatePanel('help')}>
               <HelpOutlineIcon/>
             </Button>

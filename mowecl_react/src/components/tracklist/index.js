@@ -83,7 +83,7 @@ let TracklistListPanel = ({dispatch, tracklist, current_tlid}) => {
                        <Track text={itemToText(item)}
                               duration={duration_to_human(
                                   item.track.length,
-                                  <span style={{fontSize: '100%'}}>∞</span>)} />
+                                  '∞')} />
                      </ListItemText>
                      <ListItemIcon>
                        <ButtonGroup>

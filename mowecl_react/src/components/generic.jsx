@@ -37,7 +37,7 @@ const Track = ({text, duration}) => (
         display: "flex", flexDirection: "row",
         justifyContent: "space-between", alignItems: "center"}}>
       <div>{text}</div>
-      <div style={{textAlign: "right"}}>
+    <div style={{textAlign: "right", paddingRight: '4px'}}>
         {duration}
       </div>
     </div>
