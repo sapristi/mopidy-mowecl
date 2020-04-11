@@ -21,6 +21,16 @@ const defaultPersistantSettings = {
         default: 10,
         help: 'Number of items in search history. Set 0 to disable.',
         validate: v => parseInt(v) || 10
+    },
+    theme: {
+        name: "Theme",
+        default: "light",
+        help: "light or dark",
+        validate: v => {
+            const lower = v.toLowerCase()
+            return (["light", "dark"].includes(lower)) ?
+                    lower : "light"
+        }
     }
 }
 
@@ -73,6 +83,9 @@ export const settingsReducer = (state=defaultSettings, action) => {
                     )
                 )
                 }
+
+    case 'SET_THEME':
+        return {...state, theme: action.data}
 
     default:
         return state

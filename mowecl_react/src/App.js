@@ -12,21 +12,31 @@ import SettingsPanel from './components/settingsPanel'
 import HelpPanel from './components/helpPanel'
 
 import CircularProgress from '@material-ui/core/CircularProgress';
+import Paper from '@material-ui/core/Paper';
 
+import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 
-let AppContainer = ({children}) => (
-
-    <div className="App"
-         style={{display: 'flex', flexDirection: 'column',
-                 height:'100%', overflow: 'hidden'}}>
-      <div style={{display: 'flex', flexDirection: 'row',  minHeight: '0', flex: 1}}>
-        <SidePanel/>
-        {children}
-      </div>
-      <Footer style={{display: 'flex', flex: 1, }}/>
-    </div>
-
-)
+let AppContainer = ({theme, children}) => {
+    const THEME = createMuiTheme({
+        palette: {
+            type: theme
+        },
+    })
+    return (
+    <MuiThemeProvider theme={THEME}>
+      <Paper className="App"
+           style={{display: 'flex', flexDirection: 'column',
+                   height:'100%', overflow: 'hidden',
+                  }}>
+        <div style={{display: 'flex', flexDirection: 'row',  minHeight: '0', flex: 1}}>
+          <SidePanel/>
+          {children}
+        </div>
+        <Footer style={{display: 'flex', flex: 1, }}/>
+      </Paper>
+    </MuiThemeProvider>
+    )
+}
 
 let App = ({settings, mopidy, dispatch}) => {
 
@@ -43,9 +53,9 @@ let App = ({settings, mopidy, dispatch}) => {
         activePanel = <LibraryPanel/>
     }
 
-    if (mopidy.connected) {
-        return (
-            <AppContainer>
+    return (mopidy.connected) ?
+        (
+            <AppContainer theme={settings.persistant.theme.current}>
               <div style={{height: '100%', width: '100%', flexDirection: 'row', display: 'flex'}}>
                 <div style={{ width: '50%', height: '100%', overflow: 'auto'}}>
                   {activePanel}
@@ -55,27 +65,25 @@ let App = ({settings, mopidy, dispatch}) => {
                 </div>
               </div>
             </AppContainer>
-        ) } else {
-            return (
-                <AppContainer>
-                  <div style={{ width: '50%', height: '100%', overflow: 'auto'}}>
-                    <SettingsPanel/>
-                  </div>
+        ) : (
+            <AppContainer theme={settings.persistant.theme.current}>
+              <div style={{ width: '50%', height: '100%', overflow: 'auto'}}>
+                <SettingsPanel/>
+              </div>
 
-                  <div style={{display: 'flex', flexDirection: 'column'}}>
-                    <div style={{flex: 1}}/>
-                    <div style={{flex: 1}}><CircularProgress color="inherit"
-                                                             style={{margin: 'auto'}}
-                                           /></div>
-                    <div style={{flex: 1}}>
-                      <div>Trying to reach mopidy at {settings.persistant.mopidy_ws.current}</div>
-                      <div>{mopidy.error}</div>
-                    </div>
-                    <div style={{flex: 1}}/>
-                  </div>
-                </AppContainer>
-            )
-        }
+              <div style={{display: 'flex', flexDirection: 'column'}}>
+                <div style={{flex: 1}}/>
+                <div style={{flex: 1}}><CircularProgress color="inherit"
+                                                         style={{margin: 'auto'}}
+                                       /></div>
+                <div style={{flex: 1}}>
+                  <div>Trying to reach mopidy at {settings.persistant.mopidy_ws.current}</div>
+                  <div>{mopidy.error}</div>
+                </div>
+                <div style={{flex: 1}}/>
+              </div>
+            </AppContainer>
+        )
 }
 
 export default connect(state => {return {settings: state.settings, mopidy: state.mopidy}})(App)

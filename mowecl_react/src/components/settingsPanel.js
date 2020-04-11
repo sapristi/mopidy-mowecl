@@ -18,7 +18,6 @@ const SettingsPanel = ({persistant, dispatch}) => {
 
     return (
         <div>
-          <form noValidate autoComplete="off">
             <List>
             {
                 Object.entries(settings).map(
@@ -64,7 +63,6 @@ const SettingsPanel = ({persistant, dispatch}) => {
                 )
             }
             </List>
-          </form>
 
           <ButtonGroup>
           <Button onClick={() => {
