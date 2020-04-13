@@ -4,6 +4,7 @@ import { getDefaultWS } from '../utils'
 const saved_settings = JSON.parse(localStorage.getItem("settings")) || {}
 
 const validate_hex_color = (str) => {
+    if (str.length !== 7) return false
     try {
         return Color(str).hex()
     } catch (err) {
@@ -34,17 +35,6 @@ const defaultPersistantSettings = {
         default: 10,
         help: 'Number of items in search history. Set 0 to disable.',
         validate: v => parseInt(v) || 10
-    },
-    theme: {
-        type: "param",
-        name: "Theme",
-        default: "light",
-        help: "light or dark",
-        validate: v => {
-            const lower = v.toLowerCase()
-            return (["light", "dark"].includes(lower)) ?
-                lower : "light"
-        }
     },
     colors: {
         name: "Theme colors",

@@ -28,8 +28,8 @@ import {AppContext, listEquals, duration_to_human} from '../../utils'
 import {BookmarkMenu} from './bookmark_menu'
 import {SaveMenu, saveAsPlaylist} from './save_menu'
 
-import styled from 'styled-components'
 import Color from 'color'
+import styled from '@emotion/styled'
 
 const tracklistSwap = (e, mopidy) => {
     // console.log(e)
@@ -59,7 +59,6 @@ let TracklistListPanel = ({dispatch, tracklist, current_tlid}) => {
 
     const { mopidy, colors } = React.useContext(AppContext)
 
-    console.log("Tracklist", colors);
     return (
              <ReactSortable
                list={tracklist}

@@ -19,7 +19,6 @@ import { isLeaf, rec_expand_file, addToTracklist, toggleNode } from './functions
 import {DefaultButtons, PLsRootButtons, TLButtons, PLButtons, BMButtons} from './buttons'
 
 import Color from 'color'
-import { css, jsx } from '@emotion/core'
 import styled from '@emotion/styled'
 
 const dropTo = (lib_item, at_position, to_object, mopidy) => {

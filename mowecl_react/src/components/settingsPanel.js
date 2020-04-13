@@ -12,6 +12,7 @@ import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 
 
+import {AppContext} from '../utils'
 
 const SettingInput = ({setting, setSetting}) => (
     <>
@@ -47,7 +48,7 @@ const SettingInput = ({setting, setSetting}) => (
 )
 
 const SettingsGroup = ({group, path, setInGroup}) => {
-    console.log("Settings group", group)
+    // console.log("Settings group", group)
     return (
         <Paper elevation={path.length}>
           <Typography>{group.name}</Typography>
@@ -87,7 +88,7 @@ const SettingsGroup = ({group, path, setInGroup}) => {
 
 
 const SettingsPanel = ({persistant, dispatch}) => {
-
+    const { mopidy } = React.useContext(AppContext)
     const [settings, setSettings ] = useState(persistant)
 
     return (
@@ -105,7 +106,8 @@ const SettingsPanel = ({persistant, dispatch}) => {
                       ...settings
                   }
               })
-              dispatch({type: 'CONNECT', mopidy_ws: settings.mopidy_ws.current, dispatch})
+              if (settings.mopidy_ws.current !== mopidy._settings.webSocketUrl)
+                  dispatch({type: 'CONNECT', mopidy_ws: settings.mopidy_ws.current, dispatch})
           }}>
             Commit
           </Button>
