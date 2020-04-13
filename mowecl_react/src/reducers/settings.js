@@ -24,7 +24,7 @@ const defaultPersistantSettings = {
     },
     seek_update_interval: {
         type: "param",
-        name: "Seek update interval",
+        name: "Progress update interval",
         default: 500,
         help: 'Time interval (ms) at which the song progress bar will update.',
         validate: v => parseInt(v) || 500

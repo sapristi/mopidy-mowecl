@@ -19,7 +19,6 @@ import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 let AppContainer = ({colors, children}) => {
     const THEME = createMuiTheme({
         palette: {
-            type: "light",
             background: {
                 paper: colors.background.current,
             },

@@ -20,6 +20,7 @@ Presentation
 - Drag and drop from library to tracklist, and inside tracklist
 - Save tracklist + current track as a bookmark (virtual playlist)
 - Space play/pause hotkey
+- Basic color theming
 
 .. image:: https://mopidy.com/media/ext/mowecl.png
    :target: https://mopidy.com/media/ext/mowecl.png
@@ -49,8 +50,35 @@ Mopidy-Mowecl to your Mopidy configuration file::
     [mowecl]
     # No configuration required
 
+In-app configuration
+....................
 
-Project resources
+Several configuration options are available in the web application:
+
+ - Mopidy websocket URL: mostly for development purposes, or if you are exposing mopidy websocket on a custom port
+ - Progress update interval: time interval (ms) at which the song progress bar will update.
+ - Search history lenght: max number of items in the search history
+
+
+Theming
+.......
+
+Basic theming is available in the configuration, with the following options:
+
+ - Background color
+ - Text color
+ - Highlight color
+
+For example, set these values for a dark mode based on the `Blueberry theme`_:
+
+ - Background color: ``#232937``
+ - Text color: ``#7390aa``
+ - Highlight color: ``#27e8a7``
+
+
+.. _Blueberry theme: https://github.com/peymanslh/vscode-blueberry-dark-theme
+
+PROJECT resources
 =================
 
 - `Mopidy extension page <https://mopidy.com/ext/mowecl>`_
