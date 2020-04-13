@@ -1,5 +1,6 @@
 
 import React from 'react';
+import { connect } from 'react-redux';
 
 import Slider from '@material-ui/core/Slider';
 import LinearProgress from '@material-ui/core/LinearProgress';
@@ -8,7 +9,30 @@ import { duration_to_human, AppContext } from '../../utils';
 const sliderSteps = 300;
 
 
-const PlaybackSlider = ({time_position, track_length, dispatch}) => {
+let PlaybackUpdater = ({state, time_position, time_position_updater, seek_update_interval, dispatch}) => {
+
+    React.useEffect( () => {
+        if (state === 'playing'
+            && typeof(time_position) === 'number'
+            && !time_position_updater.pending)
+        {
+            dispatch({type: 'INCR_PLAYBACK_START'});
+            setTimeout(() => dispatch({type: 'INCR_PLAYBACK'}), parseInt(seek_update_interval));
+        }
+    })
+    return null
+}
+
+const getPlaybackUpdateState = (state) => {
+    return {...state.playback_state,
+            seek_update_interval: state.settings.persistant.seek_update_interval.current
+           }};
+PlaybackUpdater = connect(getPlaybackUpdateState)(PlaybackUpdater);
+
+
+
+
+let PlaybackSlider = ({time_position, track_length, dispatch}) => {
 
     const { mopidy } = React.useContext(AppContext)
     // console.log("steps", sliderSteps, time_position, track_length);
@@ -30,6 +54,7 @@ const PlaybackSlider = ({time_position, track_length, dispatch}) => {
         return (
             <div style={{display: 'flex', flexDirection: 'row',
                          alignItems: 'center'}}>
+              <PlaybackUpdater/>
               <div style={{width: '40px'}}>
                 {duration_to_human(time_position)}
               </div>
@@ -59,4 +84,8 @@ const PlaybackSlider = ({time_position, track_length, dispatch}) => {
     }
 };
 
+const getPlaybackState = (state) => {
+    return {time_position: state.playback_state.time_position,
+           }};
+PlaybackSlider = connect(getPlaybackState)(PlaybackSlider);
 export default PlaybackSlider

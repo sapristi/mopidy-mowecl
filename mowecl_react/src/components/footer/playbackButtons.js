@@ -11,10 +11,16 @@ import PauseIcon from '@material-ui/icons/Pause';
 
 import {AppContext} from '../../utils'
 
+import { useHotkeys } from 'react-hotkeys-hook'
 
 const PlaybackButtons = ({state}) => {
-
     const { mopidy } = React.useContext(AppContext)
+    useHotkeys('space', () => {
+        ((state === 'playing') ?
+                               mopidy && mopidy.playback.pause()
+                               :
+                               mopidy && mopidy.playback.play()
+        )}, {}, [state, mopidy]);
     return (
         <ButtonGroup>
           <Button onClick={() => mopidy.playback.previous()}>

@@ -12,59 +12,91 @@ import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 
 
-const SettingsPanel = ({persistant, dispatch}) => {
+import {AppContext} from '../utils'
 
+const SettingInput = ({setting, setSetting}) => (
+    <>
+      <TextField
+        label={setting.name}
+        variant='outlined'
+        style={{margin: 8}}
+        value={setting.current}
+        fullWidth
+        onChange={(event) => {
+            setSetting({
+                ...setting,
+                current: event.target.value
+            })}}
+      />
+      <ListItemIcon>
+        <HTMLTooltip
+          title={
+              <Paper style={{padding: '10px', fontSize: 'small'}}>
+                <Typography>
+                  {setting.help}
+                </Typography>
+                <Typography>
+                  Default: <em>{setting.default}</em> 
+                </Typography>
+              </Paper>
+          }
+        >
+          <HelpOutlineIcon/>
+        </HTMLTooltip>
+      </ListItemIcon>
+    </>
+)
+
+const SettingsGroup = ({group, path, setInGroup}) => {
+    // console.log("Settings group", group)
+    return (
+        <Paper elevation={path.length}>
+          <Typography>{group.name}</Typography>
+          <List>
+            {
+                Object.entries(group).map(
+                    ([key, value]) =>
+                        <ListItem key={key}>
+                          {
+                              (value.type === "group") ?
+                                  <SettingsGroup group={value} path={[...path, key]}
+                                                 setInGroup={
+                                                     (gkey, gvalue) => {
+                                                         setInGroup(key,
+                                                                    {
+                                                                        ...value,
+                                                                        [gkey]: gvalue
+                                                                    })
+                                                     }
+                                                 }
+                                  />
+                              :
+                              (value.type === "param") ?
+                              <SettingInput setting={value}
+                                            setSetting={(newValue) => setInGroup(key, newValue)}/>
+                              :
+                              null
+                          }
+                        </ListItem>
+                )
+            }
+          </List>
+        </Paper>
+    )
+
+}
+
+
+const SettingsPanel = ({persistant, dispatch}) => {
+    const { mopidy } = React.useContext(AppContext)
     const [settings, setSettings ] = useState(persistant)
 
     return (
         <div>
-          <form noValidate autoComplete="off">
-            <List>
-            {
-                Object.entries(settings).map(
-                    ([key, setting]) =>
-
-                    <ListItem key={setting.name}>
-                      <TextField
-                        label={setting.name}
-                        variant='outlined'
-                        style={{margin: 8}}
-                        value={setting.current}
-                        fullWidth
-                        onChange={(event) =>
-                                  {
-                                      const new_value = event.target.value
-                                      setSettings( previous =>
-                                                   ({
-                                                       ...previous,
-                                                       [key]: {
-                                                           ...previous[key],
-                                                           current: new_value}
-                                                   })
-                                                 )}
-                                 }
-                      />
-                      <ListItemIcon>
-                        <HTMLTooltip
-                          title={
-                              <Paper style={{padding: '10px', fontSize: 'small'}}>
-                                <Typography>
-                                  {setting.help}
-                                </Typography>
-                                <Typography>
-                                  Default: <em>{setting.default}</em> 
-                                </Typography>
-                              </Paper>
-                          }
-                        >
-                          <HelpOutlineIcon/>
-                        </HTMLTooltip>
-                      </ListItemIcon>
-                    </ListItem>
-                )
-            }
-            </List>
-          </form>
+          <SettingsGroup group={settings}
+                         setInGroup={(key, value) =>
+                                     setSettings(() => ({...settings, [key]: value}))}
+                         path={[]}/>
 
           <ButtonGroup>
           <Button onClick={() => {
@@ -74,7 +106,8 @@ const SettingsPanel = ({persistant, dispatch}) => {
                       ...settings
                   }
               })
-              dispatch({type: 'CONNECT', mopidy_ws: settings.mopidy_ws.current, dispatch})
+              if (settings.mopidy_ws.current !== mopidy._settings.webSocketUrl)
+                  dispatch({type: 'CONNECT', mopidy_ws: settings.mopidy_ws.current, dispatch})
           }}>
             Commit
           </Button>
@@ -94,8 +127,6 @@ const SettingsPanel = ({persistant, dispatch}) => {
 
         </div>
     )
-
-
 }
 
 export default connect(state => ({persistant: state.settings.persistant}))(SettingsPanel)

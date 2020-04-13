@@ -34,10 +34,13 @@ export const playbackReducer = (state = default_playback, action) => {
 
         return res
     case 'INCR_PLAYBACK_START':
-        const time_position_updater_new = Object.assign(
-            {}, state.time_position_updater, {pending: true})
-        return Object.assign(
-            {}, state, {time_position_updater: time_position_updater_new})
+        return {
+            ...state,
+            time_position_updater: {
+                ...state.time_position_updater,
+                pending: true
+            }
+        }
     case 'INCR_PLAYBACK':
         const now = (new Date()).valueOf()
         const elapsed = now - state.time_position_updater.last_update

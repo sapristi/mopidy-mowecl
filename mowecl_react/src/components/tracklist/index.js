@@ -23,11 +23,13 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 
-import {AppContext, listEquals} from '../../utils'
+import {Track} from '../generic'
+import {AppContext, listEquals, duration_to_human} from '../../utils'
 import {BookmarkMenu} from './bookmark_menu'
 import {SaveMenu, saveAsPlaylist} from './save_menu'
 
-import styled from 'styled-components'
+import Color from 'color'
+import styled from '@emotion/styled'
 
 const tracklistSwap = (e, mopidy) => {
     // console.log(e)
@@ -45,16 +47,17 @@ const itemToText = (item) => {
 
 const TracklistItem = styled(ListItem)`
 padding: 0;
-:hover {
-    background-color: rgba(63, 81, 181, 0.125);
-    border-radius: 5px;
+box-sizing: border-box;
+border: 2px solid rgba(0,0,0,0);
+border-radius: 5px;
+&:hover {
+    border: 2px solid ${props => Color(props.color).alpha(0.5).string()};
 }
 `
 
 let TracklistListPanel = ({dispatch, tracklist, current_tlid}) => {
-    // console.log("Tracklist", tracklist, current_tlid);
 
-    const { mopidy } = React.useContext(AppContext)
+    const { mopidy, colors } = React.useContext(AppContext)
 
     return (
              <ReactSortable
@@ -69,6 +72,7 @@ let TracklistListPanel = ({dispatch, tracklist, current_tlid}) => {
              >
                {tracklist.map(item => (
                    <TracklistItem
+                     color={colors.primary.current}
                      key={item.tlid}
                      className={(item.tlid === current_tlid) ?
                                 "tracklist_current" : "" }
@@ -79,7 +83,10 @@ let TracklistListPanel = ({dispatch, tracklist, current_tlid}) => {
 
                      }
                      <ListItemText>
-                       {itemToText(item)}
+                       <Track text={itemToText(item)}
+                              duration={duration_to_human(
+                                  item.track.length,
+                                  '∞')} />
                      </ListItemText>
                      <ListItemIcon>
                        <ButtonGroup>
@@ -172,7 +179,7 @@ let TracklistInfoPanel = ({tracklist, playlists, bookmarks, dispatch}) => {
 TracklistInfoPanel = connect(state => ({ playlists: state.library.playlists}))(TracklistInfoPanel)
 
 
-let TracklistPanel = ({tracklist, current_tlid, dispatch, mopidy}) => {
+let TracklistPanel = ({tracklist, current_tlid, dispatch}) => {
 
     return (
         <Paper
@@ -181,12 +188,10 @@ let TracklistPanel = ({tracklist, current_tlid, dispatch, mopidy}) => {
                  }}>
           <TracklistInfoPanel
             tracklist={tracklist}
-            mopidy={mopidy}
           />
           <TracklistListPanel tracklist={tracklist}
                               current_tlid={current_tlid}
                               dispatch={dispatch}
-                              mopidy={mopidy}
                               style={{overflow: 'auto', height: '100%', maxHeight: '100%'}}
                   />
         </Paper>
