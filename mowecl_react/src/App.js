@@ -19,8 +19,10 @@ import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 let AppContainer = ({colors, children}) => {
     const THEME = createMuiTheme({
         palette: {
+            type: "dark",
             background: {
                 paper: colors.background.current,
+                default: colors.background.current,
             },
             primary: {
                 main: colors.primary.current
@@ -32,8 +34,21 @@ let AppContainer = ({colors, children}) => {
                 primary: colors.text.current,
                 secondary: colors.text.current,
             }
-
         },
+        overrides: {
+            MuiLinearProgress: {
+                colorPrimary: {
+                    backgroundColor: colors.background.current
+                },
+                bar1Indeterminate: {
+                    animation: "MuiLinearProgress-keyframes-indeterminate1 6.3s cubic-bezier(0.65, 0.815, 0.735, 0.395) infinite"
+                },
+                bar2Indeterminate: {
+                    animation: "MuiLinearProgress-keyframes-indeterminate2 6.3s cubic-bezier(0.165, 0.84, 0.44, 1) 4.45s infinite"
+                }
+
+            }
+        }
     })
 
     return (
