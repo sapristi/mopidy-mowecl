@@ -22,7 +22,9 @@ let MopidyApp = ({mopidy, settings, dispatch}) => {
     }
 
     return (
-        <AppContext.Provider value={{mopidy: mopidy.mopidy, dispatch: dispatch}}>
+        <AppContext.Provider value={{mopidy: mopidy.mopidy, dispatch: dispatch,
+                                     colors: settings.persistant.colors
+                                    }}>
           <App/>
         </AppContext.Provider>
     )

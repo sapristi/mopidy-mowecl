@@ -200,8 +200,9 @@ const SidePanel = ({dispatch, mopidy, uri_schemes, pendingRequestsNb, connected,
     }
 
     return (
-        <Paper elevation={3}
-        style={{display: 'flex', flexDirection: 'column', justifyContent: 'space-between'}}
+        <Paper elevation={5}
+               style={{display: 'flex', flexDirection: 'column',
+                       justifyContent: 'space-between'}}
         >
 
 

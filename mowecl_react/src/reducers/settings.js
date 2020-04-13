@@ -1,46 +1,134 @@
-
+import Color from 'color'
 import { getDefaultWS } from '../utils'
 
 const saved_settings = JSON.parse(localStorage.getItem("settings")) || {}
 
+const validate_hex_color = (str) => {
+    try {
+        return Color(str).hex()
+    } catch (err) {
+        return false
+    }
+}
+
 const defaultPersistantSettings = {
+    name: "Settings",
+    type: "group",
     mopidy_ws: {
+        type: "param",
         name: 'Modidy WebSocker URL',
         default: getDefaultWS(),
         help: 'Modidy WebSocker URL. Do not modify unless you know what you are doing.',
         validate: v => v
     },
     seek_update_interval: {
+        type: "param",
         name: "Seek update interval",
         default: 500,
         help: 'Time interval (ms) at which the song progress bar will update.',
         validate: v => parseInt(v) || 500
     },
     search_history_length: {
+        type: "param",
         name: "Search history length",
         default: 10,
         help: 'Number of items in search history. Set 0 to disable.',
         validate: v => parseInt(v) || 10
     },
     theme: {
+        type: "param",
         name: "Theme",
         default: "light",
         help: "light or dark",
         validate: v => {
             const lower = v.toLowerCase()
             return (["light", "dark"].includes(lower)) ?
-                    lower : "light"
+                lower : "light"
         }
+    },
+    colors: {
+        name: "Theme colors",
+        type: "group",
+        background: {
+            type: "param",
+            name: "Background",
+            default: "#FFFFFF",
+            help: 'Background color, hex representation.',
+            validate: v => validate_hex_color(v) ? v : "#FFFFFF"
+        },
+        text: {
+            type: "param",
+            name: "Text",
+            default: "#000000",
+            help: 'Text color, hex representation.',
+            validate: v => validate_hex_color(v) ? v : "#000000"
+        },
+        primary: {
+            type: "param",
+            name: "Primary",
+            default: "#3F51B5",
+            help: 'Primary color, hex representation.',
+            validate: v => validate_hex_color(v) ? v : "#3F51B5"
+        },
+        // secondary: {
+        //     type: "param",
+        //     name: "Secondary",
+        //     default: "#F50057",
+        //     help: 'Secondary color, hex representation.',
+        //     validate: v => validate_hex_color(v) ? v : "#F50057"
+        // }
     }
 }
 
-const persistantSettings = Object.fromEntries(
-    Object.entries(defaultPersistantSettings).map(
-        ([k, v]) => {
-            const current = saved_settings[k] || v.default
-            return [k, {...v, current}]
-        }))
 
+
+const loadSaved = (default_s, saved_s) => Object.fromEntries(
+    Object.entries(default_s).map(
+        ([k, v]) => {
+            // console.log("Merging", default_s, saved_s)
+            if (default_s[k].type === "group") {
+                return [k,
+                        {
+                            ...v,
+                            ...loadSaved(v, saved_s[k] || {})
+                        }
+                       ]
+            } else if (default_s[k].type === "param") {
+                const merged_v = saved_s[k] || v.default
+                return [k,
+                        {
+                            ...v,
+                            current: merged_v
+                        }]
+            } else {
+                return [k, v]
+            }
+        }
+    )
+)
+
+const persistantSettings = loadSaved(defaultPersistantSettings, saved_settings)
+
+const dumpSettings = (settings) => {
+
+    if (settings.type === "group") {
+        return Object.fromEntries(Object.entries(settings).map(
+            ([k, v]) => ([k, dumpSettings(v)])
+        ))
+    } else if (settings.type === "param") {
+        return settings.validate(settings.current)
+    } else return null
+}
+
+const validateSettings = (settings) => {
+    if (settings.type === "group") {
+        return Object.fromEntries(Object.entries(settings).map(
+            ([k, v]) => ([k, validateSettings(v)])
+        ))
+    } else if (settings.type === "param") {
+        return {...settings, current: settings.validate(settings.current)}
+    } else return settings
+}
 
 const defaultSettings = {
     active_panel: 'library',
@@ -56,32 +144,19 @@ export const settingsReducer = (state=defaultSettings, action) => {
         localStorage.removeItem("settings")
         return {
             ...state,
-            persistant:
-            Object.fromEntries(
-                Object.entries(defaultPersistantSettings).map(
-                    ([k, v]) => {
-                        const current = v.default
-                        return [k, {...v, current}]
-                    }))
-
+            persistant: loadSaved(defaultPersistantSettings, {})
         }
 
-
     case 'COMMIT_SETTINGS':
+
+        const validated = validateSettings(action.data)
+
         localStorage.setItem("settings",
                              JSON.stringify(
-                                 Object.fromEntries(
-                                     Object.entries(action.data).map(
-                                         ([k,v]) => [k, v.validate(v.current)]
-                                     ))))
+                                 dumpSettings(action.data)))
         // console.log("Set", state.persistant)
-        return {...state, persistant:
-
-                Object.fromEntries(
-                    Object.entries(action.data).map(
-                        ([k, v]) => [k, {...v, current: v.validate(v.current)}]
-                    )
-                )
+        return {...state,
+                persistant: validated
                 }
 
     case 'SET_THEME':

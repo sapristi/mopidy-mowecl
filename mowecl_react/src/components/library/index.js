@@ -5,6 +5,7 @@ import { ReactSortable } from "react-sortablejs";
 
 import Typography from '@material-ui/core/Typography';
 import List from '@material-ui/core/List';
+import Paper from '@material-ui/core/Paper';
 import ListItemText from '@material-ui/core/ListItemText';
 
 import ButtonGroup from '@material-ui/core/ButtonGroup';
@@ -12,13 +13,14 @@ import ButtonGroup from '@material-ui/core/ButtonGroup';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import ExpandLessIcon from '@material-ui/icons/ExpandLess';
 
-
-import styled from 'styled-components'
-
 import {AppContext, duration_to_human} from '../../utils'
 import {Track} from '../generic'
 import { isLeaf, rec_expand_file, addToTracklist, toggleNode } from './functions'
 import {DefaultButtons, PLsRootButtons, TLButtons, PLButtons, BMButtons} from './buttons'
+
+import Color from 'color'
+import { css, jsx } from '@emotion/core'
+import styled from '@emotion/styled'
 
 const dropTo = (lib_item, at_position, to_object, mopidy) => {
 
@@ -48,37 +50,40 @@ const getButtons = (node, dispatch) => {
 }
 
 const MyBar = styled.div`
-   width: 8px;
+   width: 6px;
    flex-shrink: 0;
-   opacity: 0.25;
+   opacity: 0.5;
 
    &:hover {
-      opacity: 0.5;
+      opacity: 1;
    }
 `
+
 const LibLine = styled.div`
 display: flex;
 flex-direction: row;
 justify-content: space-between;
 padding-left: 3px;
- :hover {
-background-color: rgba(63, 81, 181, 0.125);
+box-sizing: border-box;
+border: 2px solid rgba(0,0,0,0);
 border-radius: 5px;
-}
-`
+&:hover {
+    border: 2px solid ${props => Color(props.color).alpha(0.5).string()};
+}`
 
 
-const ChildrenSideBar = ({callback}) => (
+
+const ChildrenSideBar = ({callback, color}) => (
     <MyBar onClick={callback}>
       <div style={{
           width: 0,
           height: 0,
-          borderBottom: '8px solid rgba(63, 81, 181, 0.5)',
-          borderLeft: '8px solid transparent'
+          borderBottom: '6px solid ' + color,
+          borderLeft: '6px solid transparent'
       }}/>
       <div
         style={{
-            backgroundColor: 'rgba(63, 81, 181, 0.5)',
+            backgroundColor: color,
             height: 'calc(100% - 16px)',
         }}
       />
@@ -86,8 +91,8 @@ const ChildrenSideBar = ({callback}) => (
         style={{
             width: 0,
             height: 0,
-            borderTop: '8px solid rgba(63, 81, 181, 0.5)',
-            borderLeft: '8px solid transparent'
+            borderTop: '6px solid ' + color,
+            borderLeft: '6px solid transparent'
         }}
       />
     </MyBar>
@@ -95,7 +100,7 @@ const ChildrenSideBar = ({callback}) => (
 
 
 
-const NodeLeaves = ({node, dispatch, depth, rootElem}) => {
+const NodeLeaves = ({node, dispatch, depth, rootElem, colors}) => {
 
     // console.log("node", node.uri)
     const { mopidy } = React.useContext(AppContext)
@@ -143,7 +148,7 @@ const NodeLeaves = ({node, dispatch, depth, rootElem}) => {
           {
               node.children.map(child => (
                   <NodeLeaves key={child.uri} node={child} dispatch={dispatch}
-                              depth={depth+1}/>
+                              depth={depth+1} colors={colors}/>
               ))
           }
         </ReactSortable>
@@ -156,11 +161,8 @@ const NodeLeaves = ({node, dispatch, depth, rootElem}) => {
                     paddingLeft: '10px', marginLeft: 0, marginRight: 'auto',
                     textAlign: 'left',
                    }}>
-          <LibLine>
-            <ListItemText onClick={() => toggleNode(node, dispatch, mopidy)}
-        /* style={{marginLeft: 0, marginRight: 'auto'}} */
-            >
-        {  /* <Typography variant={rootElem ? "h6": "body1"} style={rootElem ? {fontSize: "1em" }: {}}> */ }
+          <LibLine color={colors.primary.current}>
+            <ListItemText onClick={() => toggleNode(node, dispatch, mopidy)}>
               <Typography style={rootElem ? {fontWeight: 500 }: {}}>
                 {getText(node)}
                 {getIcon(node)}
@@ -172,7 +174,8 @@ const NodeLeaves = ({node, dispatch, depth, rootElem}) => {
             {  node.expanded && node.children &&
 
                <div style={{display: 'flex', flexDirection: 'row'}}>
-                 <ChildrenSideBar callback={() => toggleNode(node, dispatch, mopidy)}/>
+                 <ChildrenSideBar callback={() => toggleNode(node, dispatch, mopidy)}
+                                  color={colors.primary.current}/>
                  <ChildrenPanel/>
                </div>
 
@@ -183,7 +186,7 @@ const NodeLeaves = ({node, dispatch, depth, rootElem}) => {
 
 }
 
-let LibraryPanel = ({library, dispatch}) => {
+let LibraryPanel = ({library, dispatch, colors}) => {
 
 
     const full_lib = [
@@ -203,19 +206,22 @@ let LibraryPanel = ({library, dispatch}) => {
     console.log("Library:", library, dispatch)
 
     return (
-        <List style={{paddingLeft: '10px'}}>
-          {
-              full_lib.map( (node) => 
-                            <NodeLeaves node={node} dispatch={dispatch}
-                                        depth={0}
-                                        key={node.uri}
-                                        rootElem
-                            />
-                          )
-          }
-        </List>
+        <Paper style={{minHeight: "100%"}}>
+          <List style={{paddingLeft: '10px'}}>
+            {
+                full_lib.map( (node) => 
+                              <NodeLeaves node={node} dispatch={dispatch}
+                                          depth={0}
+                                          key={node.uri}
+                                          rootElem
+                                          colors={colors}
+                              />
+                            )
+            }
+          </List>
+        </Paper>
     )
 }
 
-export default connect( (state) => ({library: state.library,}) )(LibraryPanel)
+export default connect( (state) => ({library: state.library, colors: state.settings.persistant.colors}) )(LibraryPanel)
 

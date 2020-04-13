@@ -4,8 +4,11 @@
   "private": true,
   "homepage": "./",
   "dependencies": {
+    "@emotion/core": "^10.0.28",
+    "@emotion/styled": "^10.0.27",
     "@material-ui/core": "^4.9.1",
     "@material-ui/icons": "^4.9.1",
+    "color": "^3.1.2",
     "material-ui": "^0.20.2",
     "mopidy": "^1.0.1",
     "react": "^16.12.0",
@@ -15,7 +18,6 @@
     "react-scripts": "^3.4.0",
     "react-sortablejs": "^2.0.10",
     "redux": "^4.0.5",
-    "styled-components": "^5.0.1",
     "typeface-roboto": "^0.0.75"
   },
   "scripts": {
