@@ -1,51 +1,68 @@
 import React, {useState} from 'react'
 import { connect } from 'react-redux'
-import TextField from '@material-ui/core/TextField';
-import Button from '@material-ui/core/Button';
-import ButtonGroup from '@material-ui/core/ButtonGroup';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import HTMLTooltip from '@material-ui/core/Tooltip';
-import HelpOutlineIcon from '@material-ui/icons/HelpOutline';
-import Paper from '@material-ui/core/Paper';
-import Typography from '@material-ui/core/Typography';
-
+import TextField from '@material-ui/core/TextField'
+import Button from '@material-ui/core/Button'
+import ButtonGroup from '@material-ui/core/ButtonGroup'
+import List from '@material-ui/core/List'
+import ListItem from '@material-ui/core/ListItem'
+import ListItemIcon from '@material-ui/core/ListItemIcon'
+import HTMLTooltip from '@material-ui/core/Tooltip'
+import HelpOutlineIcon from '@material-ui/icons/HelpOutline'
+import Paper from '@material-ui/core/Paper'
+import Typography from '@material-ui/core/Typography'
+import Switch from '@material-ui/core/Switch'
+import {match} from './../utils'
+import Select from '@material-ui/core/Select'
+import MenuItem from '@material-ui/core/MenuItem'
 
 import {AppContext} from '../utils'
 
-const SettingInput = ({setting, setSetting}) => (
-    <>
-      <TextField
-        label={setting.name}
-        variant='outlined'
-        style={{margin: 8}}
-        value={setting.current}
-        fullWidth
-        onChange={(event) => {
-            setSetting({
-                ...setting,
-                current: event.target.value
-            })}}
-      />
-      <ListItemIcon>
-        <HTMLTooltip
-          title={
-              <Paper style={{padding: '10px', fontSize: 'small'}}>
-                <Typography>
-                  {setting.help}
-                </Typography>
-                <Typography>
-                  Default: <em>{setting.default}</em> 
-                </Typography>
-              </Paper>
-          }
-        >
-          <HelpOutlineIcon/>
-        </HTMLTooltip>
-      </ListItemIcon>
-    </>
-)
+const SettingInput = ({setting, setSetting}) => {
+
+    const handleChange = (event) => setSetting({
+        ...setting,
+        current: event.target.value
+    })
+
+    const input = match(setting.inputType)
+          .on(x => x === "select", () =>
+              <Select value={setting.current} onChange={handleChange}>
+                {setting.choices.map(choice => <MenuItem value={choice}>{choice}</MenuItem>)}
+              </Select>
+             )
+          .otherwise( () => 
+              <TextField
+                label={setting.name}
+                variant='outlined'
+                style={{margin: 8}}
+                value={setting.current}
+                fullWidth
+                onChange={handleChange}
+              />
+          )
+
+    return (
+        <>
+          {input}
+          <ListItemIcon>
+            <HTMLTooltip
+              title={
+                  <Paper style={{padding: '10px', fontSize: 'small'}}>
+                    <Typography>
+                      {setting.help}
+                    </Typography>
+                    <Typography>
+                      Default: <em>{setting.default}</em> 
+                    </Typography>
+                  </Paper>
+              }
+            >
+              <HelpOutlineIcon/>
+            </HTMLTooltip>
+          </ListItemIcon>
+        </>
+    )
+}
 
 const SettingsGroup = ({group, path, setInGroup}) => {
     // console.log("Settings group", group)

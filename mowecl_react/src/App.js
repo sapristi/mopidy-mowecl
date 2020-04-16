@@ -17,9 +17,10 @@ import Paper from '@material-ui/core/Paper';
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 
 let AppContainer = ({colors, children}) => {
+    console.log("COLORS", colors)
     const THEME = createMuiTheme({
         palette: {
-            type: "dark",
+            type: colors.themeType.current,
             background: {
                 paper: colors.background.current,
                 default: colors.background.current,

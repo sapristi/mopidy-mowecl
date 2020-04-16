@@ -39,6 +39,15 @@ const defaultPersistantSettings = {
     colors: {
         name: "Theme colors",
         type: "group",
+        themeType: {
+            type: "param",
+            inputType: "select",
+            choices: ["light", "dark"],
+            name: "Type",
+            default: "light",
+            help: "Theme type: light or dark",
+            validate: v => v,
+        },
         background: {
             type: "param",
             name: "Background",
