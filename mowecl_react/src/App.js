@@ -18,8 +18,10 @@ import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 
 import {HotKeysProvider} from './components/molecules/HotKeysProvider'
 
+import {useTraceUpdate} from './utils'
+
 let AppContainer = ({colors, children}) => {
-    console.log("COLORS", colors)
+    // console.log("COLORS", colors)
     const THEME = createMuiTheme({
         palette: {
             type: colors.themeType.current,
@@ -72,7 +74,7 @@ let AppContainer = ({colors, children}) => {
     )
 }
 
-let App = ({settings, mopidy, dispatch}) => {
+let App = ({settings, mopidy_connected, mopidy_error, dispatch}) => {
     let activePanel = null
     switch (settings.active_panel) {
     case 'control':
@@ -85,7 +87,9 @@ let App = ({settings, mopidy, dispatch}) => {
         activePanel = <LibraryPanel/>
     }
 
-    return (mopidy.connected) ?
+    useTraceUpdate({mopidy_connected, mopidy_error})
+
+    return (mopidy_connected) ?
         (
             <AppContainer colors={settings.persistant.colors}>
               <div style={{height: '100%', width: '100%', flexDirection: 'row', display: 'flex'}}>
@@ -117,7 +121,7 @@ let App = ({settings, mopidy, dispatch}) => {
                                        /></div>
                 <div style={{flex: 1}}>
                   <div>Trying to reach mopidy at {settings.persistant.mopidy_ws.current}</div>
-                  <div>{mopidy.error}</div>
+                  <div>{mopidy_error}</div>
                 </div>
                 <div style={{flex: 1}}/>
               </Paper>
@@ -125,4 +129,10 @@ let App = ({settings, mopidy, dispatch}) => {
         )
 }
 
-export default connect(state => {return {settings: state.settings, mopidy: state.mopidy}})(App)
+export default connect(
+    state =>
+        ({settings: state.settings,
+          mopidy_connected: state.mopidy.connected,
+          mopidy_error: state.mopidy_error
+         })
+)(App)

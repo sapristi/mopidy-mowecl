@@ -31,9 +31,6 @@ const HotKeysProviderUnc = ({playbackState, volume, hotkeys_conf}) => {
                     (setting.type === "param" && setting.current))
             .map(([action,setting]) => [action, setting.current]))
 
-
-    console.log("KEYMAP", keyMap, mopidy)
-
     const volume_incr = () => Math.min(100, Math.ceil(volume * 1.1))
     const volume_decr = () => Math.max(0, Math.ceil(volume * 0.9))
 

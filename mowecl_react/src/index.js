@@ -16,13 +16,13 @@ import * as serviceWorker from './serviceWorker'
 import {mopidyReducer, libraryReducer, playbackReducer, settingsReducer, tracklistReducer} from './reducers'
 
 
-let MopidyApp = ({mopidy, settings, dispatch}) => {
-    if (!mopidy.connected && !mopidy.connecting && !mopidy.error) {
+let MopidyApp = ({mopidy_connected, mopidy_connecting, mopidy_error, settings, dispatch}) => {
+    if (!mopidy_connected && !mopidy_connecting && !mopidy_error) {
         dispatch({type: 'CONNECT', mopidy_ws: settings.persistant.mopidy_ws.current, dispatch})
     }
 
     return (
-        <AppContext.Provider value={{mopidy: mopidy.mopidy, dispatch: dispatch,
+        <AppContext.Provider value={{mopidy: window.mopidy, dispatch: dispatch,
                                      colors: settings.persistant.colors
                                     }}>
           <App/>
@@ -30,7 +30,12 @@ let MopidyApp = ({mopidy, settings, dispatch}) => {
     )
 }
 
-MopidyApp = connect(state => {return {mopidy: state.mopidy, settings: state.settings}})(MopidyApp)
+MopidyApp = connect(
+    state => ({mopidy_connected: state.mopidy.connected,
+               mopidy_connecting: state.mopidy.connecting,
+               mopidy_error: state.mopidy.error,
+               settings: state.settings})
+)(MopidyApp)
 
 
 
