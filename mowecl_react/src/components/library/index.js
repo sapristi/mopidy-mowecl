@@ -13,8 +13,8 @@ import ButtonGroup from '@material-ui/core/ButtonGroup';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import ExpandLessIcon from '@material-ui/icons/ExpandLess';
 
-import {AppContext, duration_to_human} from '../../utils'
-import {Track} from '../generic'
+import {AppContext, duration_to_human, match} from '../../utils'
+import {Track} from '../molecules'
 import { isLeaf, rec_expand_file, addToTracklist, toggleNode } from './functions'
 import {DefaultButtons, PLsRootButtons, TLButtons, PLButtons, BMButtons} from './buttons'
 
@@ -29,24 +29,18 @@ const dropTo = (lib_item, at_position, to_object, mopidy) => {
 
 const getButtons = (node, dispatch) => {
 
-    // first level of tree;
-    if (node.path && node.path.length === 1) return null
-
-    if (node.type === "tracklist") {
-        return <TLButtons node={node}/>
-    }
-
-    if (node.type === "bookmark") {
-        return <BMButtons node={node}/>
-    }
-
-    if (node.type === "playlist" && node.uri.startsWith('m3u:')) {
-        return <PLButtons node={node}/>
-    }
-    return (
-        <DefaultButtons node={node}/>
-    )
-}
+    return match(node)
+        .on(node => node.path && node.path.length === 1, () =>
+            null)
+        .on(node => node.type === "tracklist", () =>
+            <TLButtons node={node}/>)
+        .on(node => node.type === "bookmark", () =>
+            <BMButtons node={node}/>)
+        .on(node => node.type === "playlist" && node.uri.startsWith('m3u:'), () =>
+            <PLButtons node={node}/>)
+        .otherwise(() =>
+                   <DefaultButtons node={node}/>)
+ }
 
 const MyBar = styled.div`
    width: 6px;

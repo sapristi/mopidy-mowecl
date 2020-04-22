@@ -1,52 +1,49 @@
+import React from 'react'
+import { connect } from 'react-redux'
 
-import React from 'react';
-import { connect } from 'react-redux';
+import Slider from '@material-ui/core/Slider'
+import LinearProgress from '@material-ui/core/LinearProgress'
 
-import Slider from '@material-ui/core/Slider';
-import LinearProgress from '@material-ui/core/LinearProgress';
-
-import { duration_to_human, AppContext } from '../../utils';
-const sliderSteps = 300;
+import { duration_to_human, AppContext } from '../../utils'
+const sliderSteps = 300
 
 
-let PlaybackUpdater = ({state, time_position, time_position_updater, seek_update_interval, dispatch}) => {
+const PlaybackUpdaterUnc = ({state, time_position, time_position_updater, seek_update_interval, dispatch}) => {
 
     React.useEffect( () => {
         if (state === 'playing'
             && typeof(time_position) === 'number'
             && !time_position_updater.pending)
         {
-            dispatch({type: 'INCR_PLAYBACK_START'});
-            setTimeout(() => dispatch({type: 'INCR_PLAYBACK'}), parseInt(seek_update_interval));
+            dispatch({type: 'INCR_PLAYBACK_START'})
+            setTimeout(() => dispatch({type: 'INCR_PLAYBACK'}), parseInt(seek_update_interval))
         }
     })
     return null
 }
 
-const getPlaybackUpdateState = (state) => {
-    return {...state.playback_state,
-            seek_update_interval: state.settings.persistant.seek_update_interval.current
-           }};
-PlaybackUpdater = connect(getPlaybackUpdateState)(PlaybackUpdater);
+const PlaybackUpdater = connect((state) => (
+    {...state.playback_state,
+     seek_update_interval: state.settings.persistant.seek_update_interval.current
+    }))(
+    PlaybackUpdaterUnc)
 
 
-
-
-let PlaybackSlider = ({time_position, track_length, dispatch}) => {
+const PlaybackSliderUnc = ({time_position, track_length, dispatch}) => {
 
     const { mopidy } = React.useContext(AppContext)
-    // console.log("steps", sliderSteps, time_position, track_length);
+    // console.log("steps", sliderSteps, time_position, track_length)
     const handleChange = (event, newValue) => {
         dispatch({
             type: 'PLAYBACK_INFO',
             target: 'time_position',
             data: newValue * track_length / sliderSteps
-        });
-    };
+        })
+    }
 
     const handleChangeCommitted = (event, newValue) => {
         mopidy.playback.seek({time_position: Math.ceil(newValue * track_length / sliderSteps)})
-    };
+    }
 
     const sliderValue = Math.ceil(time_position / track_length * sliderSteps)
 
@@ -82,10 +79,12 @@ let PlaybackSlider = ({time_position, track_length, dispatch}) => {
             </div>
         )
     }
-};
+}
 
 const getPlaybackState = (state) => {
     return {time_position: state.playback_state.time_position,
-           }};
-PlaybackSlider = connect(getPlaybackState)(PlaybackSlider);
-export default PlaybackSlider
+           }}
+export const PlaybackSlider = connect(
+    state => (
+        {time_position: state.playback_state.time_position})
+)(PlaybackSliderUnc)

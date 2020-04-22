@@ -1,5 +1,9 @@
+import React from 'react'
+
+import Typography from '@material-ui/core/Typography'
+import Link from '@material-ui/core/Link'
 import Color from 'color'
-import { getDefaultWS } from '../utils'
+import { getDefaultWs, getDefaultMopidyHost } from '../utils'
 
 const saved_settings = JSON.parse(localStorage.getItem("settings")) || {}
 
@@ -15,10 +19,11 @@ const validate_hex_color = (str) => {
 const defaultPersistantSettings = {
     name: "Settings",
     type: "group",
+    description: "Commit after making your changes. In case of incorrect setting, the default value will be used instead of your input",
     mopidy_ws: {
         type: "param",
         name: 'Modidy WebSocker URL',
-        default: getDefaultWS(),
+        default: getDefaultWs(),
         help: 'Modidy WebSocker URL. Do not modify unless you know what you are doing.',
         validate: v => v
     },
@@ -43,7 +48,7 @@ const defaultPersistantSettings = {
             type: "param",
             inputType: "select",
             choices: ["light", "dark"],
-            name: "Type",
+            name: "Theme type",
             default: "light",
             help: "Theme type: light or dark",
             validate: v => v,
@@ -69,19 +74,75 @@ const defaultPersistantSettings = {
             help: 'Primary color, hex representation.',
             validate: v => validate_hex_color(v) ? v : "#3F51B5"
         },
-        // secondary: {
-        //     type: "param",
-        //     name: "Secondary",
-        //     default: "#F50057",
-        //     help: 'Secondary color, hex representation.',
-        //     validate: v => validate_hex_color(v) ? v : "#F50057"
-        // }
+    },
+    globalKeys: {
+        type: "group",
+        name: "Shortcut keys",
+        description: (
+            <Typography>Leave a field blank to deactivate. You can find a list of special keys at 
+                <Link href="https://developer.mozilla.org/fr/docs/Web/API/KeyboardEvent/key/Key_Values">https://developer.mozilla.org/fr/docs/Web/API/KeyboardEvent/key/Key_Values</Link></Typography>
+        ),
+        play_pause: {
+            type:"param",
+            name: "Play/Pause",
+            default: "Space",
+            validate: v => v
+        },
+        next: {
+            type:"param",
+            name: "Next track",
+            default: "ArrowRight",
+            validate: v => v
+        },
+        previous: {
+            type:"param",
+            name: "Previous track",
+            default: "",
+            validate: v => v
+        },
+        rewind: {
+            type:"param",
+            name: "Rewind track",
+            default: "ArrowLeft",
+            validate: v => v
+        },
+        volume_up: {
+            type: "param",
+            name: "Volume up shorcut",
+            default: "ArrowUp",
+            validate: v => v
+        },
+        volume_down: {
+            type: "param",
+            name: "Volume down shorcut",
+            default: "ArrowDown",
+            validate: v => v
+        }
+    },
+    remoteSync: {
+        name: "Remote sync (experimental)",
+        type: "group",
+        mopidy_host: {
+            type: "param",
+            name: 'Modidy WebSocker URL',
+            default: getDefaultMopidyHost(),
+            help: 'Modidy host URL. Do not modify unless you know what you are doing.',
+            validate: v => v
+        },
+        sync_tracklists: {
+            type: "param",
+            inputType: "checkbox",
+            name: "Sync tracklists",
+            default: false,
+            help: "Sync tracklists with mopidy: tracklists will be the same across all machines accessing the same mopidy host",
+            validate: v => v
+        }
     }
 }
 
 
 
-const loadSaved = (default_s, saved_s) => Object.fromEntries(
+export const loadSaved = (default_s, saved_s) => Object.fromEntries(
     Object.entries(default_s).map(
         ([k, v]) => {
             // console.log("Merging", default_s, saved_s)
@@ -108,8 +169,7 @@ const loadSaved = (default_s, saved_s) => Object.fromEntries(
 
 const persistantSettings = loadSaved(defaultPersistantSettings, saved_settings)
 
-const dumpSettings = (settings) => {
-
+export const dumpSettings = (settings) => {
     if (settings.type === "group") {
         return Object.fromEntries(Object.entries(settings).map(
             ([k, v]) => ([k, dumpSettings(v)])

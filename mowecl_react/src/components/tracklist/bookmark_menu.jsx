@@ -6,7 +6,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Popover from '@material-ui/core/Popover';
 import SaveIcon from '@material-ui/icons/Save';
 
-import {Input} from '../generic'
+import {Input} from '../molecules'
 
 let BookmarkMenu = ({dispatch, bookmarks, tracklist, menuState, setMenuState, anchorElRef, current_tlid}) => {
 

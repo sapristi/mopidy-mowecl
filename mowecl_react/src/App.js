@@ -16,6 +16,8 @@ import Paper from '@material-ui/core/Paper';
 
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 
+import {HotKeysProvider} from './components/molecules/HotKeysProvider'
+
 let AppContainer = ({colors, children}) => {
     console.log("COLORS", colors)
     const THEME = createMuiTheme({
@@ -28,9 +30,6 @@ let AppContainer = ({colors, children}) => {
             primary: {
                 main: colors.primary.current
             },
-            // secondary: {
-            //     main: colors.secondary.current
-            // },
             text: {
                 primary: colors.text.current,
                 secondary: colors.text.current,
@@ -53,22 +52,23 @@ let AppContainer = ({colors, children}) => {
     })
 
     return (
-    <MuiThemeProvider theme={THEME}>
-      <div className="App"
-             style={{display: 'flex', flexDirection: 'column',
-                     height:'100%', overflow: 'hidden',
-                     backgroundColor: colors.background.current,
-                     scrollbarColor: `${colors.text.current} ${colors.background.current}`,
-                     scrollbarWidth: 'thin',
-                     textAlign: 'center'
-                    }}>
-        <div style={{display: 'flex', flexDirection: 'row',  minHeight: '0', flex: 1}}>
-          <SidePanel/>
-          {children}
-        </div>
-        <Footer style={{display: 'flex', flex: 1, }}/>
-      </div>
-    </MuiThemeProvider>
+        <MuiThemeProvider theme={THEME}>
+          <HotKeysProvider/>
+          <div className="App"
+               style={{display: 'flex', flexDirection: 'column',
+                       height:'100%', overflow: 'hidden',
+                       backgroundColor: colors.background.current,
+                       scrollbarColor: `${colors.text.current} ${colors.background.current}`,
+                       scrollbarWidth: 'thin',
+                       textAlign: 'center'
+                      }}>
+            <div style={{display: 'flex', flexDirection: 'row',  minHeight: '0', flex: 1}}>
+              <SidePanel/>
+              {children}
+            </div>
+            <Footer style={{display: 'flex', flex: 1, }}/>
+          </div>
+        </MuiThemeProvider>
     )
 }
 

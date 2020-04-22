@@ -242,7 +242,7 @@ const SidePanel = ({dispatch, mopidy, uri_schemes, pendingRequestsNb, connected,
 
           <ButtonGroup orientation="vertical">
             {
-            (version != availableVersion) &&
+            (version !== availableVersion) &&
             <Tooltip title={`Version ${availableVersion} available on Pypi.`}>
               <Button>
                 <ErrorOutlineIcon/>

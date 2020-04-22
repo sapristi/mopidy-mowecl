@@ -5,7 +5,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Popover from '@material-ui/core/Popover';
 import SaveIcon from '@material-ui/icons/Save';
 import {AppContext} from '../../utils'
-import {Input} from '../generic'
+import {Input} from '../molecules'
 
 
 

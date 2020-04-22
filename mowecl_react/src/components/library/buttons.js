@@ -49,7 +49,7 @@ const PlayNowButton = ({node, ...props}) => {
 }
 
 const AddToTLButton = ({node, ...props}) => {
-    const { mopidy, dispatch } = React.useContext(AppContext)
+    const { mopidy } = React.useContext(AppContext)
     return (
         <Tooltip title="Add to tracklist">
           <Button {...props}

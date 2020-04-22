@@ -23,7 +23,7 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 
-import {Track} from '../generic'
+import {Track} from '../molecules'
 import {AppContext, listEquals, duration_to_human} from '../../utils'
 import {BookmarkMenu} from './bookmark_menu'
 import {SaveMenu, saveAsPlaylist} from './save_menu'
