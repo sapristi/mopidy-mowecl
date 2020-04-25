@@ -17,7 +17,7 @@ import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline';
 import TextField from '@material-ui/core/TextField';
 
 
-import {AppContext} from '../../utils'
+import {AppContext} from 'utils'
 
 import { isLeaf, expand_node, addToTracklist } from './functions'
 

@@ -5138,11 +5138,6 @@ hosted-git-info@^2.1.4:
   resolved "https://registry.yarnpkg.com/hosted-git-info/-/hosted-git-info-2.8.8.tgz#7539bd4bc1e0e0a895815a2e0262420b12858488"
   integrity sha512-f/wzC2QaWBs7t9IYqB4T3sR1xviIViXJRJTWBlx2Gf3g0Xi5vI7Yy4koXQ1c9OYDGHN9sBy1DQ2AB8fqZBWhUg==
 
-hotkeys-js@3.7.6:
-  version "3.7.6"
-  resolved "https://registry.yarnpkg.com/hotkeys-js/-/hotkeys-js-3.7.6.tgz#b90ae3453a7be2f2b2bed6ee55cb96443944c77b"
-  integrity sha512-X5d16trjp79o+OaCn7syXu0cs+TkLYlK/teE5FhpD1Cj9ROcEIhfIQ7Mhrk761ynF3NQLbLn5xRojP2UuSqDAw==
-
 hpack.js@^2.1.6:
   version "2.1.6"
   resolved "https://registry.yarnpkg.com/hpack.js/-/hpack.js-2.1.6.tgz#87774c0949e513f42e84575b3c45681fade2a0b2"
@@ -8898,13 +8893,6 @@ react-event-listener@^0.6.2:
     "@babel/runtime" "^7.2.0"
     prop-types "^15.6.0"
     warning "^4.0.1"
-
-react-hotkeys-hook@^2.1.1:
-  version "2.1.2"
-  resolved "https://registry.yarnpkg.com/react-hotkeys-hook/-/react-hotkeys-hook-2.1.2.tgz#1a5d949f84e9778c7c418379651eb283c7c5f418"
-  integrity sha512-aisGxtMdPIR2gdOp0qzNPtzFM65RFT+bwHLRwirPpXGysXG9z+3yaFML219wirmFlncaXZWr1Up1LX3JYYayIg==
-  dependencies:
-    hotkeys-js "3.7.6"
 
 react-hotkeys@^2.0.0-pre9:
   version "2.0.0-pre9"

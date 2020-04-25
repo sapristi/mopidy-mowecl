@@ -4,7 +4,7 @@ import { connect } from 'react-redux'
 import Slider from '@material-ui/core/Slider'
 import LinearProgress from '@material-ui/core/LinearProgress'
 
-import { duration_to_human, AppContext } from '../../utils'
+import { duration_to_human, AppContext } from 'utils'
 const sliderSteps = 300
 
 

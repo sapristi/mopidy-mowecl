@@ -18,8 +18,8 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 
-import {getSearchUris} from '../utils.js'
-import {version} from '../../package.json'
+import {getSearchUris} from 'utils'
+import {version} from 'package.json'
 
 const SearchInput = ({mopidy, searchUris, dispatch, closePopover, search_history_length}) => {
 

@@ -13,8 +13,8 @@ import ButtonGroup from '@material-ui/core/ButtonGroup';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import ExpandLessIcon from '@material-ui/icons/ExpandLess';
 
-import {AppContext, duration_to_human, match} from '../../utils'
-import {Track} from '../molecules'
+import {AppContext, duration_to_human, match} from 'utils'
+import {Track} from 'components/molecules'
 import { isLeaf, rec_expand_file, addToTracklist, toggleNode } from './functions'
 import {DefaultButtons, PLsRootButtons, TLButtons, PLButtons, BMButtons} from './buttons'
 

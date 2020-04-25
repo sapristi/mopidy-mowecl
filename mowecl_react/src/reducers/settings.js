@@ -129,14 +129,14 @@ const defaultPersistantSettings = {
             help: 'Modidy host URL. Do not modify unless you know what you are doing.',
             validate: v => v
         },
-        sync_tracklists: {
-            type: "param",
-            inputType: "checkbox",
-            name: "Sync tracklists",
-            default: false,
-            help: "Sync tracklists with mopidy: tracklists will be the same across all machines accessing the same mopidy host",
-            validate: v => v
-        }
+        // sync_tracklists: {
+        //     type: "param",
+        //     inputType: "checkbox",
+        //     name: "Sync tracklists",
+        //     default: false,
+        //     help: "Sync tracklists with mopidy: tracklists will be the same across all machines accessing the same mopidy host",
+        //     validate: v => v
+        // }
     }
 }
 

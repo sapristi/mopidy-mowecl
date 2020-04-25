@@ -1,6 +1,5 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { useHotkeys } from 'react-hotkeys-hook'
 
 import {AppContext} from '../../utils'
 

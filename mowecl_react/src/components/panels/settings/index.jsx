@@ -1,87 +1,25 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import TextField from '@material-ui/core/TextField'
 import Button from '@material-ui/core/Button'
 import ButtonGroup from '@material-ui/core/ButtonGroup'
 import List from '@material-ui/core/List'
 import ListItem from '@material-ui/core/ListItem'
-import ListItemIcon from '@material-ui/core/ListItemIcon'
-import HTMLTooltip from '@material-ui/core/Tooltip'
-import HelpOutlineIcon from '@material-ui/icons/HelpOutline'
 import Paper from '@material-ui/core/Paper'
 import Typography from '@material-ui/core/Typography'
 import Switch from '@material-ui/core/Switch'
-import Select from '@material-ui/core/Select'
 import NativeSelect from '@material-ui/core/NativeSelect'
-import MenuItem from '@material-ui/core/MenuItem'
-import FormControl from '@material-ui/core/FormControl'
-import InputLabel from '@material-ui/core/InputLabel'
 import IconButton from '@material-ui/core/IconButton'
 
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import ExpandLessIcon from '@material-ui/icons/ExpandLess';
 
-import {HFlex} from './atoms'
+import {HFlex} from 'components/atoms'
 
-import {match} from './../utils'
-import {AppContext} from '../utils'
+import {AppContext,match} from 'utils'
 
-import {dumpSettings, loadSaved} from '../reducers/settings'
+import {SettingInput} from './SettingInput'
 
-const SettingInput = ({setting, setSetting}) => {
-
-    const handleChange = (event) => setSetting({
-        ...setting,
-        current: event.target.value
-    })
-
-    const input = match(setting.inputType)
-          .on("select", () =>
-              <FormControl variant="outlined" style={{width: "100%", margin: "0 8px"}}>
-                <InputLabel>{setting.name}</InputLabel>
-                <Select
-                  fullWidth
-                  label={setting.name}
-                  value={setting.current} onChange={handleChange}>
-                  {setting.choices.map(choice => <MenuItem value={choice}>{choice}</MenuItem>)}
-                </Select></FormControl>
-             )
-          .otherwise( () => 
-              <TextField
-                label={setting.name}
-                variant='outlined'
-                style={{margin: "0 8px"}}
-                value={setting.current}
-                fullWidth
-                onChange={handleChange}
-              />
-          )
-    const help = (setting.help)
-          ?  (<ListItemIcon>
-                <HTMLTooltip
-                  title={
-                      <Paper style={{padding: '10px', fontSize: 'small'}}>
-                        <Typography>
-                          {setting.help}
-                        </Typography>
-                        <Typography>
-                          Default: <em>{setting.default}</em> 
-                        </Typography>
-                      </Paper>
-                  }
-                >
-                  <HelpOutlineIcon/>
-                </HTMLTooltip>
-              </ListItemIcon>
-             )
-          : null
-    return (
-        <>
-          {input}
-          {help}
-        </>
-    )
-}
+import {dumpSettings, loadSaved} from 'reducers/settings'
 
 const SettingsGroup = ({group, path, setInGroup}) => {
     // console.log("Settings group", group)

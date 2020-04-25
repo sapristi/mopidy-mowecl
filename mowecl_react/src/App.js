@@ -3,13 +3,13 @@ import { connect } from 'react-redux'
 
 
 import './App.css'
-import Footer from './components/footer'
+import Footer from './components/panels/footer'
 
-import SidePanel from './components/sidePanel'
-import TracklistPanel from './components/tracklist'
-import LibraryPanel from './components/library'
-import SettingsPanel from './components/settingsPanel'
-import HelpPanel from './components/helpPanel'
+import SidePanel from './components/panels/sidePanel'
+import TracklistPanel from './components/panels/tracklist'
+import LibraryPanel from './components/panels/library'
+import SettingsPanel from './components/panels/settings'
+import HelpPanel from './components/panels/helpPanel'
 
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Paper from '@material-ui/core/Paper';
