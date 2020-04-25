@@ -16,11 +16,17 @@ import Paper from '@material-ui/core/Paper';
 
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 
+import Color from 'color'
 import {HotKeysProvider} from './components/molecules/HotKeysProvider'
 
 import {useTraceUpdate} from './utils'
 
 let AppContainer = ({colors, children}) => {
+
+
+    const text_secondary = (colors.themeType.current === "light")
+          ? (Color(colors.text.current).lighten(0.25).hex())
+          : (Color(colors.text.current).darken(0.25).hex())
     // console.log("COLORS", colors)
     const THEME = createMuiTheme({
         palette: {
@@ -34,7 +40,7 @@ let AppContainer = ({colors, children}) => {
             },
             text: {
                 primary: colors.text.current,
-                secondary: colors.text.current,
+                secondary: text_secondary,
             }
         },
         overrides: {

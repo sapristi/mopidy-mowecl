@@ -84,36 +84,42 @@ const defaultPersistantSettings = {
         ),
         play_pause: {
             type:"param",
+            inputType: "shortkey",
             name: "Play/Pause",
             default: "Space",
             validate: v => v
         },
         next: {
             type:"param",
+            inputType: "shortkey",
             name: "Next track",
             default: "ArrowRight",
             validate: v => v
         },
         previous: {
             type:"param",
+            inputType: "shortkey",
             name: "Previous track",
             default: "",
             validate: v => v
         },
         rewind: {
             type:"param",
+            inputType: "shortkey",
             name: "Rewind track",
             default: "ArrowLeft",
             validate: v => v
         },
         volume_up: {
             type: "param",
+            inputType: "shortkey",
             name: "Volume up shorcut",
             default: "ArrowUp",
             validate: v => v
         },
         volume_down: {
             type: "param",
+            inputType: "shortkey",
             name: "Volume down shorcut",
             default: "ArrowDown",
             validate: v => v
