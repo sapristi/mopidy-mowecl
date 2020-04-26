@@ -1,24 +1,27 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import Button from '@material-ui/core/Button';
-import ButtonGroup from '@material-ui/core/ButtonGroup';
-import SettingsIcon from '@material-ui/icons/Settings';
-import ListIcon from '@material-ui/icons/List';
-import SearchIcon from '@material-ui/icons/Search';
-import HelpOutlineIcon from '@material-ui/icons/HelpOutline';
-import ErrorOutlineIcon from '@material-ui/icons/ErrorOutline';
-import Cached from '@material-ui/icons/Cached';
+import Button from '@material-ui/core/Button'
+import ButtonGroup from '@material-ui/core/ButtonGroup'
+import SettingsIcon from '@material-ui/icons/Settings'
+import ListIcon from '@material-ui/icons/List'
+import SearchIcon from '@material-ui/icons/Search'
+import HelpOutlineIcon from '@material-ui/icons/HelpOutline'
+import ErrorOutlineIcon from '@material-ui/icons/ErrorOutline'
+import Cached from '@material-ui/icons/Cached'
 
-import Paper from '@material-ui/core/Paper';
-import Popover from '@material-ui/core/Popover';
-import TextField from '@material-ui/core/TextField';
-import Tooltip from '@material-ui/core/Tooltip';
+import Paper from '@material-ui/core/Paper'
+import Popover from '@material-ui/core/Popover'
+import TextField from '@material-ui/core/TextField'
+import Tooltip from '@material-ui/core/Tooltip'
 
-import CircularProgress from '@material-ui/core/CircularProgress';
-import FormControl from '@material-ui/core/FormControl';
-import Select from '@material-ui/core/Select';
+import CircularProgress from '@material-ui/core/CircularProgress'
+import FormControl from '@material-ui/core/FormControl'
+import Select from '@material-ui/core/Select'
 
-import {getSearchUris} from 'utils'
+import { mdiFileTreeOutline } from '@mdi/js'
+import Icon from '@mdi/react'
+
+import { getSearchUris, AppContext } from 'utils'
 import {version} from 'package.json'
 
 const SearchInput = ({mopidy, searchUris, dispatch, closePopover, search_history_length}) => {
@@ -33,7 +36,7 @@ const SearchInput = ({mopidy, searchUris, dispatch, closePopover, search_history
         if (input.length === 0) return
 
         const uri = (selectedUri === "all") ? {} : {uris: [selectedUri + ':']}
-        // console.log("Search:",  {query: {any: [input]}, ...uri})
+        console.log("Search:",  {query: {any: [input]}, ...uri})
         mopidy.library.search({query: {any: [input]}, ...uri}).then(
             search_result => {
 
@@ -136,13 +139,14 @@ const MopidyStatus = ({pendingRequestsNb, connected}) => {
 }
 
 
-const SidePanel = ({dispatch, mopidy, uri_schemes, pendingRequestsNb, connected, search_history_length}) => {
+const SidePanel = ({dispatch, uri_schemes, pendingRequestsNb, connected, search_history_length}) => {
 
     const anchorEl = React.useRef(null)
     const [open, setOpen] = React.useState(false)
 
     const [availableVersion, setAvailableVersion] = React.useState(() => null)
 
+    const { mopidy } = React.useContext(AppContext)
     if (!availableVersion) {
         fetch('https://pypi.org/pypi/Mopidy-Mowecl/json').then(
             response =>  response.json().then(
@@ -212,42 +216,42 @@ const SidePanel = ({dispatch, mopidy, uri_schemes, pendingRequestsNb, connected,
             />
 
             <Tooltip title="Quick search">
-            <Button ref={anchorEl}
-                    id='popover-search-button'
-                    onClick={() => setOpen(true)}
-            >
-              <SearchIcon/>
-            </Button></Tooltip>
+              <Button ref={anchorEl}
+                      id='popover-search-button'
+                      onClick={() => setOpen(true)}
+              >
+                <SearchIcon/>
+              </Button></Tooltip>
             <SearchPopover/>
 
             <Tooltip title="Refresh lib and playlists">
-            <Button onClick={refreshAll}>
-              <Cached/>
-            </Button></Tooltip>
+              <Button onClick={refreshAll}>
+                <Cached/>
+              </Button></Tooltip>
           </ButtonGroup>
           <ButtonGroup orientation='vertical'>
 
             <Tooltip title="Library panel">
-            <Button onClick={activatePanel('library')}>
-              <ListIcon/>
-            </Button></Tooltip>
+              <Button onClick={activatePanel('library')}>
+                <Icon path={mdiFileTreeOutline} size={1}/>
+              </Button></Tooltip>
 
             <Tooltip title="Settings panel">
-            <Button style={{height: 'auto'}}
-                    onClick={activatePanel('control')}>
-              <SettingsIcon/>
-            </Button></Tooltip>
+              <Button style={{height: 'auto'}}
+                      onClick={activatePanel('control')}>
+                <SettingsIcon/>
+              </Button></Tooltip>
 
           </ButtonGroup>
 
           <ButtonGroup orientation="vertical">
             {
-            (version !== availableVersion) &&
-            <Tooltip title={`Version ${availableVersion} available on Pypi.`}>
-              <Button>
-                <ErrorOutlineIcon/>
-              </Button>
-            </Tooltip>
+                (version !== availableVersion) &&
+                    <Tooltip title={`Version ${availableVersion} available on Pypi.`}>
+                      <Button>
+                        <ErrorOutlineIcon/>
+                      </Button>
+                    </Tooltip>
             }
             <Button onClick={activatePanel('help')}>
               <HelpOutlineIcon/>
@@ -259,5 +263,5 @@ const SidePanel = ({dispatch, mopidy, uri_schemes, pendingRequestsNb, connected,
 
 export default connect(state => ({...state.mopidy,
                                   search_history_length:
-                                  state.settings.persistant.search_history_length.current
+                                  state.settings.persistant.generic.search_history_length.current
                                  }) )(SidePanel)

@@ -12,7 +12,8 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ClearIcon from '@material-ui/icons/Clear';
 import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline';
 
-
+import Icon from '@mdi/react'
+import { mdiPlaylistRemove } from '@mdi/js'
 
 import TextField from '@material-ui/core/TextField';
 
@@ -112,7 +113,7 @@ const DeleteTLButton = ({node, ...props}) => {
           dispatch({type: 'TRACKLIST_DELETE', data: node.uri})
 
       }} {...props}>
-        <DeleteOutlineIcon/>
+        <Icon path={mdiPlaylistRemove} size={1}/>
       </Button>
     </Tooltip>
     )
@@ -148,7 +149,7 @@ const DeletePLButton = ({node, ...props}) => {
                   })
               )
           }} {...props}>
-            <DeleteOutlineIcon/>
+            <Icon path={mdiPlaylistRemove} size={1}/>
           </Button>
         </Tooltip>
     )

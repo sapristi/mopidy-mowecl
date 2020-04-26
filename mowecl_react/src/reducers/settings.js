@@ -27,19 +27,23 @@ const defaultPersistantSettings = {
         help: 'Modidy WebSocker URL. Do not modify unless you know what you are doing.',
         validate: v => v
     },
-    seek_update_interval: {
-        type: "param",
-        name: "Progress update interval",
-        default: 500,
-        help: 'Time interval (ms) at which the song progress bar will update.',
-        validate: v => parseInt(v) || 500
-    },
-    search_history_length: {
-        type: "param",
-        name: "Search history length",
-        default: 10,
-        help: 'Number of items in search history. Set 0 to disable.',
-        validate: v => parseInt(v) || 10
+    generic: {
+        name: "Generic",
+        type: "group",
+        seek_update_interval: {
+            type: "param",
+            name: "Progress update interval",
+            default: 500,
+            help: 'Time interval (ms) at which the song progress bar will update.',
+            validate: v => parseInt(v) || 500
+        },
+        search_history_length: {
+            type: "param",
+            name: "Search history length",
+            default: 10,
+            help: 'Number of items in search history. Set 0 to disable.',
+            validate: v => parseInt(v) || 10
+        },
     },
     colors: {
         name: "Theme colors",
@@ -50,7 +54,7 @@ const defaultPersistantSettings = {
             choices: ["light", "dark"],
             name: "Theme type",
             default: "light",
-            help: "Theme type: light or dark",
+            help: "Theme type: light or dark. Mostly changes buttons outline color.",
             validate: v => v,
         },
         background: {
@@ -79,8 +83,7 @@ const defaultPersistantSettings = {
         type: "group",
         name: "Shortcut keys",
         description: (
-            <Typography>Leave a field blank to deactivate. You can find a list of special keys at 
-                <Link href="https://developer.mozilla.org/fr/docs/Web/API/KeyboardEvent/key/Key_Values">https://developer.mozilla.org/fr/docs/Web/API/KeyboardEvent/key/Key_Values</Link></Typography>
+            <Typography>Leave a field blank to deactivate. Click the "Input keys" button to assign a new shortcut.</Typography>
         ),
         play_pause: {
             type:"param",
