@@ -11,12 +11,9 @@ import Cached from '@material-ui/icons/Cached'
 
 import Paper from '@material-ui/core/Paper'
 import Popover from '@material-ui/core/Popover'
-import TextField from '@material-ui/core/TextField'
 import Tooltip from '@material-ui/core/Tooltip'
 
 import CircularProgress from '@material-ui/core/CircularProgress'
-import FormControl from '@material-ui/core/FormControl'
-import Select from '@material-ui/core/Select'
 
 import { mdiFileTreeOutline } from '@mdi/js'
 import Icon from '@mdi/react'
@@ -24,83 +21,7 @@ import Icon from '@mdi/react'
 import { getSearchUris, AppContext } from 'utils'
 import {version} from 'package.json'
 
-const SearchInput = ({mopidy, searchUris, dispatch, closePopover, search_history_length}) => {
-
-    const initialSelecterUri = localStorage.getItem("searchSelectedURI") || "all"
-
-    const [selectedUri, setSelectedUri] = React.useState(initialSelecterUri)
-    const [input, setInput] = React.useState(() => '')
-
-    const triggerSearch = (key) => {
-        if (key !== 'Enter') return
-        if (input.length === 0) return
-
-        const uri = (selectedUri === "all") ? {} : {uris: [selectedUri + ':']}
-        console.log("Search:",  {query: {any: [input]}, ...uri})
-        mopidy.library.search({query: {any: [input]}, ...uri}).then(
-            search_result => {
-
-                const search_results = search_result.map(
-                    item => ({...item, name: item.uri, children: item.tracks,
-                              type: 'search_result', expanded: true}))
-                dispatch({
-                    type: 'LIBRARY_SET_CHILDREN',
-                    fun: () => search_results,
-                    target: ['search:'],
-                })
-                dispatch({
-                    type: 'LIBRARY_SET_EXPANDED',
-                    target: ['search:'],
-                    data: true
-                })
-
-                if (search_history_length <= 0)
-                    return
-
-                const search_history_name = input + '/' + selectedUri
-                dispatch({
-                    type: 'LIBRARY_SET_CHILDREN',
-                    fun: (c) => [{name: search_history_name, uri: search_history_name},
-                                 ...c].slice(0, search_history_length),
-                    target: ['search_history:']
-                })
-
-                dispatch({
-                    type: 'LIBRARY_SET_CHILDREN',
-                    fun: () => search_results,
-                    target: ['search_history:', search_history_name]
-                })
-            }
-        )
-        closePopover()
-    }
-
-    return (
-        <div>
-          <TextField id='search-popover-textinput'
-                     variant="outlined"
-                     value={input} onChange={(event) => setInput(event.target.value)}
-                     onKeyPress={event => triggerSearch(event.key)}
-                     autoFocus={true}
-          />
-          <FormControl variant="outlined">
-            <Select
-              native
-              value={selectedUri}
-              onChange={ (event) => {
-                  localStorage.setItem("searchSelectedURI", event.target.value)
-                  setSelectedUri(event.target.value)}}
-              onKeyPress={event => triggerSearch(event.key)}
-            >
-              <option value={"all"}>All</option>
-              {
-                  searchUris.map(
-                      ([uri, uriHuman]) => <option value={uri} key={uri}>{uriHuman}</option>)
-              }
-            </Select>
-          </FormControl>
-        </div>)
-}
+import {SearchInput} from './SearchInput'
 
 
 const MopidyStatus = ({pendingRequestsNb, connected}) => {
@@ -248,7 +169,7 @@ const SidePanel = ({dispatch, uri_schemes, pendingRequestsNb, connected, search_
             {
                 (version !== availableVersion) &&
                     <Tooltip title={`Version ${availableVersion} available on Pypi.`}>
-                      <Button>
+                      <Button href={`https://github.com/sapristi/mopidy-mowecl/tree/master#v#{availableVersion}`}>
                         <ErrorOutlineIcon/>
                       </Button>
                     </Tooltip>

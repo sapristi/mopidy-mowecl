@@ -74,6 +74,47 @@ For example, set these values for a dark mode based on the `Blueberry theme`_:
 
 .. _Blueberry theme: https://github.com/peymanslh/vscode-blueberry-dark-theme
 
+Changelog
+=======================================
+
+
+v0.3.4
+........................................
+
+ - Configurable hotkeys for playback and volume control
+ - Some performance improvements
+
+
+v0.3.3
+........................................
+
+ - Color theming
+
+
+v0.3.2
+........................................
+
+- Global hotkeys: space for play/pause
+- Display track length in tracklist
+- Light/dark theme
+- New version notification
+
+
+v0.3.1
+........................................
+
+- Search history
+- Highlight of hovered library / tracklist item
+- Some fixes
+
+
+v0.2.0
+........................................
+
+- Initial release.
+
+
+
 PROJECT resources
 =================
 
