@@ -131,6 +131,7 @@ const defaultPersistantSettings = {
     remoteSync: {
         name: "Remote sync (experimental)",
         type: "group",
+        description: "Allows mowecl to communicate with its backend extension. Consider this an pre-alpha feature.",
         mopidy_host: {
             type: "param",
             name: 'Modidy WebSocker URL',

@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { connect } from 'react-redux';
+import { connect, useDispatch } from 'react-redux';
 import { ReactSortable } from "react-sortablejs";
 
 
@@ -128,7 +128,7 @@ let TracklistInfoPanel = ({tracklist, playlists, bookmarks, dispatch}) => {
             )
         }
         setPrevTracklist(tracklist)
-    })
+    }, [mopidy, dispatch, playlists, tracklist, prevTracklist, setPrevTracklist])
 
     return (
         <Paper style={{paddingLeft: '10px', display: 'flex',

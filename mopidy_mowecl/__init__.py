@@ -14,10 +14,15 @@ logger = logging.getLogger(__name__)
 
 
 class ApiHandler(RequestHandler):
+    keys = ["settings"]
+
+    def check_request(self, arg, request):
+        return arg in self.keys and len(request.body) < 10000
+
+
     def initialize(self, data_dir, allowed_origins):
         self.data_dir = data_dir
         self.allowed_origins = allowed_origins
-        logger.info("INITIALISED %s", self.allowed_origins)
 
     def get(self, arg):
         self.set_header("Access-Control-Allow-Origin", "*")
@@ -27,7 +32,8 @@ class ApiHandler(RequestHandler):
     def post(self, arg):
         self.set_header("Access-Control-Allow-Origin", "*")
         req = self.request
-        store.save(self.data_dir, "settings", req.body)
+        if check_request(arg, req):
+            store.save(self.data_dir, "settings", req.body)
 
 class Extension(ext.Extension):
 

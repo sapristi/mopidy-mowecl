@@ -13,7 +13,7 @@ import IconButton from '@material-ui/core/IconButton'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import ExpandLessIcon from '@material-ui/icons/ExpandLess';
 
-import {HFlex} from 'components/atoms'
+import {HFlex, VFlex} from 'components/atoms'
 
 import {AppContext,match} from 'utils'
 
@@ -120,7 +120,7 @@ const SettingsPanel = ({persistant, dispatch}) => {
     }
 
     return (
-        <div>
+        <Paper style={{margin: '5px'}}>
           <SettingsGroup group={settings}
                          setInGroup={(key, value) =>
                                      setSettings(() => ({...settings, [key]: value}))}
@@ -129,10 +129,16 @@ const SettingsPanel = ({persistant, dispatch}) => {
           <ButtonGroup>
             <Button onClick={handleCommit}>Commit</Button>
             <Button onClick={handleClear}>Restore defaults</Button>
-            <Button onClick={handleRemoteSave}>Save to mopidy host</Button>
-            <Button onClick={handleRemoteLoad}>Load from mopidy host</Button>
           </ButtonGroup>
-        </div>
+
+          <Paper style={{paddingTop: "15px"}}>
+            Remote sync actions
+            <ButtonGroup>
+              <Button onClick={handleRemoteSave}>Save config to mopidy host</Button>
+              <Button onClick={handleRemoteLoad}>Load config from mopidy host</Button>
+            </ButtonGroup>
+          </Paper>
+        </Paper>
     )
 }
 

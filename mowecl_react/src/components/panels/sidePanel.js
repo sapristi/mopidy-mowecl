@@ -206,7 +206,7 @@ const SidePanel = ({dispatch, uri_schemes, pendingRequestsNb, connected, search_
     return (
         <Paper elevation={5}
                style={{display: 'flex', flexDirection: 'column',
-                       justifyContent: 'space-between'}}
+                       justifyContent: 'space-between', zIndex: "10"}}
         >
 
 

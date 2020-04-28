@@ -6,10 +6,6 @@ Mopidy-Mowecl
     :target: https://pypi.org/project/Mopidy-Mowecl/
     :alt: Latest PyPI version
 
-.. image:: https://img.shields.io/circleci/build/gh/sapristi/mopidy-mowecl
-    :target: https://circleci.com/gh/sapristi/mopidy-mowecl
-    :alt: CircleCI build status
-
 Web client providing a clean and ergonomic interface to Mopidy.
 
 Presentation
@@ -19,7 +15,7 @@ Presentation
 - Library / playlists / search results displayed as a single tree view
 - Drag and drop from library to tracklist, and inside tracklist
 - Save tracklist + current track as a bookmark (virtual playlist)
-- Space play/pause hotkey
+- Configurable hotkeys for playback and volume control
 - Basic color theming
 
 .. image:: https://mopidy.com/media/ext/mowecl.png
@@ -57,7 +53,7 @@ Several configuration options are available in the web application:
 
  - Mopidy websocket URL: mostly for development purposes, or if you are exposing mopidy websocket on a custom port
  - Progress update interval: time interval (ms) at which the song progress bar will update.
- - Search history lenght: max number of items in the search history
+ - Search history length: max number of items in the search history
 
 
 Theming

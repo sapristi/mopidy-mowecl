@@ -82,7 +82,7 @@ const KeyInputDialog = ({open, onClose, name}) => {
         } else {
             setCancel( () => nullFunc)
         }
-    }, [open])
+    }, [open, onClose])
 
 
     return (
