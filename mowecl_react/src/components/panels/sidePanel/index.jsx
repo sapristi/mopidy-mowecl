@@ -167,9 +167,13 @@ const SidePanel = ({dispatch, uri_schemes, pendingRequestsNb, connected, search_
 
           <ButtonGroup orientation="vertical">
             {
-                (version !== availableVersion) &&
+                (version !== availableVersion) && (availableVersion) && 
                     <Tooltip title={`Version ${availableVersion} available on Pypi.`}>
-                      <Button href={`https://github.com/sapristi/mopidy-mowecl/tree/master#v#{availableVersion}`}>
+                      <Button
+                        href={"https://github.com/sapristi/mopidy-mowecl/tree/master#v" + availableVersion.replace(/\./g, '')}
+                        target="_blank"
+                         rel="noopener noreferrer"
+                      >
                         <ErrorOutlineIcon/>
                       </Button>
                     </Tooltip>
