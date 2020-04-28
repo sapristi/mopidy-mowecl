@@ -1,12 +1,12 @@
-
 import React from 'react';
-
 
 import TextField from '@material-ui/core/TextField';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import IconButton from '@material-ui/core/IconButton';
 
-const Input = ({label, action, icon}) => {
+import {HFlex} from '../atoms'
+
+export const Input = ({label, action, icon}) => {
 
     const [inputText, setInputText] = React.useState("")
     return <TextField
@@ -31,16 +31,11 @@ const Input = ({label, action, icon}) => {
            />
 }
 
-
-const Track = ({text, duration}) => (
-    <div style={{
-        display: "flex", flexDirection: "row",
-        justifyContent: "space-between", alignItems: "center"}}>
+export const Track = ({text, duration}) => (
+    <HFlex style={{justifyContent: "space-between"}}>
       <div>{text}</div>
-    <div style={{textAlign: "right", paddingRight: '4px'}}>
+      <div style={{textAlign: "right", paddingRight: '4px'}}>
         {duration}
       </div>
-    </div>
+    </HFlex>
 )
-
-export {Input, Track}

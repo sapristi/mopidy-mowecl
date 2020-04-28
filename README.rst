@@ -6,10 +6,6 @@ Mopidy-Mowecl
     :target: https://pypi.org/project/Mopidy-Mowecl/
     :alt: Latest PyPI version
 
-.. image:: https://img.shields.io/circleci/build/gh/sapristi/mopidy-mowecl
-    :target: https://circleci.com/gh/sapristi/mopidy-mowecl
-    :alt: CircleCI build status
-
 Web client providing a clean and ergonomic interface to Mopidy.
 
 Presentation
@@ -19,7 +15,7 @@ Presentation
 - Library / playlists / search results displayed as a single tree view
 - Drag and drop from library to tracklist, and inside tracklist
 - Save tracklist + current track as a bookmark (virtual playlist)
-- Space play/pause hotkey
+- Configurable hotkeys for playback and volume control
 - Basic color theming
 
 .. image:: https://mopidy.com/media/ext/mowecl.png
@@ -57,7 +53,7 @@ Several configuration options are available in the web application:
 
  - Mopidy websocket URL: mostly for development purposes, or if you are exposing mopidy websocket on a custom port
  - Progress update interval: time interval (ms) at which the song progress bar will update.
- - Search history lenght: max number of items in the search history
+ - Search history length: max number of items in the search history
 
 
 Theming
@@ -77,6 +73,47 @@ For example, set these values for a dark mode based on the `Blueberry theme`_:
 
 
 .. _Blueberry theme: https://github.com/peymanslh/vscode-blueberry-dark-theme
+
+Changelog
+=======================================
+
+
+v0.3.4
+........................................
+
+ - Configurable hotkeys for playback and volume control
+ - Some performance improvements
+
+
+v0.3.3
+........................................
+
+ - Color theming
+
+
+v0.3.2
+........................................
+
+- Global hotkeys: space for play/pause
+- Display track length in tracklist
+- Light/dark theme
+- New version notification
+
+
+v0.3.1
+........................................
+
+- Search history
+- Highlight of hovered library / tracklist item
+- Some fixes
+
+
+v0.2.0
+........................................
+
+- Initial release.
+
+
 
 PROJECT resources
 =================

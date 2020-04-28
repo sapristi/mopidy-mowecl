@@ -52,11 +52,18 @@ export const getSearchUris = (uris) =>
     .filter( uri => !searchBlacklist.includes(uri))
     .map( (uri) => [uri, uriHumanList[uri] || uri])
 
-export const getDefaultWS = () => {
+export const getDefaultWs = () => {
     const schema = window.location.protocol === 'https:' ? 'wss' : 'ws'
     const host = window.location.hostname
     const port = 6680
     return `${schema}://${host}:${port}/mopidy/ws`
+}
+
+export const getDefaultMopidyHost = () => {
+    const schema = window.location.protocol === 'https:' ? 'https' : 'http'
+    const host = window.location.hostname
+    const port = 6680
+    return `${schema}://${host}:${port}`
 }
 
 export const AppContext = React.createContext(null);
@@ -80,3 +87,19 @@ export function useTraceUpdate(props) {
         prev.current = props;
     });
 }
+
+
+const matched = x => ({
+  on: () => matched(x),
+  otherwise: () => x,
+})
+
+
+export const match = x => ({  
+    on: (pred, fn) => (
+        (typeof(pred) === "function")
+            ? (pred(x) ? matched(fn(x)) : match(x))
+            : ((x === pred) ? matched(fn(x)) : match(x))
+    ),
+  otherwise: fn => fn(x),
+})

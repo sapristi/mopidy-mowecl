@@ -7,7 +7,7 @@ import Paper from '@material-ui/core/Paper';
 import GitHubIcon from '@material-ui/icons/GitHub';
 
 
-import {version} from '../../package.json'
+import {version} from 'package.json'
 
 const HelpPanel = () => {
 

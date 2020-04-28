@@ -1,5 +1,9 @@
+import React from 'react'
+
+import Typography from '@material-ui/core/Typography'
+import Link from '@material-ui/core/Link'
 import Color from 'color'
-import { getDefaultWS } from '../utils'
+import { getDefaultWs, getDefaultMopidyHost } from '../utils'
 
 const saved_settings = JSON.parse(localStorage.getItem("settings")) || {}
 
@@ -15,30 +19,44 @@ const validate_hex_color = (str) => {
 const defaultPersistantSettings = {
     name: "Settings",
     type: "group",
+    description: "Commit after making your changes. In case of incorrect setting, the default value will be used instead of your input",
     mopidy_ws: {
         type: "param",
         name: 'Modidy WebSocker URL',
-        default: getDefaultWS(),
+        default: getDefaultWs(),
         help: 'Modidy WebSocker URL. Do not modify unless you know what you are doing.',
         validate: v => v
     },
-    seek_update_interval: {
-        type: "param",
-        name: "Progress update interval",
-        default: 500,
-        help: 'Time interval (ms) at which the song progress bar will update.',
-        validate: v => parseInt(v) || 500
-    },
-    search_history_length: {
-        type: "param",
-        name: "Search history length",
-        default: 10,
-        help: 'Number of items in search history. Set 0 to disable.',
-        validate: v => parseInt(v) || 10
+    generic: {
+        name: "Generic",
+        type: "group",
+        seek_update_interval: {
+            type: "param",
+            name: "Progress update interval",
+            default: 500,
+            help: 'Time interval (ms) at which the song progress bar will update.',
+            validate: v => parseInt(v) || 500
+        },
+        search_history_length: {
+            type: "param",
+            name: "Search history length",
+            default: 10,
+            help: 'Number of items in search history. Set 0 to disable.',
+            validate: v => parseInt(v) || 10
+        },
     },
     colors: {
         name: "Theme colors",
         type: "group",
+        themeType: {
+            type: "param",
+            inputType: "select",
+            choices: ["light", "dark"],
+            name: "Theme type",
+            default: "light",
+            help: "Theme type: light or dark. Mostly changes buttons outline color.",
+            validate: v => v,
+        },
         background: {
             type: "param",
             name: "Background",
@@ -60,19 +78,81 @@ const defaultPersistantSettings = {
             help: 'Primary color, hex representation.',
             validate: v => validate_hex_color(v) ? v : "#3F51B5"
         },
-        // secondary: {
+    },
+    globalKeys: {
+        type: "group",
+        name: "Shortcut keys",
+        description: (
+            <Typography>Leave a field blank to deactivate. Click the "Input keys" button to assign a new shortcut.</Typography>
+        ),
+        play_pause: {
+            type:"param",
+            inputType: "shortkey",
+            name: "Play/Pause",
+            default: "Space",
+            validate: v => v
+        },
+        next: {
+            type:"param",
+            inputType: "shortkey",
+            name: "Next track",
+            default: "ArrowRight",
+            validate: v => v
+        },
+        previous: {
+            type:"param",
+            inputType: "shortkey",
+            name: "Previous track",
+            default: "",
+            validate: v => v
+        },
+        rewind: {
+            type:"param",
+            inputType: "shortkey",
+            name: "Rewind track",
+            default: "ArrowLeft",
+            validate: v => v
+        },
+        volume_up: {
+            type: "param",
+            inputType: "shortkey",
+            name: "Volume up shorcut",
+            default: "ArrowUp",
+            validate: v => v
+        },
+        volume_down: {
+            type: "param",
+            inputType: "shortkey",
+            name: "Volume down shorcut",
+            default: "ArrowDown",
+            validate: v => v
+        }
+    },
+    remoteSync: {
+        name: "Remote sync (experimental)",
+        type: "group",
+        description: "Allows mowecl to communicate with its backend extension. Consider this an pre-alpha feature.",
+        mopidy_host: {
+            type: "param",
+            name: 'Modidy WebSocker URL',
+            default: getDefaultMopidyHost(),
+            help: 'Modidy host URL. Do not modify unless you know what you are doing.',
+            validate: v => v
+        },
+        // sync_tracklists: {
         //     type: "param",
-        //     name: "Secondary",
-        //     default: "#F50057",
-        //     help: 'Secondary color, hex representation.',
-        //     validate: v => validate_hex_color(v) ? v : "#F50057"
+        //     inputType: "checkbox",
+        //     name: "Sync tracklists",
+        //     default: false,
+        //     help: "Sync tracklists with mopidy: tracklists will be the same across all machines accessing the same mopidy host",
+        //     validate: v => v
         // }
     }
 }
 
 
 
-const loadSaved = (default_s, saved_s) => Object.fromEntries(
+export const loadSaved = (default_s, saved_s) => Object.fromEntries(
     Object.entries(default_s).map(
         ([k, v]) => {
             // console.log("Merging", default_s, saved_s)
@@ -99,8 +179,7 @@ const loadSaved = (default_s, saved_s) => Object.fromEntries(
 
 const persistantSettings = loadSaved(defaultPersistantSettings, saved_settings)
 
-const dumpSettings = (settings) => {
-
+export const dumpSettings = (settings) => {
     if (settings.type === "group") {
         return Object.fromEntries(Object.entries(settings).map(
             ([k, v]) => ([k, dumpSettings(v)])

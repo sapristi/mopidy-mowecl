@@ -218,7 +218,6 @@ const initMopidyEventsDispatcher = (state, mopidy, dispatch) => {
 export const mopidyReducer = (state={
     connected: false,
     connecting: false,
-    mopidy: null,
     uri_schemes: [],
     pendingRequestsNb: 0,
     error: null
@@ -245,10 +244,10 @@ export const mopidyReducer = (state={
 
         console.log("webSocketUrl:", webSocketUrl)
 
-        if (state.mopidy) {
-            state.mopidy.removeAllListeners()
-            state.mopidy.close()
-            state.mopidy.off()
+        if (window.mopidy) {
+            window.mopidy.removeAllListeners()
+            window.mopidy.close()
+            window.mopidy.off()
         }
         const mopidy = new Mopidy({webSocketUrl, autoConnect: false}) 
         try {
@@ -259,14 +258,14 @@ export const mopidyReducer = (state={
             mopidy.close()
             mopidy.off()
             initMopidyEventsDispatcher(state, mopidy, action.dispatch)
-            return {...state, error: error.toString(), mopidy, connecting: false}
+            return {...state, error: error.toString(), connecting: false}
         }
 
         mopidy.on('event', console.log)
-        window.$mopidy=mopidy
+        window.mopidy=mopidy
         // console.log("Connecting to ", webSocketUrl)
         initMopidyEventsDispatcher(state, mopidy, action.dispatch)
-        return {...state, connecting: true, mopidy, connected: false, error: null}
+        return {...state, connecting: true, connected: false, error: null}
 
     case 'URI_SCHEMES':
         return {...state, uri_schemes: action.data}
