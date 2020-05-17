@@ -21,8 +21,8 @@ export const VolumeSlider = ({volume, dispatch, style}) => {
         mopidy.mixer.setVolume({volume: newValue})
     }
 
-    const volume_incr = () => Math.min(100, Math.ceil(volume * 1.1))
-    const volume_decr = () => Math.max(0, Math.ceil(volume * 0.9))
+    const volume_incr = () => Math.min(100, Math.floor(volume * 1.1 + 1))
+    const volume_decr = () => Math.floor(volume * 0.9)
 
     return (
         <div style={{display: 'flex', flexDirection: 'row', alignItems: 'center', ...style}}>
