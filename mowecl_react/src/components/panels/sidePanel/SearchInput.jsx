@@ -58,8 +58,7 @@ export const SearchInput = ({mopidy, searchUris, dispatch, closePopover, search_
 
     return (
         <div>
-          <TextField id='search-popover-textinput'
-                     variant="outlined"
+          <TextField variant="outlined"
                      value={input} onChange={(event) => setInput(event.target.value)}
                      onKeyPress={event => triggerSearch(event.key)}
                      autoFocus={true}

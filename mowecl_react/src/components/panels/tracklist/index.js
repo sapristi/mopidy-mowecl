@@ -13,6 +13,7 @@ import ClearIcon from '@material-ui/icons/Clear';
 import SyncIcon from '@material-ui/icons/Sync';
 import SaveAltIcon from '@material-ui/icons/SaveAlt';
 import BookmarkBorderIcon from '@material-ui/icons/BookmarkBorder';
+import AddIcon from '@material-ui/icons/Add'
 
 import Tooltip from '@material-ui/core/Tooltip';
 import Chip from '@material-ui/core/Chip';
@@ -26,6 +27,7 @@ import ListItemText from '@material-ui/core/ListItemText';
 import {Track} from 'components/molecules'
 import {AppContext, listEquals, duration_to_human} from 'utils'
 import {BookmarkMenu} from './bookmark_menu'
+import {AddUriMenu} from './add_uri_menu'
 import {SaveMenu, saveAsPlaylist} from './save_menu'
 
 import Color from 'color'
@@ -150,6 +152,12 @@ let TracklistInfoPanel = ({tracklist, playlists, bookmarks, dispatch}) => {
             {tracklist.length} tracks
           </div>
           <ButtonGroup>
+            <Tooltip title="Add uri to tracklist">
+              <Button onClick={() => setMenuState("add_uri")}>
+                <AddIcon fontSize="small"/>
+              </Button>
+            </Tooltip>
+
             <Tooltip title="Clear playlist">
               <Button onClick={() => {
                   dispatch({type: 'TRACKLIST_UNSYNC'})
@@ -158,21 +166,24 @@ let TracklistInfoPanel = ({tracklist, playlists, bookmarks, dispatch}) => {
               </Button>
             </Tooltip>
             <Tooltip title="Save as...">
-              <Button onClick={ (event) => setMenuState("menu") } ref={anchorElRef}>
+              <Button onClick={() => setMenuState("menu")} ref={anchorElRef}>
                 <SaveAltIcon/>
               </Button>
             </Tooltip>
+            <Tooltip title="Bookmark current TL and position">
+              <Button onClick={() => setMenuState("bookmark")}>
+                <BookmarkBorderIcon/>
+              </Button>
+            </Tooltip>
+
             <SaveMenu menuState={menuState} setMenuState={setMenuState}
                       anchorElRef={anchorElRef} playlists={playlists}
                       tracklist={tracklist}
             />
-            <Tooltip title="Bookmark current TL and position">
-              <Button onClick={(event) => setMenuState("bookmark")}>
-                <BookmarkBorderIcon/>
-              </Button>
-            </Tooltip>
             <BookmarkMenu menuState={menuState} setMenuState={setMenuState}
                           anchorElRef={anchorElRef} tracklist={tracklist}/>
+            <AddUriMenu anchorElRef={anchorElRef} setMenuState={setMenuState}
+                        mopidy={mopidy} menuState={menuState}/>
           </ButtonGroup>
         </Paper>)
 }
