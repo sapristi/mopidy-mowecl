@@ -71,14 +71,20 @@ Basic theming is available in the configuration, with the following options:
  - Text color
  - Highlight color
 
-For example, set these values for a dark mode based on the `Blueberry theme`_:
+For example, you can use the following settings:
 
- - Background color: ``#232937``
- - Text color: ``#7390aa``
- - Highlight color: ``#27e8a7``
++------------------+-----------------------+----------------------+
+|                  | `Solarized`_ (light)  | `Blueberry`_ (dark)  |
++==================+=======================+======================+
+| Background color | #fdf6e3               | #232937              |
++------------------+-----------------------+----------------------+
+| Text color       | #002b36               | #7390aa              |
++------------------+-----------------------+----------------------+
+| Highlight color  | #268bd2               | #27e8a7              |
++------------------+-----------------------+----------------------+
 
-
-.. _Blueberry theme: https://github.com/peymanslh/vscode-blueberry-dark-theme
+.. _Blueberry: https://github.com/peymanslh/vscode-blueberry-dark-theme
+.. _Solarized: https://en.wikipedia.org/wiki/Solarized_(color_scheme)
 
 Changelog
 =======================================

@@ -5,14 +5,14 @@ Changelog
 v0.3.4
 ========================================
 
- - Configurable hotkeys for playback and volume control
- - Some performance improvements
+- Configurable hotkeys for playback and volume control
+- Some performance improvements
 
 
 v0.3.3
 ========================================
 
- - Color theming
+- Color theming
 
 
 v0.3.2
