@@ -7,6 +7,8 @@ from mopidy import config, ext
 
 from tornado.web import RequestHandler
 from . import store
+from . import bookmarks
+
 
 __version__ = pkg_resources.get_distribution("Mopidy-Mowecl").version
 
@@ -18,7 +20,6 @@ class ApiHandler(RequestHandler):
 
     def check_request(self, arg, request):
         return arg in self.keys and len(request.body) < 10000
-
 
     def initialize(self, data_dir, allowed_origins):
         self.data_dir = data_dir
@@ -49,6 +50,7 @@ class Extension(ext.Extension):
         return schema
 
     def setup(self, registry):
+
         registry.add(
             "http:static",
             {
@@ -57,18 +59,28 @@ class Extension(ext.Extension):
             },
         )
         registry.add(
-            "http:app", {"name": self.ext_name, "factory": self.factory}
+            "http:app", {
+                "name": self.ext_name,
+                "factory": self.http_app_factory}
         )
+        registry.add("frontend", bookmarks.MopidyCoreListener)
 
 
-    def factory(self, config, core):
+    def http_app_factory(self, config, core):
         allowed_origins = {
             x.lower() for x in config["http"]["allowed_origins"] if x
         }
 
         store.initialize(self.get_data_dir(config))
         return [
-            (r"/api/(.*)", ApiHandler, {"data_dir": self.get_data_dir(config),
-                                        "allowed_origins": allowed_origins
-            })
+            (
+                r"/api/(.*)",
+                ApiHandler,
+                {"data_dir": self.get_data_dir(config),
+                 "allowed_origins": allowed_origins}
+            ),
+            (
+                r"/ws/?", bookmarks.WebSocketHandler, {}
+            )
         ]
+
