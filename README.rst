@@ -32,9 +32,15 @@ Mopidy-Mowecl is written in Javascript, and is built upon React, Redux and Mater
 Installation
 ============
 
-Install by running::
+Depending on your setup, install either by running::
 
+    # When mopidy was installed with pip
     python3 -m pip install Mopidy-Mowecl
+
+or::
+
+    # When mopidy was installed as a package or pip using sudo
+    sudo python3 -m pip install Mopidy-Mowecl
 
 
 Configuration
