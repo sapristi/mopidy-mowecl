@@ -2,17 +2,24 @@ import logging
 import pathlib
 import json
 import pkg_resources
+import re
 
 from mopidy import config, ext
 
-from tornado.web import RequestHandler
-from . import store
-from . import bookmarks
-
+from tornado.web import RequestHandler, StaticFileHandler
+from .file_server import FileServer
 
 __version__ = pkg_resources.get_distribution("Mopidy-Mowecl").version
 
 logger = logging.getLogger(__name__)
+
+class ConfigColor(config.String):
+
+    def deserialize(self, value):
+        value = super().deserialize(value)
+        if not re.fullmatch("#[0-9A-Fa-f]{6}", value):
+            raise ValueError(f"Colors must be in the #AAAAAA format; {value} is not")
+        return value
 
 class Extension(ext.Extension):
 
@@ -25,14 +32,29 @@ class Extension(ext.Extension):
 
     def get_config_schema(self):
         schema = super().get_config_schema()
+        schema["theme_type"] = config.String(optional=True, choices=["light", "dark"])
+        schema["background_color"] = ConfigColor(optional=True)
+        schema["text_color"] = ConfigColor(optional=True)
+        schema["primary_color"] = ConfigColor(optional=True)
+        schema["seek_update_interval"] = config.Integer()
+        schema["search_history_length"] = config.Integer()
         return schema
 
     def setup(self, registry):
 
+        logger.info("VERSION %s", self.version)
         registry.add(
-            "http:static",
+            "http:app",
             {
                 "name": self.ext_name,
-                "path": str(pathlib.Path(__file__).parent / "static"),
+                "factory": self.factory
             },
         )
+
+    def factory(self, config, core):
+        path = pathlib.Path(__file__).parent / "static"
+        return [
+            (r"/(index.html)", FileServer, {"config": config, "path": path}),
+            (r"/", FileServer, {"config": config, "path": path}),
+            (r"/(.*)", StaticFileHandler, {"path": path}),
+        ]

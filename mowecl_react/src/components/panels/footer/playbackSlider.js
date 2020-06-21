@@ -24,7 +24,7 @@ const PlaybackUpdaterUnc = ({state, time_position, time_position_updater, seek_u
 
 const PlaybackUpdater = connect((state) => (
     {...state.playback_state,
-     seek_update_interval: state.settings.persistant.generic.seek_update_interval.current
+     seek_update_interval: state.settings.persistant.generic.seek_update_interval
     }))(
     PlaybackUpdaterUnc)
 

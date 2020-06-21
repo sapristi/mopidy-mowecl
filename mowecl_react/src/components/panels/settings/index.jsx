@@ -19,9 +19,9 @@ import {AppContext,match} from 'utils'
 
 import {SettingInput} from './SettingInput'
 
-import {dumpSettings, loadSaved} from 'reducers/settings'
+import {load, settingsSchema} from 'reducers/settings'
 
-const SettingsGroup = ({group, path, setInGroup}) => {
+const SettingsGroup = ({schema, group, path, setInGroup}) => {
     // console.log("Settings group", group)
     const [open, setOpen] = React.useState(() => (path.length === 0))
     const headerComponent = "h" + (path.length + 1)
@@ -29,24 +29,27 @@ const SettingsGroup = ({group, path, setInGroup}) => {
 
     const body = (
         <>
-          {group.description && group.description}
+          {schema.description && schema.description}
           <List>
             {
-                Object.entries(group)
+                Object.entries(schema)
                     .filter(([key, value]) => (["param", "group"].includes(value.type)))
-                    .map(([key, value]) =>
+                    .map(([key, subSchema]) =>
                          <ListItem key={key}>
                            {
-                               (value.type === "group")
-                                   ? ( <SettingsGroup group={value} path={[...path, key]}
+                               (subSchema.type === "group")
+                                   ? ( <SettingsGroup schema={subSchema}
+                                                      group={group[key]}
+                                                      path={[...path, key]}
                                                       setInGroup={(gkey, gvalue) => {
                                                           setInGroup(key, {
-                                                              ...value,
+                                                              ...group[key],
                                                               [gkey]: gvalue
                                                           })}}/>)
                                    : ( <SettingInput
-                                         setting={value}
-                                         setSetting={(newValue) =>
+                                         schema={subSchema}
+                                         value={group[key]}
+                                         setValue={(newValue) =>
                                                      setInGroup(key, newValue)}/>)
                            }
                          </ListItem>
@@ -62,7 +65,7 @@ const SettingsGroup = ({group, path, setInGroup}) => {
           <a onClick={() => setOpen(prev => !prev)}>
             <HFlex style={{alignItems: "center"}}>
               <Typography variant={headerVariant} component={headerComponent}>
-                {group.name}</Typography>
+                {schema.name}</Typography>
               {(open) ? <ExpandLessIcon/>: <ExpandMoreIcon/>}
             </HFlex>
           </a>
@@ -82,8 +85,8 @@ const SettingsPanel = ({persistant, dispatch}) => {
             type: 'COMMIT_SETTINGS',
             data: settings
         })
-        if (settings.mopidy_ws.current !== mopidy._settings.webSocketUrl)
-            dispatch({type: 'CONNECT', mopidy_ws: settings.mopidy_ws.current, dispatch})
+        if (settings.mopidy_ws !== mopidy._settings.webSocketUrl)
+            dispatch({type: 'CONNECT', mopidy_ws: settings.mopidy_ws, dispatch})
     }
 
     const handleClear = () => {
@@ -91,53 +94,25 @@ const SettingsPanel = ({persistant, dispatch}) => {
             type: 'CLEAR_SETTINGS'
         })
         dispatch({
-            type: 'CONNECT', mopidy_ws: settings.mopidy_ws.current, dispatch
+            type: 'CONNECT', mopidy_ws: settings.mopidy_ws, dispatch
         })
     }
 
-    const handleRemoteSave = () => {
-        const url = new URL("mowecl/api/settings",
-                            persistant.remoteSync.mopidy_host.current).href
-        fetch(url,
-              {
-                  method: "POST",
-                  body: JSON.stringify(dumpSettings(settings))
-              })
-    }
-
-    const handleRemoteLoad = () => {
-        const url = new URL("mowecl/api/settings",
-                            persistant.remoteSync.mopidy_host.current).href
-        fetch(url).then(res => (res.json())).then(
-            stored_settings =>
-                {console.log(stored_settings)
-                 const loaded = loadSaved(settings, stored_settings)
-                 dispatch({
-                     type: "COMMIT_SETTINGS",
-                     data: loaded
-                 })
-                })
-    }
 
     return (
         <Paper style={{margin: '5px'}}>
-          <SettingsGroup group={settings}
-                         setInGroup={(key, value) =>
-                                     setSettings(() => ({...settings, [key]: value}))}
-                         path={[]}/>
+          <SettingsGroup
+            schema={settingsSchema}
+            group={settings}
+            setInGroup={(key, value) =>
+                        setSettings(() => ({...settings, [key]: value}))}
+            path={[]}/>
 
           <ButtonGroup>
             <Button onClick={handleCommit}>Commit</Button>
             <Button onClick={handleClear}>Restore defaults</Button>
           </ButtonGroup>
 
-          <Paper style={{paddingTop: "15px"}}>
-            Remote sync actions
-            <ButtonGroup>
-              <Button onClick={handleRemoteSave}>Save config to mopidy host</Button>
-              <Button onClick={handleRemoteLoad}>Load config from mopidy host</Button>
-            </ButtonGroup>
-          </Paper>
         </Paper>
     )
 }

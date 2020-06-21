@@ -74,7 +74,7 @@ let TracklistListPanel = ({dispatch, tracklist, current_tlid}) => {
              >
                {tracklist.map(item => (
                    <TracklistItem
-                     color={colors.primary.current}
+                     color={colors.primary}
                      key={item.tlid}
                      className={(item.tlid === current_tlid) ?
                                 "tracklist_current" : "" }
