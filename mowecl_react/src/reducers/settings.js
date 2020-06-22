@@ -3,12 +3,11 @@ import React from 'react'
 import Typography from '@material-ui/core/Typography'
 import Link from '@material-ui/core/Link'
 import Color from 'color'
-import { getDefaultWs, getDefaultMopidyHost } from '../utils'
+import { getDefaultWs, getDefaultMopidyHost, match, ObjectComp} from 'utils'
 
-const saved_settings = JSON.parse(localStorage.getItem("settings")) || {}
 
 const validate_hex_color = (str) => {
-    if (str.length !== 7) return false
+    if ((!str) || str.length !== 7) return false
     try {
         return Color(str).hex()
     } catch (err) {
@@ -16,16 +15,39 @@ const validate_hex_color = (str) => {
     }
 }
 
-const defaultPersistantSettings = {
+const staticSettings =
+      (window.static_settings_enabled === "true")
+      ? (window.static_settings )
+// default settings when the app is not served by mopidy
+      : ({
+          mopidy_ws: getDefaultWs(),
+          generic: {
+              seek_update_interval: 500,
+              search_history_length: 10
+          },
+          colors: {
+              themeType: "light",
+              background: "#fdf6e3",
+              text: "#002b36",
+              primary: "#268bd2"
+          },
+          globalKeys: {
+              play_pause: "",
+              next: "",
+              previous: "",
+          }
+      })
+console.log("SETTINGS STATIC", staticSettings)
+
+export const settingsSchema = {
     name: "Settings",
     type: "group",
     description: "Commit after making your changes. In case of incorrect setting, the default value will be used instead of your input",
     mopidy_ws: {
         type: "param",
         name: 'Modidy WebSocker URL',
-        default: getDefaultWs(),
         help: 'Modidy WebSocker URL. Do not modify unless you know what you are doing.',
-        validate: v => v
+        validate: v => v || staticSettings.mopidy_ws || getDefaultWs()
     },
     generic: {
         name: "Generic",
@@ -33,16 +55,14 @@ const defaultPersistantSettings = {
         seek_update_interval: {
             type: "param",
             name: "Progress update interval",
-            default: 500,
             help: 'Time interval (ms) at which the song progress bar will update.',
-            validate: v => parseInt(v) || 500
+            validate: v => parseInt(v) || staticSettings.generic.seek_update_interval
         },
         search_history_length: {
             type: "param",
             name: "Search history length",
-            default: 10,
             help: 'Number of items in search history. Set 0 to disable.',
-            validate: v => parseInt(v) || 10
+            validate: v => parseInt(v) || staticSettings.generic.search_history_length
         },
     },
     colors: {
@@ -53,30 +73,26 @@ const defaultPersistantSettings = {
             inputType: "select",
             choices: ["light", "dark"],
             name: "Theme type",
-            default: "light",
             help: "Theme type: light or dark. Mostly changes buttons outline color.",
-            validate: v => v,
+            validate: v => v || staticSettings.colors.themeType,
         },
         background: {
             type: "param",
             name: "Background",
-            default: "#FFFFFF",
             help: 'Background color, hex representation.',
-            validate: v => validate_hex_color(v) ? v : "#FFFFFF"
+            validate: v => validate_hex_color(v) ? v : staticSettings.colors.background
         },
         text: {
             type: "param",
             name: "Text",
-            default: "#000000",
             help: 'Text color, hex representation.',
-            validate: v => validate_hex_color(v) ? v : "#000000"
+            validate: v => validate_hex_color(v) ? v : staticSettings.colors.text
         },
         primary: {
             type: "param",
             name: "Primary",
-            default: "#3F51B5",
             help: 'Primary color, hex representation.',
-            validate: v => validate_hex_color(v) ? v : "#3F51B5"
+            validate: v => validate_hex_color(v) ? v : staticSettings.colors.primary
         },
     },
     globalKeys: {
@@ -89,56 +105,50 @@ const defaultPersistantSettings = {
             type:"param",
             inputType: "shortkey",
             name: "Play/Pause",
-            default: "Space",
-            validate: v => v
+            validate: v => v || staticSettings.globalKeys.play_pause
         },
         next: {
             type:"param",
             inputType: "shortkey",
             name: "Next track",
-            default: "ArrowRight",
-            validate: v => v
+            validate: v => v || staticSettings.globalKeys.next,
         },
         previous: {
             type:"param",
             inputType: "shortkey",
             name: "Previous track",
-            default: "",
-            validate: v => v
+            validate: v => v || staticSettings.globalKeys.previous
         },
         rewind: {
             type:"param",
             inputType: "shortkey",
             name: "Rewind track",
-            default: "ArrowLeft",
-            validate: v => v
+            validate: v => v || staticSettings.globalKeys.rewind,
         },
         volume_up: {
             type: "param",
             inputType: "shortkey",
             name: "Volume up shorcut",
-            default: "ArrowUp",
-            validate: v => v
+            validate: v => v || staticSettings.globalKeys.volume_up,
         },
         volume_down: {
             type: "param",
             inputType: "shortkey",
             name: "Volume down shorcut",
-            default: "ArrowDown",
-            validate: v => v
+            validate: v => v || staticSettings.globalKeys.volume_down,
         }
     },
-    remoteSync: {
-        name: "Remote sync (experimental)",
-        type: "group",
-        description: "Allows mowecl to communicate with its backend extension. Consider this an pre-alpha feature.",
-        mopidy_host: {
-            type: "param",
-            name: 'Modidy WebSocker URL',
-            default: getDefaultMopidyHost(),
-            help: 'Modidy host URL. Do not modify unless you know what you are doing.',
-            validate: v => v
-        },
+    // remoteSync: {
+    //     name: "Remote sync (experimental)",
+    //     type: "group",
+    //     description: "Allows mowecl to communicate with its backend extension. Consider this an pre-alpha feature.",
+    //     mopidy_host: {
+    //         type: "param",
+    //         name: 'Modidy WebSocker URL',
+    //         default: getDefaultMopidyHost(),
+    //         help: 'Modidy host URL. Do not modify unless you know what you are doing.',
+    //         validate: v => v
+    //     },
         // sync_tracklists: {
         //     type: "param",
         //     inputType: "checkbox",
@@ -147,91 +157,66 @@ const defaultPersistantSettings = {
         //     help: "Sync tracklists with mopidy: tracklists will be the same across all machines accessing the same mopidy host",
         //     validate: v => v
         // }
-    }
+    // }
 }
 
 
 
-export const loadSaved = (default_s, saved_s) => Object.fromEntries(
-    Object.entries(default_s).map(
-        ([k, v]) => {
-            // console.log("Merging", default_s, saved_s)
-            if (default_s[k].type === "group") {
-                return [k,
-                        {
-                            ...v,
-                            ...loadSaved(v, saved_s[k] || {})
-                        }
-                       ]
-            } else if (default_s[k].type === "param") {
-                const merged_v = saved_s[k] || v.default
-                return [k,
-                        {
-                            ...v,
-                            current: merged_v
-                        }]
-            } else {
-                return [k, v]
-            }
-        }
-    )
-)
+const load_rec = (schema, settings) => 
+      ObjectComp(
+          schema,
+          ([k, v]) =>
+              match(schema[k].type)
+              .on("group", () =>
+                  ([k,
+                    {
+                        ...load_rec(v, settings[k] || {})
+                    }
+                   ])
+                 )
+              .on("param", () => 
+                  ([k, v.validate(settings[k])])
+                 )
+              .otherwise(null),
+         x => x
+      )
 
-const persistantSettings = loadSaved(defaultPersistantSettings, saved_settings)
+export const load = settings => load_rec(settingsSchema, settings)
 
-export const dumpSettings = (settings) => {
-    if (settings.type === "group") {
-        return Object.fromEntries(Object.entries(settings).map(
-            ([k, v]) => ([k, dumpSettings(v)])
-        ))
-    } else if (settings.type === "param") {
-        return settings.validate(settings.current)
-    } else return null
-}
 
-const validateSettings = (settings) => {
-    if (settings.type === "group") {
-        return Object.fromEntries(Object.entries(settings).map(
-            ([k, v]) => ([k, validateSettings(v)])
-        ))
-    } else if (settings.type === "param") {
-        return {...settings, current: settings.validate(settings.current)}
-    } else return settings
-}
+console.log("SETTINGS SCHEMA", settingsSchema)
+const saved_settings = JSON.parse(localStorage.getItem("settings")) || {}
+const initialSettings = load(saved_settings)
 
+console.log("SETTINGS INITIAL", initialSettings)
 const defaultSettings = {
     active_panel: 'library',
-    persistant: persistantSettings,
+    persistant: initialSettings,
 }
 
-export const settingsReducer = (state=defaultSettings, action) => {
-    switch (action.type) {
-    case 'ACTIVATE_PANEL':
-        return {...state, active_panel: action.target}
-
-    case 'CLEAR_SETTINGS':
-        localStorage.removeItem("settings")
-        return {
-            ...state,
-            persistant: loadSaved(defaultPersistantSettings, {})
-        }
-
-    case 'COMMIT_SETTINGS':
-
-        const validated = validateSettings(action.data)
-
-        localStorage.setItem("settings",
-                             JSON.stringify(
-                                 dumpSettings(action.data)))
-        // console.log("Set", state.persistant)
-        return {...state,
-                persistant: validated
-                }
-
-    case 'SET_THEME':
-        return {...state, theme: action.data}
-
-    default:
-        return state
-    }
-}
+export const settingsReducer = (state=defaultSettings, action) => (
+    match(action.type)
+        .on("ACTIVATE_PANEL", () =>
+            ({...state, active_panel: action.target})
+           )
+        .on('CLEAR_SETTINGS', () => {
+            localStorage.removeItem("settings")
+            return {
+                ...state,
+                persistant: staticSettings
+            }
+        })
+        .on('COMMIT_SETTINGS', () => {
+            const newSettings = load(action.data)
+            localStorage.setItem(
+                "settings",
+                JSON.stringify(newSettings)
+            )
+            // console.log("Set", state.persistant)
+            return {...state, persistant: newSettings }
+        })
+        .on('SET_THEME', () => 
+            ({...state, theme: action.data})
+           )
+        .otherwise(() => state)
+)

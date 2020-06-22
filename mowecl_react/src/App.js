@@ -24,29 +24,29 @@ import {useTraceUpdate} from './utils'
 let AppContainer = ({colors, children}) => {
 
 
-    const text_secondary = (colors.themeType.current === "light")
-          ? (Color(colors.text.current).lighten(0.25).hex())
-          : (Color(colors.text.current).darken(0.25).hex())
+    const text_secondary = (colors.themeType === "light")
+          ? (Color(colors.text).lighten(0.25).hex())
+          : (Color(colors.text).darken(0.25).hex())
     // console.log("COLORS", colors)
     const THEME = createMuiTheme({
         palette: {
-            type: colors.themeType.current,
+            type: colors.themeType,
             background: {
-                paper: colors.background.current,
-                default: colors.background.current,
+                paper: colors.background,
+                default: colors.background,
             },
             primary: {
-                main: colors.primary.current
+                main: colors.primary
             },
             text: {
-                primary: colors.text.current,
+                primary: colors.text,
                 secondary: text_secondary,
             }
         },
         overrides: {
             MuiLinearProgress: {
                 colorPrimary: {
-                    backgroundColor: colors.background.current
+                    backgroundColor: colors.background
                 },
                 bar1Indeterminate: {
                     animation: "MuiLinearProgress-keyframes-indeterminate1 6.3s cubic-bezier(0.65, 0.815, 0.735, 0.395) infinite"
@@ -65,8 +65,8 @@ let AppContainer = ({colors, children}) => {
           <div className="App"
                style={{display: 'flex', flexDirection: 'column',
                        height:'100%', overflow: 'hidden',
-                       backgroundColor: colors.background.current,
-                       scrollbarColor: `${colors.text.current} ${colors.background.current}`,
+                       backgroundColor: colors.background,
+                       scrollbarColor: `${colors.text} ${colors.background}`,
                        scrollbarWidth: 'thin',
                        textAlign: 'center'
                       }}>
@@ -126,7 +126,7 @@ let App = ({settings, mopidy_connected, mopidy_error, dispatch}) => {
                                          style={{margin: 'auto'}}
                                        /></div>
                 <div style={{flex: 1}}>
-                  <div>Trying to reach mopidy at {settings.persistant.mopidy_ws.current}</div>
+                  <div>Trying to reach mopidy at {settings.persistant.mopidy_ws}</div>
                   <div>{mopidy_error}</div>
                 </div>
                 <div style={{flex: 1}}/>

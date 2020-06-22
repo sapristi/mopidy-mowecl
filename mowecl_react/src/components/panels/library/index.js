@@ -154,7 +154,7 @@ const NodeLeaves = ({node, dispatch, depth, rootElem, colors}) => {
                     paddingLeft: '10px', marginLeft: 0, marginRight: 'auto',
                     textAlign: 'left',
                    }}>
-          <LibLine color={colors.primary.current}>
+          <LibLine color={colors.primary}>
             <ListItemText onClick={() => toggleNode(node, dispatch, mopidy)}>
               <Typography style={rootElem ? {fontWeight: 500 }: {}}>
                 {getText(node)}
@@ -168,7 +168,7 @@ const NodeLeaves = ({node, dispatch, depth, rootElem, colors}) => {
 
                <div style={{display: 'flex', flexDirection: 'row'}}>
                  <ChildrenSideBar callback={() => toggleNode(node, dispatch, mopidy)}
-                                  color={colors.primary.current}/>
+                                  color={colors.primary}/>
                  <ChildrenPanel/>
                </div>
 

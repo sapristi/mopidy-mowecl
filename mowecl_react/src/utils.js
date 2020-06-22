@@ -94,12 +94,24 @@ const matched = x => ({
   otherwise: () => x,
 })
 
+const cleverEval = (fn, x) => (
+    (typeof(fn) === "function")
+        ? fn(x) : fn
+)
 
-export const match = x => ({  
+export const match = x => ({
     on: (pred, fn) => (
         (typeof(pred) === "function")
-            ? (pred(x) ? matched(fn(x)) : match(x))
-            : ((x === pred) ? matched(fn(x)) : match(x))
+            ? (pred(x) ? matched(cleverEval(fn, x)) : match(x))
+            : ((x === pred) ? matched(cleverEval(fn, x)) : match(x))
     ),
-  otherwise: fn => fn(x),
+    otherwise: fn => cleverEval(fn, x),
 })
+
+export const ObjectComp = (object, mapFn, filterFn) => {
+    let res = Object.entries(object).map(mapFn)
+    if (filterFn) {
+        res = res.filter(filterFn)
+    }
+    return Object.fromEntries(res)
+}

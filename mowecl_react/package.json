@@ -1,10 +1,10 @@
 {
   "name": "mopidy_webui",
-  "version": "0.3.4",
+  "version": "0.3.5",
   "private": true,
   "homepage": "./",
   "dependencies": {
-    "@babel/helper-call-delegate": "^7.8.7",
+    "@babel/helper-call-delegate": "^7.10.3",
     "@emotion/core": "^10.0.28",
     "@emotion/styled": "^10.0.27",
     "@material-ui/core": "^4.9.1",
@@ -21,7 +21,8 @@
     "react-scripts": "^3.4.0",
     "react-sortablejs": "^2.0.10",
     "redux": "^4.0.5",
-    "typeface-roboto": "^0.0.75"
+    "typeface-roboto": "^0.0.75",
+    "websocket-extensions": "^0.1.4"
   },
   "scripts": {
     "start": "react-scripts start",

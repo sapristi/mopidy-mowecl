@@ -46,20 +46,31 @@ or::
 Configuration
 =============
 
-Before starting Mopidy, you must add configuration for
-Mopidy-Mowecl to your Mopidy configuration file::
+Mowecl can both be configured in-app, and through the mopidy configuration file. Values set in the configuration files will act as default values for the clients, that can then override theme as they wish (clients configuration is stored in the browser data).
+
+Here is are the available settings (and default values) of Mowecl in the Mopidy configuration file::
 
     [mowecl]
-    # No configuration required
+    enabled = true
 
-In-app configuration
-....................
+    # generic config
+    seek_update_interval = 500
+    search_history_length = 10
 
-Several configuration options are available in the web application:
+    # theme config 
+    ## light or dark
+    theme_type = light
+    background_color = #fdf6e3
+    text_color = #002b36
+    primary_color = #268bd2
 
- - Mopidy websocket URL: mostly for development purposes, or if you are exposing mopidy websocket on a custom port
- - Progress update interval: time interval (ms) at which the song progress bar will update.
- - Search history length: max number of items in the search history
+    # Hotkeys, use web config to find the right parameters
+    key_play_pause = space+Control
+    key_next_track = ArrowRight
+    key_previous_track = 
+    key_rewind_track = ArrowLeft
+    key_volume_up = ArrowUp
+    key_volume_down = ArrowDown
 
 
 Theming
@@ -67,34 +78,88 @@ Theming
 
 Basic theming is available in the configuration, with the following options:
 
- - Background color
- - Text color
- - Highlight color
+- Background color
+- Text color
+- Highlight color
 
-For example, set these values for a dark mode based on the `Blueberry theme`_:
+For example, you can use the following settings:
 
- - Background color: ``#232937``
- - Text color: ``#7390aa``
- - Highlight color: ``#27e8a7``
++------------------+-----------------------+----------------------+
+|                  | `Solarized`_ (light)  | `Blueberry`_ (dark)  |
++==================+=======================+======================+
+| Background color | #fdf6e3               | #232937              |
++------------------+-----------------------+----------------------+
+| Text color       | #002b36               | #7390aa              |
++------------------+-----------------------+----------------------+
+| Highlight color  | #268bd2               | #27e8a7              |
++------------------+-----------------------+----------------------+
+
+.. _Blueberry: https://github.com/peymanslh/vscode-blueberry-dark-theme
+.. _Solarized: https://en.wikipedia.org/wiki/Solarized_(color_scheme)
 
 
-.. _Blueberry theme: https://github.com/peymanslh/vscode-blueberry-dark-theme
+Building
+=======================================
+
+Mowecl is a React application served by a python app. Building the application thus requires tools from both the javascript and the python ecosystem.
+
+Requirements
+.......................................
+
+- The `yarn` program
+- The `setuptools` and `wheel` python packages (installable via `pip`)
+
+Steps
+.......................................
+
+From the root of Mowecl directory, running the following commands will build the web application,, and then build the mowecl python package in the `dist` folder.
+
+.. code-block:: bash
+
+    cd mowecl_react
+    yarn install
+    yarn build
+    cd ..
+    python3 setup.py sdist bdist_wheel
+    ls dist
+
+You can then install the built package with pip, e.g.
+::
+
+    pip3 install dist/Mopidy_Mowecl-X.X.X-py3-none-any.whl
+
+Development
+.......................................
+
+To run Mowecl in develop mode, do the following:
+
+.. code-block:: bash
+
+    cd mowecl_react
+    yarn install
+    yarn start
 
 Changelog
 =======================================
 
+v0.3.5
+........................................
+
+- Parse configuration from mopidy
+- Add uri button
+- Fix volume increase/decrease
 
 v0.3.4
 ........................................
 
- - Configurable hotkeys for playback and volume control
- - Some performance improvements
+- Configurable hotkeys for playback and volume control
+- Some performance improvements
 
 
 v0.3.3
 ........................................
 
- - Color theming
+- Color theming
 
 
 v0.3.2
@@ -127,7 +192,6 @@ PROJECT resources
 - `Mopidy extension page <https://mopidy.com/ext/mowecl>`_
 - `Source code <https://github.com/sapristi/mopidy-mowecl>`_
 - `Issue tracker <https://github.com/sapristi/mopidy-mowecl/issues>`_
-- `Changelog <https://github.com/sapristi/mopidy-mowecl/blob/master/CHANGELOG.rst>`_
 
 
 Credits

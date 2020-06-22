@@ -23,16 +23,16 @@ import HelpOutlineIcon from '@material-ui/icons/HelpOutline'
 import { recordKeyCombination } from 'react-hotkeys'
 import { getApplicationKeyMap } from 'react-hotkeys'
 
-const SettingHelp = ({setting}) =>
+const SettingHelp = ({schema}) =>
       <ListItemIcon>
         <HTMLTooltip
           title={
               <Paper style={{padding: '10px', fontSize: 'small'}}>
                 <Typography>
-                  {setting.help}
+                  {schema.help}
                 </Typography>
                 <Typography>
-                  Default: <em>{setting.default}</em> 
+                  Default: <em>{schema.default}</em> 
                 </Typography>
               </Paper>
           }
@@ -41,24 +41,26 @@ const SettingHelp = ({setting}) =>
         </HTMLTooltip>
       </ListItemIcon>
 
-const TextSettingInput = ({setting, handleChange}) =>
+const TextSettingInput = ({schema, value, handleChange}) =>
       <TextField
-        label={setting.name}
+        label={schema.name}
         variant='outlined'
         style={{margin: "0 8px"}}
-        value={setting.current}
+        value={value}
         fullWidth
         onChange={handleChange}
       />
 
-const SelectSettingInput = ({setting, handleChange}) =>
+const SelectSettingInput = ({schema, value, handleChange}) =>
     <FormControl variant="outlined" style={{width: "100%", margin: "0 8px"}}>
-      <InputLabel>{setting.name}</InputLabel>
+      <InputLabel>{schema.name}</InputLabel>
       <Select
         fullWidth
-        label={setting.name}
-        value={setting.current} onChange={handleChange}>
-        {setting.choices.map(choice => <MenuItem value={choice}>{choice}</MenuItem>)}
+        label={schema.name}
+        value={value} onChange={handleChange}>
+        {schema.choices.map(
+            choice =>
+                <MenuItem value={choice} key={choice}>{choice}</MenuItem>)}
       </Select></FormControl>
 
 
@@ -94,7 +96,7 @@ const KeyInputDialog = ({open, onClose, name}) => {
 }
 
 
-const KeySettingInput = ({setting, handleChange}) => {
+const KeySettingInput = ({schema, value, handleChange}) => {
     const [dialogOpen, setDialogOpen] = React.useState(() => false)
 
 
@@ -108,38 +110,38 @@ const KeySettingInput = ({setting, handleChange}) => {
     return (
         <HFlex>
           <TextField
-            label={setting.name}
+            label={schema.name}
             variant='outlined'
             style={{margin: "0 8px"}}
-            value={setting.current}
+            value={value}
             fullWidth
             onChange={handleChange}
           />
           <Button onClick={() => setDialogOpen(true)}>Input keys</Button>
           <KeyInputDialog open={dialogOpen}
                           onClose={onClose}
-                          name={setting.name}
+                          name={schema.name}
           />
         </HFlex>)
 }
 
 
-export const SettingInput = ({setting, setSetting}) => {
+export const SettingInput = ({schema, value, setValue}) => {
 
-    const handleChange = (event) => setSetting({
-        ...setting,
-        current: event.target.value
-    })
+    const handleChange = (event) => setValue(event.target.value)
 
-    const input = match(setting.inputType)
+    const input = match(schema.inputType)
           .on("select", () =>
-              <SelectSettingInput setting={setting} handleChange={handleChange}/>)
+              <SelectSettingInput
+                schema={schema} value={value} handleChange={handleChange}/>)
           .on("shortkey", () =>
-              <KeySettingInput setting={setting} handleChange={handleChange}/>)
+              <KeySettingInput
+                schema={schema} value={value} handleChange={handleChange}/>)
           .otherwise(() =>
-                     <TextSettingInput setting={setting} handleChange={handleChange}/>)
-    const help = (setting.help)
-          ? <SettingHelp setting={setting}/>
+                     <TextSettingInput
+                       schema={schema} value={value} handleChange={handleChange}/>)
+    const help = (schema.help)
+          ? <SettingHelp schema={schema}/>
           : null
     return (
         <>
