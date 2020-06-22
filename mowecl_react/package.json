@@ -1,6 +1,6 @@
 {
   "name": "mopidy_webui",
-  "version": "0.3.4",
+  "version": "0.3.5",
   "private": true,
   "homepage": "./",
   "dependencies": {

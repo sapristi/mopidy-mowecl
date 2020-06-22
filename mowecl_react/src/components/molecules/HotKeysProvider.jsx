@@ -13,12 +13,6 @@ const HotKeysProviderUnc = ({playbackState, volume, hotkeys_conf}) => {
 
     React.useEffect(() => {
 
-        const keyMap = Object.fromEntries(
-            Object.entries(hotkeys_conf)
-                .filter(([action, setting]) =>
-                        (setting.type === "param" && setting.current))
-                .map(([action,setting]) => [action, setting.current]))
-
         const volume_incr = () => Math.min(100, Math.floor(volume * 1.1 + 1))
         const volume_decr = () => Math.floor(volume * 0.9)
 
@@ -39,7 +33,7 @@ const HotKeysProviderUnc = ({playbackState, volume, hotkeys_conf}) => {
         const defaultPreventedHandlers = Object.fromEntries(
             Object.entries(handlers).map(([k,h]) => [k, preventDefaultHandler(h)]))
 
-        setHotKeys( () => () => <GlobalHotKeys keyMap={keyMap} handlers={defaultPreventedHandlers}/>)
+        setHotKeys( () => () => <GlobalHotKeys keyMap={hotkeys_conf} handlers={defaultPreventedHandlers}/>)
     },
                     [playbackState, volume, hotkeys_conf,  mopidy])
 

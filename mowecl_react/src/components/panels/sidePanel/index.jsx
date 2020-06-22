@@ -188,5 +188,5 @@ const SidePanel = ({dispatch, uri_schemes, pendingRequestsNb, connected, search_
 
 export default connect(state => ({...state.mopidy,
                                   search_history_length:
-                                  state.settings.persistant.generic.search_history_length.current
+                                  state.settings.persistant.generic.search_history_length
                                  }) )(SidePanel)
