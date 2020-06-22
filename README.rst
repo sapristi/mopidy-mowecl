@@ -80,9 +80,9 @@ Theming
 
 Basic theming is available in the configuration, with the following options:
 
- - Background color
- - Text color
- - Highlight color
+- Background color
+- Text color
+- Highlight color
 
 For example, you can use the following settings:
 
@@ -108,13 +108,13 @@ Mowecl is a React application served by a python app. Building the application t
 Requirements
 .......................................
 
- - The `yarn` program
- - The `setuptools` and `wheel` python packages (installable via `pip`)
+- The `yarn` program
+- The `setuptools` and `wheel` python packages (installable via `pip`)
 
 Steps
 .......................................
 
-From the root of Mowecl directory, running the following commands will build the web application,, and then build the mowecl python package in the `dist` folder
+From the root of Mowecl directory, running the following commands will build the web application,, and then build the mowecl python package in the `dist` folder.
 
 .. code-block:: bash
 
@@ -134,7 +134,7 @@ To run Mowecl in develop mode, do the following:
 
     cd mowecl_react
     yarn install
-    yarn run
+    yarn start
 
 Changelog
 =======================================
@@ -142,15 +142,15 @@ Changelog
 v0.3.5
 ........................................
 
- - Parse configuration from mopidy
- - Add uri button
- - Fix volume increase/decrease
+- Parse configuration from mopidy
+- Add uri button
+- Fix volume increase/decrease
 
 v0.3.4
 ........................................
 
- - Configurable hotkeys for playback and volume control
- - Some performance improvements
+- Configurable hotkeys for playback and volume control
+- Some performance improvements
 
 
 v0.3.3
