@@ -64,11 +64,9 @@ Here is are the available settings (and default values) of Mowecl in the Mopidy 
     text_color = #002b36
     primary_color = #268bd2
 
-    # Hotkeys
-    ## key combination
+    # Hotkeys, use web config to find the right parameters
     key_play_pause = space+Control
     key_next_track = ArrowRight
-    ## Leave empty to disable hotkey 
     key_previous_track = 
     key_rewind_track = ArrowLeft
     key_volume_up = ArrowUp
@@ -124,6 +122,11 @@ From the root of Mowecl directory, running the following commands will build the
     cd ..
     python3 setup.py sdist bdist_wheel
     ls dist
+
+You can then install the built package with pip, e.g.
+::
+
+    pip3 install dist/Mopidy_Mowecl-X.X.X-py3-none-any.whl
 
 Development
 .......................................
