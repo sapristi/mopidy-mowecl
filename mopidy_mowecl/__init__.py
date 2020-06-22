@@ -38,6 +38,13 @@ class Extension(ext.Extension):
         schema["primary_color"] = ConfigColor(optional=True)
         schema["seek_update_interval"] = config.Integer()
         schema["search_history_length"] = config.Integer()
+
+        schema["key_play_pause"] = config.String(optional=True)
+        schema["key_next"] = config.String(optional=True)
+        schema["key_previous"] = config.String(optional=True)
+        schema["key_rewind"] = config.String(optional=True)
+        schema["key_volume_up"] = config.String(optional=True)
+        schema["key_volume_down"] = config.String(optional=True)
         return schema
 
     def setup(self, registry):
