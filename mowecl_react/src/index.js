@@ -22,16 +22,16 @@ const stopClient = (client) => {
     client.removeAllListeners(); client.close(); client.off()
 }
 
-let MopidyApp = ({mopidy_state, mopidy_address,  colors, dispatch}) => {
+let MopidyApp = ({mopidy_host, mopidy_port,  colors, dispatch}) => {
 
     const [mopidy, setMopidy] = React.useState(new MopidyClient({autoConnect: false}))
 
     React.useEffect(() => {
         stopClient(mopidy)
         dispatch({type: "MOPIDY_CLIENT_DISCONNECTED"})
-        console.log("Connecting to ", getWsAddress(mopidy_address.host, mopidy_address.port, "mopidy"))
+        console.log("Connecting to ", getWsAddress(mopidy_host, mopidy_port, "mopidy"))
         const new_mopidy = new MopidyClient({
-            webSocketUrl: getWsAddress(mopidy_address.host, mopidy_address.port, "mopidy"),
+            webSocketUrl: getWsAddress(mopidy_host, mopidy_port, "mopidy"),
             autoConnect: false
         })
         try {
@@ -46,7 +46,7 @@ let MopidyApp = ({mopidy_state, mopidy_address,  colors, dispatch}) => {
         dispatch({type: "MOPIDY_CLIENT_CONNECTED", })
         setMopidy(new_mopidy)
 
-    }, [mopidy_address.host, mopidy_address.port])
+    }, [mopidy_host, mopidy_port])
 
     return (
         <AppContext.Provider value={{mopidy: mopidy, dispatch: dispatch,
@@ -59,15 +59,8 @@ let MopidyApp = ({mopidy_state, mopidy_address,  colors, dispatch}) => {
 
 MopidyApp = connect(
     state => ({
-        mopidy_state: {
-            connected: state.mopidy.connected,
-            connecting: state.mopidy.connecting,
-            error: state.mopidy.error,
-        },
-        mopidy_address: {
-            host: state.settings.persistant.mopidy_host,
-            port: state.settings.persistant.mopidy_port,
-        },
+        mopidy_host: state.settings.persistant.mopidy_host,
+        mopidy_port: state.settings.persistant.mopidy_port,
         colors: state.settings.persistant.colors})
 )(MopidyApp)
 

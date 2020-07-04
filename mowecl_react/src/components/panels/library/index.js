@@ -93,15 +93,14 @@ const ChildrenSideBar = ({callback, color}) => (
 
 
 
-const NodeLeaves = ({node, dispatch, depth, rootElem, colors}) => {
+const NodeLeaves = React.memo(({node, dispatch, depth, rootElem, colors}) => {
 
-    // console.log("node", node.uri)
+    console.log("Rendering node", node.uri)
     const { mopidy } = React.useContext(AppContext)
 
     // if (isLeaf(node)) console.log(node)
 
     if (!node) return null
-
 
     const getChildrenNb = (node) => {
         if (isLeaf(node)) return ''
@@ -128,7 +127,7 @@ const NodeLeaves = ({node, dispatch, depth, rootElem, colors}) => {
 
 
 
-    const ChildrenPanel = () => (
+    const ChildrenPanel = React.memo(({node, mopidy}) => (
         <ReactSortable
           group={{name: 'library', put: false, pull: "clone" }}
           list={node.children}
@@ -145,7 +144,7 @@ const NodeLeaves = ({node, dispatch, depth, rootElem, colors}) => {
               ))
           }
         </ReactSortable>
-    )
+    ))
 
 
     return (
@@ -169,15 +168,14 @@ const NodeLeaves = ({node, dispatch, depth, rootElem, colors}) => {
                <div style={{display: 'flex', flexDirection: 'row'}}>
                  <ChildrenSideBar callback={() => toggleNode(node, dispatch, mopidy)}
                                   color={colors.primary}/>
-                 <ChildrenPanel/>
+                 <ChildrenPanel node={node} mopidy={mopidy}/>
                </div>
 
             }
           </div>
         </li>
     )
-
-}
+})
 
 let LibraryPanel = ({library, dispatch, colors}) => {
 
