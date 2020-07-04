@@ -85,20 +85,11 @@ const SettingsPanel = ({persistant, dispatch}) => {
             type: 'COMMIT_SETTINGS',
             data: settings
         })
-        const mopidy_ws = getMopidyWs(settings.mopidy_host,
-                                      settings.mopidy_port)
-        if (mopidy_ws !== mopidy._settings.webSocketUrl)
-            dispatch({type: 'CONNECT', mopidy_ws: settings.mopidy_ws, dispatch})
     }
 
     const handleClear = () => {
         dispatch({
             type: 'CLEAR_SETTINGS'
-        })
-        const mopidy_ws = getMopidyWs(settings.mopidy_host,
-                                      settings.mopidy_port)
-        dispatch({
-            type: 'CONNECT', mopidy_ws, dispatch
         })
     }
 

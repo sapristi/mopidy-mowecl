@@ -59,9 +59,9 @@ export const getDefaultMopidyHost = () => {
     return `${host}:${port}`
 }
 
-export const getMopidyWs = (host, port) => {
+export const getWsAddress = (host, port, endpoint) => {
     const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:'
-    return `${protocol}//${host}:${port}`
+    return `${protocol}//${host}:${port}/${endpoint}/ws`
 }
 
 export const getWsProtocol = () => (
