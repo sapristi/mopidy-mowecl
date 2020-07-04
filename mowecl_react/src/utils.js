@@ -52,19 +52,21 @@ export const getSearchUris = (uris) =>
     .filter( uri => !searchBlacklist.includes(uri))
     .map( (uri) => [uri, uriHumanList[uri] || uri])
 
-export const getDefaultWs = () => {
-    const schema = window.location.protocol === 'https:' ? 'wss' : 'ws'
-    const host = window.location.hostname
-    const port = 6680
-    return `${schema}://${host}:${port}/mopidy/ws`
-}
 
 export const getDefaultMopidyHost = () => {
-    const schema = window.location.protocol === 'https:' ? 'https' : 'http'
     const host = window.location.hostname
     const port = 6680
-    return `${schema}://${host}:${port}`
+    return `${host}:${port}`
 }
+
+export const getMopidyWs = (host, port) => {
+    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:'
+    return `${protocol}//${host}:${port}`
+}
+
+export const getWsProtocol = () => (
+    window.location.protocol === 'https:' ? 'wss:' : 'ws:'
+)
 
 export const AppContext = React.createContext(null);
 

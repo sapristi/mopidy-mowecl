@@ -240,7 +240,7 @@ export const mopidyReducer = (state={
             return {...state, error, connecting: true}
         }
 
-        const webSocketUrl = action.mopidy_ws
+        const webSocketUrl = action.mopidy_ws + "/mopidy/ws"
 
         console.log("webSocketUrl:", webSocketUrl)
 
@@ -249,7 +249,11 @@ export const mopidyReducer = (state={
             window.mopidy.close()
             window.mopidy.off()
         }
-        const mopidy = new Mopidy({webSocketUrl, autoConnect: false}) 
+        const mopidy = new Mopidy({webSocketUrl, autoConnect: false})
+        const bookmarks = new Mopidy({
+            webSocketUrl: action.mopidy_ws + "/bookmarks/ws"
+        })
+        window.boomarks = bookmarks
         try {
             mopidy.connect()
         } catch(error) {

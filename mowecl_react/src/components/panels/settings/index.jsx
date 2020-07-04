@@ -15,7 +15,7 @@ import ExpandLessIcon from '@material-ui/icons/ExpandLess';
 
 import {HFlex, VFlex} from 'components/atoms'
 
-import {AppContext,match} from 'utils'
+import {AppContext,match, getMopidyWs} from 'utils'
 
 import {SettingInput} from './SettingInput'
 
@@ -85,7 +85,9 @@ const SettingsPanel = ({persistant, dispatch}) => {
             type: 'COMMIT_SETTINGS',
             data: settings
         })
-        if (settings.mopidy_ws !== mopidy._settings.webSocketUrl)
+        const mopidy_ws = getMopidyWs(settings.mopidy_host,
+                                      settings.mopidy_port)
+        if (mopidy_ws !== mopidy._settings.webSocketUrl)
             dispatch({type: 'CONNECT', mopidy_ws: settings.mopidy_ws, dispatch})
     }
 
@@ -93,8 +95,10 @@ const SettingsPanel = ({persistant, dispatch}) => {
         dispatch({
             type: 'CLEAR_SETTINGS'
         })
+        const mopidy_ws = getMopidyWs(settings.mopidy_host,
+                                      settings.mopidy_port)
         dispatch({
-            type: 'CONNECT', mopidy_ws: settings.mopidy_ws, dispatch
+            type: 'CONNECT', mopidy_ws, dispatch
         })
     }
 

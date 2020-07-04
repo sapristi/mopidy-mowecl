@@ -3,7 +3,7 @@ import React from 'react'
 import Typography from '@material-ui/core/Typography'
 import Link from '@material-ui/core/Link'
 import Color from 'color'
-import { getDefaultWs, getDefaultMopidyHost, match, ObjectComp} from 'utils'
+import { getMopidyWs,  match, ObjectComp} from 'utils'
 
 
 const validate_hex_color = (str) => {
@@ -20,7 +20,8 @@ const staticSettings =
       ? (window.static_settings )
 // default settings when the app is not served by mopidy
       : ({
-          mopidy_ws: getDefaultWs(),
+          mopidy_host: window.location.hostname,
+          mopidy_port: 6680,
           generic: {
               seek_update_interval: 500,
               search_history_length: 10
@@ -43,11 +44,17 @@ export const settingsSchema = {
     name: "Settings",
     type: "group",
     description: "Commit after making your changes. In case of incorrect setting, the default value will be used instead of your input",
-    mopidy_ws: {
+    mopidy_host: {
         type: "param",
-        name: 'Modidy WebSocker URL',
-        help: 'Modidy WebSocker URL. Do not modify unless you know what you are doing.',
-        validate: v => v || staticSettings.mopidy_ws || getDefaultWs()
+        name: 'Modidy host',
+        help: 'Modidy host. Do not modify unless you know what you are doing.',
+        validate: v => v || staticSettings.mopidy_host
+    },
+    mopidy_port: {
+        type: "param",
+        name: 'Modidy port',
+        help: 'Modidy port. Do not modify unless you know what you are doing.',
+        validate: v => parseInt(v) || staticSettings.mopidy_port
     },
     generic: {
         name: "Generic",

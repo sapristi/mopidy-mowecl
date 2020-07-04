@@ -8,7 +8,7 @@ import { createStore,  combineReducers } from 'redux'
 // import 'semantic-ui-css/semantic.min.css'
 import './index.css'
 import 'typeface-roboto';
-import {AppContext} from './utils'
+import {AppContext, getMopidyWs} from './utils'
 
 import App from './App'
 import * as serviceWorker from './serviceWorker'
@@ -18,7 +18,9 @@ import {mopidyReducer, libraryReducer, playbackReducer, settingsReducer, trackli
 
 let MopidyApp = ({mopidy_connected, mopidy_connecting, mopidy_error, settings, dispatch}) => {
     if (!mopidy_connected && !mopidy_connecting && !mopidy_error) {
-        dispatch({type: 'CONNECT', mopidy_ws: settings.persistant.mopidy_ws, dispatch})
+        const mopidy_ws = getMopidyWs(settings.persistant.mopidy_host,
+                                      settings.persistant.mopidy_port)
+        dispatch({type: 'CONNECT', mopidy_ws, dispatch})
     }
 
     return (
