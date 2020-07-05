@@ -11,7 +11,7 @@ const stopClient = (client) => {
 }
 
 export const useWsClient = (endpoint, init_callback, selector) => {
-    const [client, setClient] = React.useState(new MopidyClient({autoConnect: false}))
+    const client = useSelector(selector)
     const mopidyHost = useSelector(store => store.settings.persistant.mopidy_host)
     const mopidyPort = useSelector(store => store.settings.persistant.mopidy_port)
     const dispatch = useDispatch()
@@ -36,11 +36,9 @@ export const useWsClient = (endpoint, init_callback, selector) => {
 
         init_callback(new_client)
         dispatch({type: 'UPDATE_CLIENT', endpoint, client: new_client})
-        setClient(new_client)
 
     }, [mopidyHost, mopidyPort])
 
-    return client
 }
 
 export const makeWsClientReducer = (endpoint) => (

@@ -20,24 +20,19 @@ import {mopidyReducer, libraryReducer, playbackReducer, settingsReducer, trackli
 import {initMopidyEventsDispatcher} from 'mopidy_client'
 
 
-let MopidyApp = ({mopidy_host, mopidy_port,  colors}) => {
+const MopidyApp = ({mopidy_host, mopidy_port,  colors}) => {
     const dispatch = useDispatch()
-    const mopidy = useWsClient(
+
+    useWsClient(
         "mopidy",
-        mopidyCli => initMopidyEventsDispatcher(mopidyCli, dispatch))
+        mopidyCli => initMopidyEventsDispatcher(mopidyCli, dispatch),
+        store => store.mopidy.client
+    )
 
     return (
-        <AppContext.Provider value={{mopidy: mopidy, dispatch: dispatch}}>
           <App/>
-        </AppContext.Provider>
     )
 }
-
-MopidyApp = connect(
-    state => ({
-        mopidy_host: state.settings.persistant.mopidy_host,
-        mopidy_port: state.settings.persistant.mopidy_port})
-)(MopidyApp)
 
 
 

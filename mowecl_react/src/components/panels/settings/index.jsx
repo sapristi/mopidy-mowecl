@@ -1,5 +1,5 @@
 import React from 'react'
-import { connect } from 'react-redux'
+import { connect, useSelector } from 'react-redux'
 import Button from '@material-ui/core/Button'
 import ButtonGroup from '@material-ui/core/ButtonGroup'
 import List from '@material-ui/core/List'
@@ -76,7 +76,7 @@ const SettingsGroup = ({schema, group, path, setInGroup}) => {
 
 
 const SettingsPanel = ({persistant, dispatch}) => {
-    const { mopidy } = React.useContext(AppContext)
+    const mopidy = useSelector(state => state.mopidy.client)
     const [settings, setSettings ] = React.useState(persistant)
 
 

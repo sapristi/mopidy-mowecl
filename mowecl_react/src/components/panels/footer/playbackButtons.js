@@ -1,4 +1,5 @@
 import React from 'react'
+import { useSelector } from 'react-redux'
 
 import ButtonGroup from '@material-ui/core/ButtonGroup'
 import Button from '@material-ui/core/Button'
@@ -12,7 +13,7 @@ import {AppContext} from 'utils'
 
 
 export const PlaybackButtons = ({playbackState}) => {
-    const { mopidy } = React.useContext(AppContext)
+    const mopidy = useSelector(state => state.mopidy.client)
     return (
         <ButtonGroup>
           <Button onClick={() => mopidy.playback.previous()}>

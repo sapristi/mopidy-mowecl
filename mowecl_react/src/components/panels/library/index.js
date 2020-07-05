@@ -1,5 +1,5 @@
 import React from 'react'
-import { connect } from 'react-redux'
+import { connect, useSelector } from 'react-redux'
 
 import { ReactSortable } from "react-sortablejs";
 
@@ -96,7 +96,7 @@ const ChildrenSideBar = ({callback, color}) => (
 const NodeLeaves = ({node, dispatch, depth, rootElem, colors}) => {
 
     console.log("Rendering node", node.uri)
-    const { mopidy } = React.useContext(AppContext)
+    const mopidy = useSelector(state => state.mopidy.client)
 
     // if (isLeaf(node)) console.log(node)
 

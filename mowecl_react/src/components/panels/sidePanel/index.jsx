@@ -1,5 +1,5 @@
 import React from 'react'
-import { connect } from 'react-redux'
+import { connect, useSelector } from 'react-redux'
 import Button from '@material-ui/core/Button'
 import ButtonGroup from '@material-ui/core/ButtonGroup'
 import SettingsIcon from '@material-ui/icons/Settings'
@@ -73,7 +73,7 @@ const SidePanel = (
 
     const [availableVersion, setAvailableVersion] = React.useState(() => null)
 
-    const { mopidy } = React.useContext(AppContext)
+    const mopidy = useSelector(state => state.mopidy.client)
     if (!availableVersion) {
         fetch('https://pypi.org/pypi/Mopidy-Mowecl/json').then(
             response =>  response.json().then(

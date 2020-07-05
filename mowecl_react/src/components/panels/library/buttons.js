@@ -1,5 +1,5 @@
-
 import React from 'react'
+import { useSelector, useDispatch } from 'react-redux'
 
 import ButtonGroup from '@material-ui/core/ButtonGroup';
 import Button from '@material-ui/core/Button';
@@ -24,7 +24,8 @@ import { isLeaf, expand_node, addToTracklist } from './functions'
 
 
 const PlayNowButton = ({node, ...props}) => {
-    const { mopidy, dispatch } = React.useContext(AppContext)
+    const mopidy = useSelector(state => state.mopidy.client)
+    const dispatch = useDispatch()
     return (
         <Tooltip title="Play now !">
           <Button {...props}
@@ -50,7 +51,7 @@ const PlayNowButton = ({node, ...props}) => {
 }
 
 const AddToTLButton = ({node, ...props}) => {
-    const { mopidy } = React.useContext(AppContext)
+    const mopidy = useSelector(state => state.mopidy.client)
     return (
         <Tooltip title="Add to tracklist">
           <Button {...props}
@@ -69,7 +70,8 @@ const AddToTLButton = ({node, ...props}) => {
 }
 
 const PlayTLSyncedButton = ({node, ...props}) => {
-    const { mopidy, dispatch } = React.useContext(AppContext)
+    const mopidy = useSelector(state => state.mopidy.client)
+const dispatch = useDispatch()
     return (
         <Tooltip title="Play synced">
           <Button {...props} onClick={() => {
@@ -87,7 +89,8 @@ const PlayTLSyncedButton = ({node, ...props}) => {
 
 
 const PlayPLSyncedButton = ({node, ...props}) => {
-    const { mopidy, dispatch } = React.useContext(AppContext)
+    const mopidy = useSelector(state => state.mopidy.client)
+    const dispatch = useDispatch()
     return (
         <Tooltip title="Play synced">
           <Button {...props} onClick={() => {
@@ -106,7 +109,8 @@ const PlayPLSyncedButton = ({node, ...props}) => {
 
 const DeleteTLButton = ({node, ...props}) => {
 
-    const { mopidy, dispatch } = React.useContext(AppContext)
+    const mopidy = useSelector(state => state.mopidy.client)
+    const dispatch = useDispatch()
     return (
     <Tooltip title={"Delete tracklist " + node.name}>
       <Button onClick={() => {
@@ -121,7 +125,8 @@ const DeleteTLButton = ({node, ...props}) => {
 
 const DeleteBMButton = ({node, ...props}) => {
 
-    const { mopidy, dispatch } = React.useContext(AppContext)
+    const mopidy = useSelector(state => state.mopidy.client)
+    const dispatch = useDispatch()
     return (
         <Tooltip title={"Delete bookmark " + node.name}>
           <Button onClick={() => {
@@ -136,7 +141,8 @@ const DeleteBMButton = ({node, ...props}) => {
 
 const DeletePLButton = ({node, ...props}) => {
 
-    const { mopidy, dispatch } = React.useContext(AppContext)
+    const mopidy = useSelector(state => state.mopidy.client)
+    const dispatch = useDispatch()
     return (
         <Tooltip title={"Delete playlist " + node.name}>
           <Button onClick={() => {
@@ -170,7 +176,8 @@ export const DefaultButtons = ({node}) => {
 
 export const TLsRootButtons = () => {
 
-    const { mopidy, dispatch } = React.useContext(AppContext)
+    const mopidy = useSelector(state => state.mopidy.client)
+    const dispatch = useDispatch()
     const [inputOpen, setInputOpen] = React.useState(false)
     const [input, setInput] = React.useState("")
 
@@ -259,7 +266,8 @@ export const PLButtons = ({node}) => {
 
 export const PLsRootButtons = () => {
 
-    const { mopidy, dispatch } = React.useContext(AppContext)
+    const mopidy = useSelector(state => state.mopidy.client)
+    const dispatch = useDispatch()
     const [inputOpen, setInputOpen] = React.useState(false)
     const [input, setInput] = React.useState("")
 

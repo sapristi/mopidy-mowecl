@@ -59,7 +59,7 @@ border-radius: 5px;
 
 let TracklistListPanel = ({dispatch, tracklist, current_tlid}) => {
 
-    const { mopidy } = React.useContext(AppContext)
+    const mopidy = useSelector(state => state.mopidy.client)
     const colors = useSelector(state => state.settings.persistant.colors)
 
     return (
@@ -110,7 +110,7 @@ let TracklistListPanel = ({dispatch, tracklist, current_tlid}) => {
 
 
 let TracklistInfoPanel = ({tracklist, playlists, bookmarks, dispatch}) => {
-    const { mopidy } = React.useContext(AppContext)
+    const mopidy = useSelector(state => state.mopidy.client)
     const anchorElRef = React.useRef(null)
     const [menuState, setMenuState] = React.useState(null)
 
