@@ -93,7 +93,7 @@ const ChildrenSideBar = ({callback, color}) => (
 
 
 
-const NodeLeaves = React.memo(({node, dispatch, depth, rootElem, colors}) => {
+const NodeLeaves = ({node, dispatch, depth, rootElem, colors}) => {
 
     console.log("Rendering node", node.uri)
     const { mopidy } = React.useContext(AppContext)
@@ -127,7 +127,7 @@ const NodeLeaves = React.memo(({node, dispatch, depth, rootElem, colors}) => {
 
 
 
-    const ChildrenPanel = React.memo(({node, mopidy}) => (
+    const ChildrenPanel = ({node, mopidy}) => (
         <ReactSortable
           group={{name: 'library', put: false, pull: "clone" }}
           list={node.children}
@@ -144,7 +144,7 @@ const NodeLeaves = React.memo(({node, dispatch, depth, rootElem, colors}) => {
               ))
           }
         </ReactSortable>
-    ))
+    )
 
 
     return (
@@ -175,7 +175,7 @@ const NodeLeaves = React.memo(({node, dispatch, depth, rootElem, colors}) => {
           </div>
         </li>
     )
-})
+}
 
 let LibraryPanel = ({library, dispatch, colors}) => {
 

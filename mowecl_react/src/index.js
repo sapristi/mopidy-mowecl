@@ -1,6 +1,6 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import { Provider, connect } from 'react-redux'
+import { Provider, connect, useSelector, useDispatch } from 'react-redux'
 
 import { createStore,  combineReducers } from 'redux'
 
@@ -8,50 +8,26 @@ import { createStore,  combineReducers } from 'redux'
 // import 'semantic-ui-css/semantic.min.css'
 import './index.css'
 import 'typeface-roboto';
+
 import {AppContext, getWsAddress} from './utils'
 
 import App from './App'
 import * as serviceWorker from './serviceWorker'
-import MopidyClient from "mopidy-js/mopidy"
+import {useWsClient} from "mopidy-js"
 
 import {mopidyReducer, libraryReducer, playbackReducer, settingsReducer, tracklistReducer} from './reducers'
 
 import {initMopidyEventsDispatcher} from 'mopidy_client'
 
-const stopClient = (client) => {
-    client.removeAllListeners(); client.close(); client.off()
-}
 
-let MopidyApp = ({mopidy_host, mopidy_port,  colors, dispatch}) => {
-
-    const [mopidy, setMopidy] = React.useState(new MopidyClient({autoConnect: false}))
-
-    React.useEffect(() => {
-        stopClient(mopidy)
-        dispatch({type: "MOPIDY_CLIENT_DISCONNECTED"})
-        console.log("Connecting to ", getWsAddress(mopidy_host, mopidy_port, "mopidy"))
-        const new_mopidy = new MopidyClient({
-            webSocketUrl: getWsAddress(mopidy_host, mopidy_port, "mopidy"),
-            autoConnect: false
-        })
-        try {
-            new_mopidy.connect()
-        } catch(error) {
-            console.log("Error when initializing mopidy", error)
-            stopClient(new_mopidy)
-            dispatch({type: "MOPIDY_CONNECTION_ERROR", error})
-        }
-
-        initMopidyEventsDispatcher(new_mopidy, dispatch)
-        dispatch({type: "MOPIDY_CLIENT_CONNECTED", })
-        setMopidy(new_mopidy)
-
-    }, [mopidy_host, mopidy_port])
+let MopidyApp = ({mopidy_host, mopidy_port,  colors}) => {
+    const dispatch = useDispatch()
+    const mopidy = useWsClient(
+        "mopidy",
+        mopidyCli => initMopidyEventsDispatcher(mopidyCli, dispatch))
 
     return (
-        <AppContext.Provider value={{mopidy: mopidy, dispatch: dispatch,
-                                     colors: colors
-                                    }}>
+        <AppContext.Provider value={{mopidy: mopidy, dispatch: dispatch}}>
           <App/>
         </AppContext.Provider>
     )
@@ -60,8 +36,7 @@ let MopidyApp = ({mopidy_host, mopidy_port,  colors, dispatch}) => {
 MopidyApp = connect(
     state => ({
         mopidy_host: state.settings.persistant.mopidy_host,
-        mopidy_port: state.settings.persistant.mopidy_port,
-        colors: state.settings.persistant.colors})
+        mopidy_port: state.settings.persistant.mopidy_port})
 )(MopidyApp)
 
 

@@ -43,6 +43,10 @@ export const initMopidyEventsDispatcher = (mopidy, dispatch) => {
         dispatch({
             type: 'MOPIDY_CLIENT_CONNECTED',
         })
+        dispatch({
+            type: "ACTIVE_PANEL",
+            target: "library"
+        })
         mopidy.tracklist.getTlTracks().then(
             async tltracks => {
                 dispatch({
