@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { connect, useDispatch } from 'react-redux';
+import { connect, useDispatch, useSelector } from 'react-redux';
 import { ReactSortable } from "react-sortablejs";
 
 
@@ -59,7 +59,8 @@ border-radius: 5px;
 
 let TracklistListPanel = ({dispatch, tracklist, current_tlid}) => {
 
-    const { mopidy, colors } = React.useContext(AppContext)
+    const mopidy = useSelector(state => state.mopidy.client)
+    const colors = useSelector(state => state.settings.persistant.colors)
 
     return (
              <ReactSortable
@@ -109,7 +110,7 @@ let TracklistListPanel = ({dispatch, tracklist, current_tlid}) => {
 
 
 let TracklistInfoPanel = ({tracklist, playlists, bookmarks, dispatch}) => {
-    const { mopidy } = React.useContext(AppContext)
+    const mopidy = useSelector(state => state.mopidy.client)
     const anchorElRef = React.useRef(null)
     const [menuState, setMenuState] = React.useState(null)
 

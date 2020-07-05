@@ -1,5 +1,5 @@
-
 import React from 'react';
+import { useSelector } from 'react-redux'
 import MenuItem from '@material-ui/core/MenuItem';
 
 import Popover from '@material-ui/core/Popover';
@@ -21,7 +21,7 @@ const saveAsPlaylist = (mopidy, playlistName, tracks) => {
 
 
 const SaveMenu = ({menuState, setMenuState, anchorElRef, playlists, tracklist}) => {
-    const { mopidy } = React.useContext(AppContext)
+    const mopidy = useSelector(state => state.mopidy.client)
 
     const saveAsNewPlaylist = (playlistName) => {
         if (!playlistName || playlistName.length === 0) return

@@ -199,11 +199,12 @@ console.log("SETTINGS INITIAL", initialSettings)
 const defaultSettings = {
     active_panel: 'library',
     persistant: initialSettings,
+    uri_schemes: [],
 }
 
 export const settingsReducer = (state=defaultSettings, action) => (
     match(action.type)
-        .on("ACTIVATE_PANEL", () =>
+        .on("ACTIVE_PANEL", () =>
             ({...state, active_panel: action.target})
            )
         .on('CLEAR_SETTINGS', () => {
@@ -222,8 +223,11 @@ export const settingsReducer = (state=defaultSettings, action) => (
             // console.log("Set", state.persistant)
             return {...state, persistant: newSettings }
         })
-        .on('SET_THEME', () => 
+        .on('SET_THEME', () =>
             ({...state, theme: action.data})
            )
+        .on('URI_SCHEMES', () =>
+            ({...state, uri_schemes: action.data})
+        )
         .otherwise(() => state)
 )

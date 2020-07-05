@@ -1,5 +1,5 @@
 import React from 'react'
-import { connect } from 'react-redux'
+import { connect, useSelector} from 'react-redux'
 
 import Slider from '@material-ui/core/Slider'
 import LinearProgress from '@material-ui/core/LinearProgress'
@@ -31,7 +31,7 @@ const PlaybackUpdater = connect((state) => (
 
 const PlaybackSliderUnc = ({time_position, track_length, dispatch}) => {
 
-    const { mopidy } = React.useContext(AppContext)
+    const mopidy = useSelector(state => state.mopidy.client)
     // console.log("steps", sliderSteps, time_position, track_length)
     const handleChange = (event, newValue) => {
         dispatch({

@@ -19,7 +19,7 @@ import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 import Color from 'color'
 import {HotKeysProvider} from './components/molecules/HotKeysProvider'
 
-import {useTraceUpdate} from './utils'
+import {useTraceUpdate, getWsAddress, match} from './utils'
 
 let AppContainer = ({colors, children}) => {
 
@@ -80,24 +80,23 @@ let AppContainer = ({colors, children}) => {
     )
 }
 
-let App = ({settings, mopidy_connected, mopidy_error, dispatch}) => {
-    let activePanel = null
-    switch (settings.active_panel) {
-    case 'control':
-        activePanel = <SettingsPanel/>
-        break
-    case 'help':
-        activePanel = <HelpPanel/>
-        break
-    default:
-        activePanel = <LibraryPanel/>
-    }
+let App = (
+    {active_panel_name,
+     colors, mopidy_ws_url,
+     mopidy_connected,
+     mopidy_error, dispatch}
+) => {
+    const activePanel = match(active_panel_name)
+          .on('control', <SettingsPanel/>)
+          .on('help', <HelpPanel/>)
+          .on('library', <LibraryPanel/>)
+          .otherwise(() => console.log("Bad active panel name", active_panel_name))
 
     useTraceUpdate({mopidy_connected, mopidy_error})
 
     return (mopidy_connected) ?
         (
-            <AppContainer colors={settings.persistant.colors}>
+            <AppContainer colors={colors}>
               <div style={{height: '100%', width: '100%', flexDirection: 'row', display: 'flex'}}>
                 <div style={{ width: '50%', height: '100%', overflow: 'auto',
                               scrollbarWidth: 'thin'
@@ -112,7 +111,7 @@ let App = ({settings, mopidy_connected, mopidy_error, dispatch}) => {
               </div>
             </AppContainer>
         ) : (
-            <AppContainer colors={settings.persistant.colors}>
+            <AppContainer colors={colors}>
               <div style={{ width: '50%', height: '100%', overflow: 'auto',
                             scrollbarWidth: 'thin'
                           }}>
@@ -126,7 +125,7 @@ let App = ({settings, mopidy_connected, mopidy_error, dispatch}) => {
                                          style={{margin: 'auto'}}
                                        /></div>
                 <div style={{flex: 1}}>
-                  <div>Trying to reach mopidy at {settings.persistant.mopidy_ws}</div>
+                  <div>Trying to reach mopidy at {mopidy_ws_url}</div>
                   <div>{mopidy_error}</div>
                 </div>
                 <div style={{flex: 1}}/>
@@ -137,8 +136,14 @@ let App = ({settings, mopidy_connected, mopidy_error, dispatch}) => {
 
 export default connect(
     state =>
-        ({settings: state.settings,
-          mopidy_connected: state.mopidy.connected,
-          mopidy_error: state.mopidy_error
+        ({
+            active_panel_name: state.settings.active_panel,
+            colors: state.settings.persistant.colors,
+            mopidy_ws_url: getWsAddress(
+                state.settings.persistant.mopidy_host,
+                state.settings.persistant.mopidy_port,
+                "mopidy"),
+            mopidy_connected: state.mopidy.connected,
+            mopidy_error: state.mopidy_error
          })
 )(App)

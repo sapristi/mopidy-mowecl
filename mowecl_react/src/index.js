@@ -1,6 +1,6 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import { Provider, connect } from 'react-redux'
+import { Provider, connect, useSelector, useDispatch } from 'react-redux'
 
 import { createStore,  combineReducers } from 'redux'
 
@@ -8,36 +8,31 @@ import { createStore,  combineReducers } from 'redux'
 // import 'semantic-ui-css/semantic.min.css'
 import './index.css'
 import 'typeface-roboto';
-import {AppContext, getMopidyWs} from './utils'
+
+import {AppContext, getWsAddress} from './utils'
 
 import App from './App'
 import * as serviceWorker from './serviceWorker'
+import {useWsClient, makeWsClientReducer} from "mopidy-js"
 
 import {mopidyReducer, libraryReducer, playbackReducer, settingsReducer, tracklistReducer} from './reducers'
 
+import {initMopidyEventsDispatcher} from 'mopidy_client'
 
-let MopidyApp = ({mopidy_connected, mopidy_connecting, mopidy_error, settings, dispatch}) => {
-    if (!mopidy_connected && !mopidy_connecting && !mopidy_error) {
-        const mopidy_ws = getMopidyWs(settings.persistant.mopidy_host,
-                                      settings.persistant.mopidy_port)
-        dispatch({type: 'CONNECT', mopidy_ws, dispatch})
-    }
+
+const MopidyApp = ({mopidy_host, mopidy_port,  colors}) => {
+    const dispatch = useDispatch()
+
+    useWsClient(
+        "mopidy",
+        mopidyCli => initMopidyEventsDispatcher(mopidyCli, dispatch),
+        store => store.mopidy.client
+    )
 
     return (
-        <AppContext.Provider value={{mopidy: window.mopidy, dispatch: dispatch,
-                                     colors: settings.persistant.colors
-                                    }}>
           <App/>
-        </AppContext.Provider>
     )
 }
-
-MopidyApp = connect(
-    state => ({mopidy_connected: state.mopidy.connected,
-               mopidy_connecting: state.mopidy.connecting,
-               mopidy_error: state.mopidy.error,
-               settings: state.settings})
-)(MopidyApp)
 
 
 
@@ -47,7 +42,7 @@ const store = createStore(
         tracklist: tracklistReducer,
         library: libraryReducer,
         settings: settingsReducer,
-        mopidy: mopidyReducer
+        mopidy: makeWsClientReducer("mopidy")
     }),
     window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
 )
