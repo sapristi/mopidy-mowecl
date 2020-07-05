@@ -60,8 +60,14 @@ const MopidyStatus = ({pendingRequestsNb, connected}) => {
 }
 
 
-const SidePanel = ({dispatch, uri_schemes, pendingRequestsNb, connected, search_history_length}) => {
-
+const SidePanel = (
+    {
+        uri_schemes,
+        dispatch,
+        pendingRequestsNb,
+        connected,
+        search_history_length}
+) => {
     const anchorEl = React.useRef(null)
     const [open, setOpen] = React.useState(false)
 
@@ -77,7 +83,7 @@ const SidePanel = ({dispatch, uri_schemes, pendingRequestsNb, connected, search_
     const searchUris = getSearchUris(uri_schemes)
 
     const activatePanel = function (name) {
-        return () => dispatch({type: 'ACTIVATE_PANEL',
+        return () => dispatch({type: 'ACTIVE_PANEL',
                                target: name
                               })}
 
@@ -186,7 +192,11 @@ const SidePanel = ({dispatch, uri_schemes, pendingRequestsNb, connected, search_
     )
 }
 
-export default connect(state => ({...state.mopidy,
-                                  search_history_length:
-                                  state.settings.persistant.generic.search_history_length
-                                 }) )(SidePanel)
+export default connect(
+    state => (
+        {
+            ...state.mopidy,
+            search_history_length: state.settings.persistant.generic.search_history_length,
+            uri_schemes: state.settings.uri_schemes
+        }
+    ) )(SidePanel)

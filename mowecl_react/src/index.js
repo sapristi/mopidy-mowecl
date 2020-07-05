@@ -13,7 +13,7 @@ import {AppContext, getWsAddress} from './utils'
 
 import App from './App'
 import * as serviceWorker from './serviceWorker'
-import {useWsClient} from "mopidy-js"
+import {useWsClient, makeWsClientReducer} from "mopidy-js"
 
 import {mopidyReducer, libraryReducer, playbackReducer, settingsReducer, tracklistReducer} from './reducers'
 
@@ -47,7 +47,7 @@ const store = createStore(
         tracklist: tracklistReducer,
         library: libraryReducer,
         settings: settingsReducer,
-        mopidy: mopidyReducer
+        mopidy: makeWsClientReducer("mopidy")
     }),
     window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
 )

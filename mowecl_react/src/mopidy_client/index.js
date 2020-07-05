@@ -35,13 +35,15 @@ export const initMopidyEventsDispatcher = (mopidy, dispatch) => {
     mopidy.on('event', console.log)
     mopidy.on("requests:count", (value) => {
         dispatch({
-            type: 'MOPIDY_PENDING_REQUESTS_COUNT',
+            type: 'PENDING_REQUESTS_COUNT',
+            endpoint: 'mopidy',
             data: value
         })
     })
     mopidy.on("state:online", async () => {
         dispatch({
-            type: 'MOPIDY_CLIENT_CONNECTED',
+            type: 'CLIENT_CONNECTED',
+            endpoint: 'mopidy'
         })
         dispatch({
             type: "ACTIVE_PANEL",

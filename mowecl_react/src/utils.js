@@ -1,6 +1,5 @@
 import React from 'react'
 
-
 export const duration_to_human = (ms, default_value='??') => {
     if (ms === undefined || ms === null) return default_value
 
@@ -101,11 +100,11 @@ const cleverEval = (fn, x) => (
         ? fn(x) : fn
 )
 
-export const match = x => ({
+export const match = (x, cmp = (a,b) => a===b) => ({
     on: (pred, fn) => (
         (typeof(pred) === "function")
-            ? (pred(x) ? matched(cleverEval(fn, x)) : match(x))
-            : ((x === pred) ? matched(cleverEval(fn, x)) : match(x))
+            ? (pred(x) ? matched(cleverEval(fn, x)) : match(x, cmp))
+            : ((cmp(x, pred)) ? matched(cleverEval(fn, x)) : match(x, cmp))
     ),
     otherwise: fn => cleverEval(fn, x),
 })

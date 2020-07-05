@@ -204,7 +204,7 @@ const defaultSettings = {
 
 export const settingsReducer = (state=defaultSettings, action) => (
     match(action.type)
-        .on("ACTIVATE_PANEL", () =>
+        .on("ACTIVE_PANEL", () =>
             ({...state, active_panel: action.target})
            )
         .on('CLEAR_SETTINGS', () => {
