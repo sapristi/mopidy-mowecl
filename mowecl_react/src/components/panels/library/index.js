@@ -36,7 +36,7 @@ const getButtons = (node, dispatch) => {
             <TLButtons node={node}/>)
         .on(node => node.type === "bookmark", () =>
             <BMButtons node={node}/>)
-        .on(node => node.type === "playlist" && node.uri.startsWith('m3u:'), () =>
+        .on(node => node.type === "playlist", () =>
             <PLButtons node={node}/>)
         .otherwise(() =>
                    <DefaultButtons node={node}/>)

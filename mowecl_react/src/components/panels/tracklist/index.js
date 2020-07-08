@@ -109,8 +109,13 @@ let TracklistListPanel = ({dispatch, tracklist, current_tlid}) => {
 };
 
 
-let TracklistInfoPanel = ({tracklist, playlists, bookmarks, dispatch}) => {
+const TracklistInfoPanel = ({tracklist}) => {
+
+    const dispatch = useDispatch()
     const mopidy = useSelector(state => state.mopidy.client)
+    const playlists = useSelector(state => state.library.playlists)
+    const currentBookmark = useSelector(state => state.bookmarksState.currentBookmark)
+    const bookmarksCli = useSelector(state => state.bookmarks.client)
     const anchorElRef = React.useRef(null)
     const [menuState, setMenuState] = React.useState(null)
 
@@ -127,7 +132,6 @@ let TracklistInfoPanel = ({tracklist, playlists, bookmarks, dispatch}) => {
                     target: ["playlist:", playlists.synced.uri],
                     fun: () => (items || [])
                 })
-
             )
         }
         setPrevTracklist(tracklist)
@@ -139,12 +143,12 @@ let TracklistInfoPanel = ({tracklist, playlists, bookmarks, dispatch}) => {
                      justifyContent: 'space-between'
                     }}>
           {
-              playlists.synced &&
+              currentBookmark &&
                   <Chip icon={<SyncIcon/>}
                         color="primary"
-                        onDelete={() => dispatch({type: 'PLAYLIST_UNSYNC'})}
+                        onDelete={() => bookmarksCli.stopSync()}
                         style={{float: 'left'}}
-                        label={playlists.synced.name}
+                        label={currentBookmark}
                         variant='outlined'
                         size="small"
                   />
@@ -188,7 +192,6 @@ let TracklistInfoPanel = ({tracklist, playlists, bookmarks, dispatch}) => {
           </ButtonGroup>
         </Paper>)
 }
-TracklistInfoPanel = connect(state => ({ playlists: state.library.playlists}))(TracklistInfoPanel)
 
 
 let TracklistPanel = ({tracklist, current_tlid, dispatch}) => {

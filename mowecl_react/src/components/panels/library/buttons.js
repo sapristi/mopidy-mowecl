@@ -107,6 +107,21 @@ const PlayPLSyncedButton = ({node, ...props}) => {
     )
 }
 
+
+const ResumeBookmarkButton = ({node, ...props}) => {
+    const bookmarksCli = useSelector(state => state.bookmarks.client)
+    const dispatch = useDispatch()
+    const resume = () => bookmarksCli.resume({name: node.name})
+    return (
+        <Tooltip title="Resume bookmark">
+          <Button {...props} onClick={resume}>
+            <PlaylistPlayIcon />
+          </Button>
+        </Tooltip>
+    )
+}
+
+
 const DeleteTLButton = ({node, ...props}) => {
 
     const mopidy = useSelector(state => state.mopidy.client)
@@ -250,12 +265,13 @@ export const BMButtons = ({node}) => {
 
 
 export const PLButtons = ({node}) => {
-
     return (
         <ListItemIcon>
           <ButtonGroup size="small">
             <PlayNowButton node={node}/>
-            {/* <PlayPLSyncedButton node={node}/> */}
+            {node.uri.startsWith("bookmark:") &&
+             <ResumeBookmarkButton node={node}/>
+            }
             <AddToTLButton node={node}/>
             <DeletePLButton node={node}/>
           </ButtonGroup>

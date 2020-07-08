@@ -17,8 +17,9 @@ import {useWsClient, makeWsClientReducer} from "mopidy-js"
 
 import {mopidyReducer, libraryReducer, playbackReducer, settingsReducer, tracklistReducer} from './reducers'
 
-import {initMopidyEventsDispatcher} from 'mopidy_client'
+import {initMopidyEventsDispatcher} from 'client_setup/mopidy'
 
+import {initBookmarksEventsDispatcher, bookmarksStateReducer} from 'client_setup/bookmarks'
 
 const MopidyApp = ({mopidy_host, mopidy_port,  colors}) => {
     const dispatch = useDispatch()
@@ -29,11 +30,15 @@ const MopidyApp = ({mopidy_host, mopidy_port,  colors}) => {
         store => store.mopidy.client
     )
 
+    useWsClient(
+        "bookmarks",
+        bookmarksCli => initBookmarksEventsDispatcher(bookmarksCli, dispatch),
+        store => store.bookmarks.client
+    )
     return (
           <App/>
     )
 }
-
 
 
 const store = createStore(
@@ -42,7 +47,9 @@ const store = createStore(
         tracklist: tracklistReducer,
         library: libraryReducer,
         settings: settingsReducer,
-        mopidy: makeWsClientReducer("mopidy")
+        mopidy: makeWsClientReducer("mopidy"),
+        bookmarks: makeWsClientReducer("bookmarks"),
+        bookmarksState: bookmarksStateReducer,
     }),
     window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
 )

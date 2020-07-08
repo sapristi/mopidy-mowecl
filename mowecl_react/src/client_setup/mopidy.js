@@ -45,6 +45,7 @@ export const initMopidyEventsDispatcher = (mopidy, dispatch) => {
             type: 'CLIENT_CONNECTED',
             endpoint: 'mopidy'
         })
+        dispatch({type: 'UPDATE_CLIENT', endpoint: "mopidy", client: mopidy})
         dispatch({
             type: "ACTIVE_PANEL",
             target: "library"
@@ -121,7 +122,8 @@ export const initMopidyEventsDispatcher = (mopidy, dispatch) => {
     })
 
     mopidy.on("state:offline", () => dispatch({
-        type: 'MOPIDY_CLIENT_DISCONNECTED',
+        type: 'CLIENT_DISCONNECTED',
+        endpoint: "mopidy"
     }))
 
     mopidy.on("event:trackPlaybackResumed", (data) => {

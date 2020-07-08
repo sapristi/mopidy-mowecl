@@ -27,7 +27,6 @@ export const useWsClient = (endpoint, init_callback, selector) => {
         })
         try {
             new_client.connect()
-            dispatch({type: 'CLIENT_CONNECTED', endpoint})
         } catch(error) {
             console.log("Error when initializing mopidy client", error)
             stopClient(new_client)
@@ -35,8 +34,7 @@ export const useWsClient = (endpoint, init_callback, selector) => {
         }
 
         init_callback(new_client)
-        dispatch({type: 'UPDATE_CLIENT', endpoint, client: new_client})
-
+        window[endpoint] = new_client
     }, [mopidyHost, mopidyPort])
 
 }
