@@ -63,15 +63,6 @@ export const initMopidyEventsDispatcher = (mopidyCli, dispatch) => {
                     target: ["playlist:"],
                     fun: () => playlists,
                 })
-
-                const bookmarks = JSON.parse(localStorage.getItem("bookmarks"))
-                console.log("BOOKMARKS", bookmarks)
-                if (bookmarks)
-                    dispatch({
-                        type: 'LIBRARY_SET_CHILDREN',
-                        target: ["bookmark:"],
-                        fun: () => bookmarks.children
-                    })
              }
         )
 
