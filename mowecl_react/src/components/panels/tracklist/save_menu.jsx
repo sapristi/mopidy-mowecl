@@ -22,7 +22,7 @@ const saveAsPlaylist = (mopidy, playlistName, tracks) => {
 
 const SaveMenu = ({menuState, setMenuState, anchorElRef, playlists, tracklist}) => {
     const mopidy = useSelector(state => state.mopidy.client)
-
+    playlists = {children: []}
     const saveAsNewPlaylist = (playlistName) => {
         if (!playlistName || playlistName.length === 0) return
         if (playlists.children.map(pl => pl.name).includes(playlistName)) {

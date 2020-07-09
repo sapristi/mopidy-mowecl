@@ -1,5 +1,5 @@
 import React from 'react'
-import { connect, useSelector } from 'react-redux'
+import { connect, useSelector, useDispatch } from 'react-redux'
 
 import { ReactSortable } from "react-sortablejs";
 
@@ -93,11 +93,12 @@ const ChildrenSideBar = ({callback, color}) => (
 
 
 
-const NodeLeaves = ({node, dispatch, depth, rootElem, colors}) => {
+const NodeLeaves = ({node, depth, rootElem}) => {
 
-    console.log("Rendering node", node.uri)
+    // console.log("Rendering node", node.uri)
+    const dispatch = useDispatch()
     const mopidy = useSelector(state => state.mopidy.client)
-
+    const colors = useSelector(state => state.settings.persistant.colors)
     // if (isLeaf(node)) console.log(node)
 
     if (!node) return null
@@ -140,7 +141,7 @@ const NodeLeaves = ({node, dispatch, depth, rootElem, colors}) => {
           {
               node.children.map(child => (
                   <NodeLeaves key={child.uri} node={child} dispatch={dispatch}
-                              depth={depth+1} colors={colors}/>
+                              depth={depth+1}/>
               ))
           }
         </ReactSortable>
@@ -177,35 +178,36 @@ const NodeLeaves = ({node, dispatch, depth, rootElem, colors}) => {
     )
 }
 
-let LibraryPanel = ({library, dispatch, colors}) => {
+export const LibraryPanel = () => {
 
-
+    const library = useSelector(state => state.library)
     const full_lib = [
         ...library.mopidyLibrary,
-        library.playlists,
-        library.search_results,
     ]
 
-    if (library.search_history.children.length > 0) {
-        full_lib.push(library.search_history)
-    }
+    const optionalLibItems = [
+        library.playlists,
+        library.bookmarks,
+        library.search_results,
+        library.search_history
+    ]
 
-    if (library.bookmarks.children.length > 0) {
-        full_lib.push(library.bookmarks)
-    }
-
-    console.log("Library:", library, dispatch)
+    optionalLibItems.forEach(
+        item => {
+            if (item.children.length > 0) {
+                full_lib.push(item)
+            }}
+    )
 
     return (
         <Paper style={{minHeight: "100%"}}>
           <List style={{paddingLeft: '10px'}}>
             {
-                full_lib.map( (node) => 
-                              <NodeLeaves node={node} dispatch={dispatch}
+                full_lib.map( (node) =>
+                              <NodeLeaves node={node}
                                           depth={0}
                                           key={node.uri}
                                           rootElem
-                                          colors={colors}
                               />
                             )
             }
@@ -213,6 +215,4 @@ let LibraryPanel = ({library, dispatch, colors}) => {
         </Paper>
     )
 }
-
-export default connect( (state) => ({library: state.library, colors: state.settings.persistant.colors}) )(LibraryPanel)
 

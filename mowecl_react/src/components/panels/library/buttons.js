@@ -111,7 +111,7 @@ const PlayPLSyncedButton = ({node, ...props}) => {
 const ResumeBookmarkButton = ({node, ...props}) => {
     const bookmarksCli = useSelector(state => state.bookmarks.client)
     const dispatch = useDispatch()
-    const resume = () => bookmarksCli.resume({name: node.name})
+    const resume = () => bookmarksCli.resume({uri: node.uri})
     return (
         <Tooltip title="Resume bookmark">
           <Button {...props} onClick={resume}>
