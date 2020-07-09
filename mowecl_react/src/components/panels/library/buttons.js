@@ -30,7 +30,6 @@ const PlayNowButton = ({node, ...props}) => {
         <Tooltip title="Play now !">
           <Button {...props}
                   onClick={() => {
-                      dispatch({type: 'TRACKLIST_UNSYNC'})
                       mopidy.tracklist.clear()
                       addToTracklist(node, 0, mopidy).then(
                           (tltracks) => {
@@ -65,45 +64,6 @@ const AddToTLButton = ({node, ...props}) => {
             <PlaylistAddIcon/>
           </Button>
         </Tooltip>
-
-    )
-}
-
-const PlayTLSyncedButton = ({node, ...props}) => {
-    const mopidy = useSelector(state => state.mopidy.client)
-const dispatch = useDispatch()
-    return (
-        <Tooltip title="Play synced">
-          <Button {...props} onClick={() => {
-              mopidy.tracklist.clear()
-              dispatch({type: 'TRACKLIST_SYNC', data: node.uri})
-              addToTracklist(node, 0, mopidy).then(
-                  () => mopidy.playback.play()
-              )
-          }}>
-            <PlaylistPlayIcon />
-          </Button>
-        </Tooltip>
-    )
-}
-
-
-const PlayPLSyncedButton = ({node, ...props}) => {
-    const mopidy = useSelector(state => state.mopidy.client)
-    const dispatch = useDispatch()
-    return (
-        <Tooltip title="Play synced">
-          <Button {...props} onClick={() => {
-              mopidy.tracklist.clear()
-              addToTracklist(node, 0, mopidy).then(
-                  (pl_uris) => {
-                      dispatch({type: 'PLAYLIST_SYNC', data: {...node, children: pl_uris}})
-                      mopidy.playback.play()}
-              )
-          }}>
-            <PlaylistPlayIcon />
-          </Button>
-        </Tooltip>
     )
 }
 
@@ -121,55 +81,14 @@ const ResumeBookmarkButton = ({node, ...props}) => {
     )
 }
 
-
-const DeleteTLButton = ({node, ...props}) => {
-
-    const mopidy = useSelector(state => state.mopidy.client)
-    const dispatch = useDispatch()
-    return (
-    <Tooltip title={"Delete tracklist " + node.name}>
-      <Button onClick={() => {
-          dispatch({type: 'TRACKLIST_DELETE', data: node.uri})
-
-      }} {...props}>
-        <Icon path={mdiPlaylistRemove} size={1}/>
-      </Button>
-    </Tooltip>
-    )
-}
-
-const DeleteBMButton = ({node, ...props}) => {
-
-    const mopidy = useSelector(state => state.mopidy.client)
-    const dispatch = useDispatch()
-    return (
-        <Tooltip title={"Delete bookmark " + node.name}>
-          <Button onClick={() => {
-              dispatch({type: 'BOOKMARK_DELETE', target: node.uri})
-
-          }} {...props}>
-            <DeleteOutlineIcon/>
-          </Button>
-        </Tooltip>
-    )
-}
-
 const DeletePLButton = ({node, ...props}) => {
-
     const mopidy = useSelector(state => state.mopidy.client)
     const dispatch = useDispatch()
+    const action = () => mopidy.playlists.delete({uri: node.uri})
+
     return (
         <Tooltip title={"Delete playlist " + node.name}>
-          <Button onClick={() => {
-              mopidy.playlists.delete({uri: node.uri})
-              mopidy.playlists.asList().then(
-                  playlists_updated => dispatch({
-                      type: 'LIBRARY_UPDATE_CHILDREN',
-                      target: ['playlist:'],
-                      data: playlists_updated
-                  })
-              )
-          }} {...props}>
+          <Button onClick={action} {...props}>
             <Icon path={mdiPlaylistRemove} size={1}/>
           </Button>
         </Tooltip>
@@ -189,88 +108,15 @@ export const DefaultButtons = ({node}) => {
     )
 }
 
-export const TLsRootButtons = () => {
-
-    const mopidy = useSelector(state => state.mopidy.client)
-    const dispatch = useDispatch()
-    const [inputOpen, setInputOpen] = React.useState(false)
-    const [input, setInput] = React.useState("")
-
-    const inputRef = React.useRef(null)
-
-    const triggerCreateTracklist = () => {
-        if (input.length === 0) return
-        dispatch({
-            type: "TRACKLIST_CREATE",
-            data: input
-        })
-
-    }
-
-    return (
-        <ListItemIcon>
-          <ButtonGroup size="small">
-            <Tooltip title="Create new tracklist">
-              <Button onClick={() => {setInputOpen(!inputOpen)}}>
-                {
-                    inputOpen ?
-                        <ClearIcon/> :
-                    <AddIcon/>
-                }
-              </Button>
-            </Tooltip>
-          {
-          inputOpen &&
-                  <TextField label="Tracklist name" variant="outlined" size="small"
-                             onChange={(event) => setInput(event.target.value)}
-                             onKeyPress={(event) => {
-                                 if (event.key !== 'Enter') return 
-                                 triggerCreateTracklist(event.key)
-                                 setInputOpen(false)
-                             }}
-                             autoFocus={true}
-                             ref={inputRef}
-                  />
-        }
-          </ButtonGroup>
-        </ListItemIcon>
-    )
-}
-
-export const TLButtons = ({node}) => {
-
-    return (
-        <ListItemIcon>
-          <ButtonGroup size="small">
-            <PlayTLSyncedButton node={node}/>
-            <AddToTLButton node={node}/>
-            <DeleteTLButton node={node}/>
-          </ButtonGroup>
-        </ListItemIcon>
-    )
-}
-
-export const BMButtons = ({node}) => {
-
-    return (
-        <ListItemIcon>
-          <ButtonGroup size="small">
-            <PlayNowButton node={node}/>
-            <AddToTLButton node={node}/>
-            <DeleteBMButton node={node}/>
-          </ButtonGroup>
-        </ListItemIcon>
-    )
-}
-
 
 export const PLButtons = ({node}) => {
     return (
         <ListItemIcon>
           <ButtonGroup size="small">
-            <PlayNowButton node={node}/>
-            {node.uri.startsWith("bookmark:") &&
-             <ResumeBookmarkButton node={node}/>
+            {
+                (node.uri.startsWith("bookmark:"))
+                    ? (<ResumeBookmarkButton node={node}/>)
+                : (<PlayNowButton node={node}/>)
             }
             <AddToTLButton node={node}/>
             <DeletePLButton node={node}/>
@@ -291,15 +137,7 @@ export const PLsRootButtons = () => {
 
     const triggerCreatePlaylist = () => {
         if (input.length === 0) return
-        mopidy.playlists.create({'name': input, 'uri_scheme': 'm3u'}).then(
-            () => {
-                mopidy.playlists.asList().then(
-                    playlists => dispatch({
-                        type: 'LIBRARY_UPDATE_CHILDREN',
-                        target: ["playlist:"],
-                        data: playlists,
-                    }))
-            })}
+        mopidy.playlists.create({'name': input, 'uri_scheme': 'm3u'})}
 
     return (
         <ListItemIcon>

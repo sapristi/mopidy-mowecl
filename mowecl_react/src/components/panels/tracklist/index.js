@@ -164,9 +164,7 @@ const TracklistInfoPanel = ({tracklist}) => {
             </Tooltip>
 
             <Tooltip title="Clear playlist">
-              <Button onClick={() => {
-                  dispatch({type: 'TRACKLIST_UNSYNC'})
-                  mopidy.tracklist.clear()}}>
+              <Button onClick={() => mopidy.tracklist.clear()}>
                 <ClearAllIcon fontSize="small"/>
               </Button>
             </Tooltip>
