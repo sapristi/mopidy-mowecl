@@ -60,7 +60,6 @@ const store = createStore(
 window.$store = store
 
 
-
 ReactDOM.render(
     <Provider store={store} style={{height: '100%'}}>
       <RecoilRoot>
@@ -73,3 +72,10 @@ ReactDOM.render(
 // unregister() to register() below. Note this comes with some pitfalls.
 // Learn more about service workers: https://bit.ly/CRA-PWA
 serviceWorker.unregister()
+
+// Trigger buttons blur so that spacebar doesn't affect them
+document.querySelectorAll("button").forEach( function(item) {
+    item.addEventListener('focus', function() {
+        this.blur();
+    })
+})

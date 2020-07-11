@@ -128,7 +128,9 @@ export const ExtraButtonsPopover = ({...props}) => {
               horizontal: 'center',
           }}
         >
-          {children}
+          <ButtonGroup size="small">
+            {children}
+          </ButtonGroup>
         </Popover>
     )
 }

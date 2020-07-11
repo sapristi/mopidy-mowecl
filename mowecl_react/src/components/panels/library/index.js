@@ -16,7 +16,7 @@ import ExpandLessIcon from '@material-ui/icons/ExpandLess';
 import {AppContext, duration_to_human, match} from 'utils'
 import {Track} from 'components/molecules'
 import { isLeaf, rec_expand_file, addToTracklist, toggleNode } from './functions'
-import {DefaultButtons, PLsRootButtons, PLButtons, ExtraButtonsPopover} from './buttons'
+import {DefaultButtons, PLButtons, ExtraButtonsPopover, BMButtons} from './buttons'
 
 import Color from 'color'
 import styled from '@emotion/styled'
@@ -32,6 +32,8 @@ const getButtons = (node, dispatch) => {
     return match(node)
         .on(node => node.path && node.path.length === 1, () =>
             null)
+        .on(node => node.uri.startsWith("bookmark:"), () =>
+            <BMButtons node={node}/>)
         .on(node => node.type === "playlist", () =>
             <PLButtons node={node}/>)
         .otherwise(() =>
