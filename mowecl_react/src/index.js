@@ -1,6 +1,9 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import { Provider, connect, useSelector, useDispatch } from 'react-redux'
+import {
+    RecoilRoot,
+} from 'recoil';
 
 import { createStore,  combineReducers } from 'redux'
 
@@ -60,7 +63,9 @@ window.$store = store
 
 ReactDOM.render(
     <Provider store={store} style={{height: '100%'}}>
-      <MopidyApp />
+      <RecoilRoot>
+        <MopidyApp />
+      </RecoilRoot>
     </Provider>
     , document.getElementById('root'))
 

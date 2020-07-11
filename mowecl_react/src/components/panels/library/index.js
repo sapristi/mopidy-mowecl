@@ -16,7 +16,7 @@ import ExpandLessIcon from '@material-ui/icons/ExpandLess';
 import {AppContext, duration_to_human, match} from 'utils'
 import {Track} from 'components/molecules'
 import { isLeaf, rec_expand_file, addToTracklist, toggleNode } from './functions'
-import {DefaultButtons, PLsRootButtons, PLButtons} from './buttons'
+import {DefaultButtons, PLsRootButtons, PLButtons, ExtraButtonsPopover} from './buttons'
 
 import Color from 'color'
 import styled from '@emotion/styled'
@@ -208,6 +208,7 @@ export const LibraryPanel = () => {
                             )
             }
           </List>
+          <ExtraButtonsPopover/>
         </Paper>
     )
 }

@@ -141,7 +141,10 @@ const TracklistInfoPanel = ({tracklist}) => {
         <Paper style={{paddingLeft: '10px', display: 'flex',
                      flexDirection: 'row', alignItems: 'center',
                      justifyContent: 'space-between'
-                    }}>
+                      }}>
+          <div>
+            {tracklist.length} tracks
+          </div>
           {
               currentBookmark &&
                   <Chip icon={<SyncIcon/>}
@@ -153,9 +156,6 @@ const TracklistInfoPanel = ({tracklist}) => {
                         size="small"
                   />
           }
-          <div>
-            {tracklist.length} tracks
-          </div>
           <ButtonGroup>
             <Tooltip title="Add uri to tracklist">
               <Button onClick={() => setMenuState("add_uri")}>
@@ -163,12 +163,12 @@ const TracklistInfoPanel = ({tracklist}) => {
               </Button>
             </Tooltip>
 
-            <Tooltip title="Clear playlist">
+            <Tooltip title="Clear tracklist">
               <Button onClick={() => mopidy.tracklist.clear()}>
                 <ClearAllIcon fontSize="small"/>
               </Button>
             </Tooltip>
-            <Tooltip title="Save as...">
+            <Tooltip title="Save as playlist">
               <Button onClick={() => setMenuState("menu")} ref={anchorElRef}>
                 <SaveAltIcon/>
               </Button>

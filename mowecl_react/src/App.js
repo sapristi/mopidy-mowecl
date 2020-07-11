@@ -1,7 +1,6 @@
 import React from 'react'
 import { connect } from 'react-redux'
 
-
 import './App.css'
 import Footer from './components/panels/footer'
 
