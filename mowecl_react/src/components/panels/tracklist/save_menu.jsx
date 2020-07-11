@@ -10,7 +10,7 @@ import {Input} from 'components/molecules'
 
 
 
-const saveAsPlaylist = (mopidy, playlistName, tracks) => {
+export const saveAsPlaylist = (mopidy, playlistName, tracks) => {
     mopidy.playlists.create({'name': playlistName, 'uri_scheme': 'm3u'}).then(
         (playlist) => {
             playlist.tracks = tracks
@@ -20,7 +20,7 @@ const saveAsPlaylist = (mopidy, playlistName, tracks) => {
 
 
 
-const SaveMenu = ({menuState, setMenuState, anchorElRef, playlists, tracklist}) => {
+export const SaveMenu = ({menuState, setMenuState, anchorElRef, playlists, tracklist}) => {
     const mopidy = useSelector(state => state.mopidy.client)
 
     const saveAsNewPlaylist = (playlistName) => {
@@ -32,8 +32,6 @@ const SaveMenu = ({menuState, setMenuState, anchorElRef, playlists, tracklist}) 
 
         saveAsPlaylist(mopidy, playlistName, tracklist.map(tlt => tlt.track))
     }
-
-
 
     const MainMenu = () => <Popover
       anchorEl={anchorElRef.current}
@@ -50,11 +48,10 @@ const SaveMenu = ({menuState, setMenuState, anchorElRef, playlists, tracklist}) 
       <MenuItem onClick={event => setMenuState("submenu")}>
         Overwrite Playlist
       </MenuItem>
-      
     </Popover>
 
 
-    const SaveSubMenu = () => 
+    const SaveSubMenu = () =>
         <Popover
           anchorEl={anchorElRef.current}
           keepMounted
@@ -83,5 +80,3 @@ const SaveMenu = ({menuState, setMenuState, anchorElRef, playlists, tracklist}) 
         return <MainMenu/>
     } else {return <SaveSubMenu/>}
 }
-
-export {SaveMenu, saveAsPlaylist}

@@ -1,13 +1,12 @@
 import React from 'react'
 import { connect } from 'react-redux'
 
-
 import './App.css'
 import Footer from './components/panels/footer'
 
 import SidePanel from './components/panels/sidePanel'
 import TracklistPanel from './components/panels/tracklist'
-import LibraryPanel from './components/panels/library'
+import { LibraryPanel } from './components/panels/library'
 import SettingsPanel from './components/panels/settings'
 import HelpPanel from './components/panels/helpPanel'
 

@@ -1,6 +1,9 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import { Provider, connect, useSelector, useDispatch } from 'react-redux'
+import {
+    RecoilRoot,
+} from 'recoil';
 
 import { createStore,  combineReducers } from 'redux'
 
@@ -17,8 +20,9 @@ import {useWsClient, makeWsClientReducer} from "mopidy-js"
 
 import {mopidyReducer, libraryReducer, playbackReducer, settingsReducer, tracklistReducer} from './reducers'
 
-import {initMopidyEventsDispatcher} from 'mopidy_client'
+import {initMopidyEventsDispatcher} from 'client_setup/mopidy'
 
+import {initBookmarksEventsDispatcher, bookmarksStateReducer} from 'client_setup/bookmarks'
 
 const MopidyApp = ({mopidy_host, mopidy_port,  colors}) => {
     const dispatch = useDispatch()
@@ -29,11 +33,15 @@ const MopidyApp = ({mopidy_host, mopidy_port,  colors}) => {
         store => store.mopidy.client
     )
 
+    useWsClient(
+        "bookmarks",
+        bookmarksCli => initBookmarksEventsDispatcher(bookmarksCli, dispatch),
+        store => store.bookmarks.client
+    )
     return (
           <App/>
     )
 }
-
 
 
 const store = createStore(
@@ -42,7 +50,9 @@ const store = createStore(
         tracklist: tracklistReducer,
         library: libraryReducer,
         settings: settingsReducer,
-        mopidy: makeWsClientReducer("mopidy")
+        mopidy: makeWsClientReducer("mopidy"),
+        bookmarks: makeWsClientReducer("bookmarks"),
+        bookmarksState: bookmarksStateReducer,
     }),
     window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
 )
@@ -50,10 +60,11 @@ const store = createStore(
 window.$store = store
 
 
-
 ReactDOM.render(
     <Provider store={store} style={{height: '100%'}}>
-      <MopidyApp />
+      <RecoilRoot>
+        <MopidyApp />
+      </RecoilRoot>
     </Provider>
     , document.getElementById('root'))
 
@@ -61,3 +72,10 @@ ReactDOM.render(
 // unregister() to register() below. Note this comes with some pitfalls.
 // Learn more about service workers: https://bit.ly/CRA-PWA
 serviceWorker.unregister()
+
+// Trigger buttons blur so that spacebar doesn't affect them
+document.querySelectorAll("button").forEach( function(item) {
+    item.addEventListener('focus', function() {
+        this.blur();
+    })
+})

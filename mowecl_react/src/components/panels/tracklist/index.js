@@ -109,8 +109,13 @@ let TracklistListPanel = ({dispatch, tracklist, current_tlid}) => {
 };
 
 
-let TracklistInfoPanel = ({tracklist, playlists, bookmarks, dispatch}) => {
+const TracklistInfoPanel = ({tracklist}) => {
+
+    const dispatch = useDispatch()
     const mopidy = useSelector(state => state.mopidy.client)
+    const playlists = useSelector(state => state.library.playlists)
+    const currentBookmark = useSelector(state => state.bookmarksState.currentBookmark)
+    const bookmarksCli = useSelector(state => state.bookmarks.client)
     const anchorElRef = React.useRef(null)
     const [menuState, setMenuState] = React.useState(null)
 
@@ -127,7 +132,6 @@ let TracklistInfoPanel = ({tracklist, playlists, bookmarks, dispatch}) => {
                     target: ["playlist:", playlists.synced.uri],
                     fun: () => (items || [])
                 })
-
             )
         }
         setPrevTracklist(tracklist)
@@ -137,21 +141,21 @@ let TracklistInfoPanel = ({tracklist, playlists, bookmarks, dispatch}) => {
         <Paper style={{paddingLeft: '10px', display: 'flex',
                      flexDirection: 'row', alignItems: 'center',
                      justifyContent: 'space-between'
-                    }}>
+                      }}>
+          <div>
+            {tracklist.length} tracks
+          </div>
           {
-              playlists.synced &&
+              currentBookmark &&
                   <Chip icon={<SyncIcon/>}
                         color="primary"
-                        onDelete={() => dispatch({type: 'PLAYLIST_UNSYNC'})}
+                        onDelete={() => bookmarksCli.stopSync()}
                         style={{float: 'left'}}
-                        label={playlists.synced.name}
+                        label={currentBookmark}
                         variant='outlined'
                         size="small"
                   />
           }
-          <div>
-            {tracklist.length} tracks
-          </div>
           <ButtonGroup>
             <Tooltip title="Add uri to tracklist">
               <Button onClick={() => setMenuState("add_uri")}>
@@ -159,14 +163,12 @@ let TracklistInfoPanel = ({tracklist, playlists, bookmarks, dispatch}) => {
               </Button>
             </Tooltip>
 
-            <Tooltip title="Clear playlist">
-              <Button onClick={() => {
-                  dispatch({type: 'TRACKLIST_UNSYNC'})
-                  mopidy.tracklist.clear()}}>
+            <Tooltip title="Clear tracklist">
+              <Button onClick={() => mopidy.tracklist.clear()}>
                 <ClearAllIcon fontSize="small"/>
               </Button>
             </Tooltip>
-            <Tooltip title="Save as...">
+            <Tooltip title="Save as playlist">
               <Button onClick={() => setMenuState("menu")} ref={anchorElRef}>
                 <SaveAltIcon/>
               </Button>
@@ -188,7 +190,6 @@ let TracklistInfoPanel = ({tracklist, playlists, bookmarks, dispatch}) => {
           </ButtonGroup>
         </Paper>)
 }
-TracklistInfoPanel = connect(state => ({ playlists: state.library.playlists}))(TracklistInfoPanel)
 
 
 let TracklistPanel = ({tracklist, current_tlid, dispatch}) => {
