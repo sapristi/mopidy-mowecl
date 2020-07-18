@@ -16,7 +16,6 @@ export const useWsClient = (endpoint, init_callback, selector) => {
     const mopidyPort = useSelector(store => store.settings.persistant.mopidy_port)
     const dispatch = useDispatch()
 
-    const action_prefix = endpoint.toUpperCase()
     React.useEffect(() => {
         stopClient(client)
         dispatch({type: 'CLIENT_DISCONNECTED', endpoint})

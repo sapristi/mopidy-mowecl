@@ -4,7 +4,7 @@ import { connect, useSelector} from 'react-redux'
 import Slider from '@material-ui/core/Slider'
 import LinearProgress from '@material-ui/core/LinearProgress'
 
-import { duration_to_human, AppContext } from 'utils'
+import { duration_to_human } from 'utils'
 const sliderSteps = 300
 
 
@@ -29,9 +29,10 @@ const PlaybackUpdater = connect((state) => (
     PlaybackUpdaterUnc)
 
 
-const PlaybackSliderUnc = ({time_position, track_length, dispatch}) => {
+export const PlaybackSlider = ({track_length, dispatch}) => {
 
     const mopidy = useSelector(state => state.mopidy.client)
+    const time_position = useSelector(state => state.playback_state.time_position)
     // console.log("steps", sliderSteps, time_position, track_length)
     const handleChange = (event, newValue) => {
         dispatch({
@@ -81,11 +82,3 @@ const PlaybackSliderUnc = ({time_position, track_length, dispatch}) => {
         )
     }
 }
-
-const getPlaybackState = (state) => {
-    return {time_position: state.playback_state.time_position,
-           }}
-export const PlaybackSlider = connect(
-    state => (
-        {time_position: state.playback_state.time_position})
-)(PlaybackSliderUnc)

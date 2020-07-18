@@ -1,5 +1,4 @@
 import { match } from 'utils'
-import {updateOrInsert} from 'reducers/library/aux_functions'
 
 export const initBookmarksEventsDispatcher = (bookmarksCli, dispatch) => {
     bookmarksCli.on('event', console.log)
@@ -17,21 +16,11 @@ export const initBookmarksEventsDispatcher = (bookmarksCli, dispatch) => {
             type: 'CLIENT_CONNECTED',
             endpoint: 'bookmarks'
         })
-        bookmarksCli.getSyncStatus().then(
-            ({current_bookmark}) => dispatch({
+        bookmarksCli.getCurrentBookmark().then(
+            (current_bookmark) => dispatch({
                 type: "BOOKMARKS_SYNC_STATUS",
-                data: current_bookmark
+                data: (current_bookmark) ? current_bookmark.name : null
             })
-        )
-        bookmarksCli.asList().then(
-            (bookmarks) => {
-                console.log("Got bookmarks", bookmarks)
-                dispatch({
-                    type: 'LIBRARY_SET_CHILDREN',
-                    target: ["bookmark:"],
-                    fun: () => bookmarks,
-                })
-            }
         )
         dispatch({type: 'UPDATE_CLIENT', endpoint: "bookmarks", client: bookmarksCli})
     })
@@ -47,30 +36,6 @@ export const initBookmarksEventsDispatcher = (bookmarksCli, dispatch) => {
             data: newStatus.bookmark
     })})
 
-
-    bookmarksCli.on("event:bookmarkChanged", ({bookmark}) => {
-        const libItem = {
-            ...bookmark,
-            type: "playlist",
-            children: bookmark.tracks
-        }
-        dispatch({
-            type: "LIBRARY_SET_CHILDREN",
-            target: ["bookmark:"],
-            fun: prevBookmarks => updateOrInsert(prevBookmarks, libItem)
-        })
-    })
-
-    bookmarksCli.on("event:bookmarkDeleted", ({uri}) => {
-        dispatch({
-            type: "LIBRARY_SET_CHILDREN",
-            target: ["bookmark:"],
-            fun: prevBookmarks => prevBookmarks.filter(
-                item => item.uri !== uri
-            )
-        })
-    })
-    console.log("BMCLI", bookmarksCli)
 }
 
 const defaultState = {

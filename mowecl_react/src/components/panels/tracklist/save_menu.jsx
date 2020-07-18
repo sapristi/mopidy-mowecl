@@ -4,20 +4,18 @@ import MenuItem from '@material-ui/core/MenuItem';
 
 import Popover from '@material-ui/core/Popover';
 import SaveIcon from '@material-ui/icons/Save';
-import {AppContext} from 'utils'
 import {Input} from 'components/molecules'
 
 
-
-
-export const saveAsPlaylist = (mopidy, playlistName, tracks) => {
-    mopidy.playlists.create({'name': playlistName, 'uri_scheme': 'm3u'}).then(
-        (playlist) => {
-            playlist.tracks = tracks
-            mopidy.playlists.save({'playlist': playlist}).then()
-        })
+export const savePlaylist = async (mopidy, playlist, tracklist) => {
+    playlist.tracks = tracklist.map(tlt => tlt.track)
+    return await mopidy.playlists.save({'playlist': playlist})
 }
 
+export const createPlaylist = async (mopidy, name, tracklist, uri_scheme) => {
+    const playlist = await mopidy.playlists.create({'name': name, 'uri_scheme': uri_scheme})
+    return await savePlaylist(mopidy, playlist, tracklist)
+}
 
 
 export const SaveMenu = ({menuState, setMenuState, anchorElRef, playlists, tracklist}) => {
@@ -30,7 +28,7 @@ export const SaveMenu = ({menuState, setMenuState, anchorElRef, playlists, track
             return
         }
 
-        saveAsPlaylist(mopidy, playlistName, tracklist.map(tlt => tlt.track))
+        createPlaylist(mopidy, playlistName, tracklist, "m3u")
     }
 
     const MainMenu = () => <Popover
@@ -51,6 +49,18 @@ export const SaveMenu = ({menuState, setMenuState, anchorElRef, playlists, track
     </Popover>
 
 
+    const PlMenuItem = (item) => {
+        const action = () => {
+            savePlaylist(mopidy, item, tracklist)
+            setMenuState(null)
+        }
+
+        return (
+            <MenuItem onClick={action}>
+              {item.name}
+            </MenuItem>)
+    }
+
     const SaveSubMenu = () =>
         <Popover
           anchorEl={anchorElRef.current}
@@ -61,16 +71,7 @@ export const SaveMenu = ({menuState, setMenuState, anchorElRef, playlists, track
           {
               playlists.children &&
                   playlists.children.map(
-                      item => (
-                          <MenuItem key={item.uri}
-                                    onClick={() => {
-                                        saveAsPlaylist(mopidy, item.name,
-                                                       tracklist.map(tlt => tlt.track))
-                                        setMenuState(null)
-                                    }}
-                          >
-                            {item.name}
-                          </MenuItem>)
+                      item => <PlMenuItem key={item.uri} item={item}/>
                   )
           }
         </Popover>

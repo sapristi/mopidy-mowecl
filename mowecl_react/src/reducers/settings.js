@@ -1,9 +1,8 @@
 import React from 'react'
 
 import Typography from '@material-ui/core/Typography'
-import Link from '@material-ui/core/Link'
 import Color from 'color'
-import { getMopidyWs,  match, ObjectComp} from 'utils'
+import {match, ObjectComp} from 'utils'
 
 
 const validate_hex_color = (str) => {

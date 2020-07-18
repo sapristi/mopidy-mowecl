@@ -1,5 +1,5 @@
 import React from 'react'
-import { connect, useSelector, useDispatch } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 
 import { ReactSortable } from "react-sortablejs";
 
@@ -8,14 +8,12 @@ import List from '@material-ui/core/List';
 import Paper from '@material-ui/core/Paper';
 import ListItemText from '@material-ui/core/ListItemText';
 
-import ButtonGroup from '@material-ui/core/ButtonGroup';
-
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import ExpandLessIcon from '@material-ui/icons/ExpandLess';
 
-import {AppContext, duration_to_human, match} from 'utils'
+import {duration_to_human, match} from 'utils'
 import {Track} from 'components/molecules'
-import { isLeaf, rec_expand_file, addToTracklist, toggleNode } from './functions'
+import { isLeaf, addToTracklist, toggleNode } from './functions'
 import {DefaultButtons, PLButtons, ExtraButtonsPopover, BMButtons} from './buttons'
 
 import Color from 'color'

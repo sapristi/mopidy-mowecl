@@ -9,8 +9,6 @@ import SkipNextIcon from '@material-ui/icons/SkipNext'
 import PlayArrowIcon from '@material-ui/icons/PlayArrow'
 import PauseIcon from '@material-ui/icons/Pause'
 
-import {AppContext} from 'utils'
-
 
 export const PlaybackButtons = ({playbackState}) => {
     const mopidy = useSelector(state => state.mopidy.client)

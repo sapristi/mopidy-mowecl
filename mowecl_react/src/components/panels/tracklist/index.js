@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { connect, useDispatch, useSelector } from 'react-redux';
+import { connect, useSelector } from 'react-redux';
 import { ReactSortable } from "react-sortablejs";
 
 
@@ -25,10 +25,10 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 
 import {Track} from 'components/molecules'
-import {AppContext, listEquals, duration_to_human} from 'utils'
+import {duration_to_human} from 'utils'
 import {BookmarkMenu} from './bookmark_menu'
 import {AddUriMenu} from './add_uri_menu'
-import {SaveMenu, saveAsPlaylist} from './save_menu'
+import {SaveMenu} from './save_menu'
 
 import Color from 'color'
 import styled from '@emotion/styled'
@@ -111,7 +111,6 @@ let TracklistListPanel = ({dispatch, tracklist, current_tlid}) => {
 
 const TracklistInfoPanel = ({tracklist}) => {
 
-    const dispatch = useDispatch()
     const mopidy = useSelector(state => state.mopidy.client)
     const playlists = useSelector(state => state.library.playlists)
     const currentBookmark = useSelector(state => state.bookmarksState.currentBookmark)
@@ -119,23 +118,6 @@ const TracklistInfoPanel = ({tracklist}) => {
     const anchorElRef = React.useRef(null)
     const [menuState, setMenuState] = React.useState(null)
 
-    const [prevTracklist, setPrevTracklist] = React.useState(tracklist)
-    React.useEffect( () => {
-        if (listEquals(tracklist.map(tlt => tlt.track.uri),
-                       prevTracklist.map(tlt => tlt.track.uri))) return
-
-        if (playlists.synced) {
-            saveAsPlaylist(mopidy, playlists.synced.name, tracklist.map(tlt => tlt.track))
-            mopidy.playlists.getItems({uri: playlists.synced.uri}).then(
-                items => dispatch({
-                    type: 'LIBRARY_SET_CHILDREN',
-                    target: ["playlist:", playlists.synced.uri],
-                    fun: () => (items || [])
-                })
-            )
-        }
-        setPrevTracklist(tracklist)
-    }, [mopidy, dispatch, playlists, tracklist, prevTracklist, setPrevTracklist])
 
     return (
         <Paper style={{paddingLeft: '10px', display: 'flex',

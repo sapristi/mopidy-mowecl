@@ -1,5 +1,5 @@
 import React from 'react'
-import { useSelector, useDispatch } from 'react-redux'
+import {useSelector} from 'react-redux'
 import {atom, useRecoilState, useSetRecoilState} from 'recoil'
 
 import ButtonGroup from '@material-ui/core/ButtonGroup'
@@ -9,21 +9,16 @@ import Popover from '@material-ui/core/Popover'
 
 import PlaylistAddIcon from '@material-ui/icons/PlaylistAdd'
 import PlaylistPlayIcon from '@material-ui/icons/PlaylistPlay'
-import AddIcon from '@material-ui/icons/Add'
+// import AddIcon from '@material-ui/icons/Add'
 import ListItemIcon from '@material-ui/core/ListItemIcon'
-import ClearIcon from '@material-ui/icons/Clear'
-import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline'
+// import ClearIcon from '@material-ui/icons/Clear'
+// import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline'
 import MoreVertIcon from '@material-ui/icons/MoreVert'
 
 import Icon from '@mdi/react'
 import { mdiPlaylistRemove } from '@mdi/js'
 
-import TextField from '@material-ui/core/TextField'
-
-
-import {AppContext} from 'utils'
-
-import { isLeaf, expand_node, addToTracklist } from './functions'
+import {expand_node, addToTracklist } from './functions'
 
 
 const PlayNowButton = ({node, ...props}) => {

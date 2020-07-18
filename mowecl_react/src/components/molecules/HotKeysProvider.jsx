@@ -1,10 +1,7 @@
 import React from 'react'
 import { connect, useSelector } from 'react-redux'
 
-import {AppContext} from '../../utils'
-
-
-import {configure, GlobalHotKeys} from 'react-hotkeys';
+import {GlobalHotKeys} from 'react-hotkeys';
 
 const HotKeysProviderUnc = ({playbackState, volume, hotkeys_conf}) => {
     const mopidy = useSelector(state => state.mopidy.client)

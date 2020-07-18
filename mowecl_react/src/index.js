@@ -1,6 +1,6 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import { Provider, connect, useSelector, useDispatch } from 'react-redux'
+import {Provider,  useDispatch } from 'react-redux'
 import {
     RecoilRoot,
 } from 'recoil';
@@ -12,13 +12,11 @@ import { createStore,  combineReducers } from 'redux'
 import './index.css'
 import 'typeface-roboto';
 
-import {AppContext, getWsAddress} from './utils'
-
 import App from './App'
 import * as serviceWorker from './serviceWorker'
 import {useWsClient, makeWsClientReducer} from "mopidy-js"
 
-import {mopidyReducer, libraryReducer, playbackReducer, settingsReducer, tracklistReducer} from './reducers'
+import {libraryReducer, playbackReducer, settingsReducer, tracklistReducer} from './reducers'
 
 import {initMopidyEventsDispatcher} from 'client_setup/mopidy'
 

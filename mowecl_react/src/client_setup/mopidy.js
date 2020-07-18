@@ -1,4 +1,4 @@
-import { obj_reducer, listEquals } from 'utils'
+import {obj_reducer} from 'utils'
 import {updateOrInsert} from 'reducers/library/aux_functions'
 
 const fetchPlaybackInfo = async (mopidyCli, dispatch) => {
@@ -57,11 +57,18 @@ export const initMopidyEventsDispatcher = (mopidyCli, dispatch) => {
                     type: 'TRACKLIST_INITIALISE',
                     data: tltracks
                 })
-                const playlists = await mopidyCli.playlists.asList()
+                const playlistsAll = await mopidyCli.playlists.asList()
+                const playlists = playlistsAll.filter(pl => (! pl.uri.startsWith("bookmark:")))
+                const bookmarks = playlistsAll.filter(pl => (pl.uri.startsWith("bookmark:")))
                 dispatch({
                     type: 'LIBRARY_SET_CHILDREN',
                     target: ["playlist:"],
                     fun: () => playlists,
+                })
+                dispatch({
+                    type: 'LIBRARY_SET_CHILDREN',
+                    target: ["bookmark:"],
+                    fun: () => bookmarks,
                 })
              }
         )
@@ -198,17 +205,19 @@ export const initMopidyEventsDispatcher = (mopidyCli, dispatch) => {
             type: "playlist",
             children: playlist.tracks
         }
+        const target = (playlist.uri.startsWith("bookmark:")) ? ["bookmark:"] : ["playlist:"]
         dispatch({
             type: "LIBRARY_SET_CHILDREN",
-            target: ["playlist:"],
+            target,
             fun: prevPlaylists => updateOrInsert(prevPlaylists, libItem)
         })
     })
 
     mopidyCli.on("event:playlistDeleted", ({uri}) => {
+        const target = (uri.startsWith("bookmark:")) ? ["bookmark:"] : ["playlist:"]
         dispatch({
             type: "LIBRARY_SET_CHILDREN",
-            target: ["playlist:"],
+            target,
             fun: prevPlaylists => prevPlaylists.filter(
                 item => item.uri !== uri
             )

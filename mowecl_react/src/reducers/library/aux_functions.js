@@ -102,5 +102,4 @@ export const updateOrInsert = (prevItems, newItem) => {
     } else {
         return [...prevItems, newItem]
     }
-    return prevItems
 }

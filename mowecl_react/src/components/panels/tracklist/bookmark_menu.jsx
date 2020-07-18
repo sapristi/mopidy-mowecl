@@ -1,5 +1,5 @@
 import React from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import {useSelector} from 'react-redux';
 import MenuItem from '@material-ui/core/MenuItem';
 
 import Popover from '@material-ui/core/Popover';
@@ -7,13 +7,13 @@ import SaveIcon from '@material-ui/icons/Save';
 
 import {Input} from 'components/molecules'
 
+import {savePlaylist, createPlaylist} from './save_menu'
+
 export const BookmarkMenu = ({tracklist, menuState, setMenuState, anchorElRef}) => {
 
-    const dispatch = useDispatch()
     const bookmarks = useSelector(state => state.library.bookmarks)
     const bookmarksCli = useSelector(state => state.bookmarks.client)
-    const createBookmark = (bookmarkName) =>
-          bookmarksCli.createFromTracklist({name: bookmarkName})
+    const mopidy = useSelector(state => state.mopidy.client)
 
     return (
         <Popover
@@ -28,7 +28,9 @@ export const BookmarkMenu = ({tracklist, menuState, setMenuState, anchorElRef}) 
               label={"New Bookmark"}
               icon={<SaveIcon/>}
               action={ (name) => {
-                  createBookmark(name)
+                  createPlaylist(mopidy, name, tracklist, "bookmark").then(
+                      bookmark => bookmarksCli.startSync({uri: bookmark.uri})
+                  )
                   setMenuState(null)
               }
             }/>
@@ -39,7 +41,7 @@ export const BookmarkMenu = ({tracklist, menuState, setMenuState, anchorElRef}) 
                       item =>
                           <MenuItem key={item.uri}
                                     onClick={() => {
-                                        createBookmark(item.name)
+                                        savePlaylist(mopidy, item, tracklist)
                                         setMenuState(null)
                                     }}
                           >
