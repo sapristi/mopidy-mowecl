@@ -1,34 +1,33 @@
+import React from 'react'
+import { connect, useSelector } from 'react-redux'
+import {useSetRecoilState} from 'recoil'
+import { ReactSortable } from "react-sortablejs"
 
-import React from 'react';
-import { connect, useSelector } from 'react-redux';
-import { ReactSortable } from "react-sortablejs";
-
-
-import ButtonGroup from '@material-ui/core/ButtonGroup';
-import Button from '@material-ui/core/Button';
-import PlayArrowIcon from '@material-ui/icons/PlayArrow';
-import AudiotrackIcon from '@material-ui/icons/Audiotrack';
-import ClearAllIcon from '@material-ui/icons/ClearAll';
-import ClearIcon from '@material-ui/icons/Clear';
-import SyncIcon from '@material-ui/icons/Sync';
-import SaveAltIcon from '@material-ui/icons/SaveAlt';
-import BookmarkBorderIcon from '@material-ui/icons/BookmarkBorder';
+import ButtonGroup from '@material-ui/core/ButtonGroup'
+import Button from '@material-ui/core/Button'
+import PlayArrowIcon from '@material-ui/icons/PlayArrow'
+import AudiotrackIcon from '@material-ui/icons/Audiotrack'
+import ClearAllIcon from '@material-ui/icons/ClearAll'
+import ClearIcon from '@material-ui/icons/Clear'
+import SyncIcon from '@material-ui/icons/Sync'
+import SaveAltIcon from '@material-ui/icons/SaveAlt'
+import { mdiBookmarkMusicOutline } from '@mdi/js'
+import BookmarkBorderIcon from '@material-ui/icons/BookmarkBorder'
 import AddIcon from '@material-ui/icons/Add'
 
-import Tooltip from '@material-ui/core/Tooltip';
-import Chip from '@material-ui/core/Chip';
-import Paper from '@material-ui/core/Paper';
+import Tooltip from '@material-ui/core/Tooltip'
+import Chip from '@material-ui/core/Chip'
+import Paper from '@material-ui/core/Paper'
 
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemText from '@material-ui/core/ListItemText';
+import List from '@material-ui/core/List'
+import ListItem from '@material-ui/core/ListItem'
+import ListItemIcon from '@material-ui/core/ListItemIcon'
+import ListItemText from '@material-ui/core/ListItemText'
 
 import {Track} from 'components/molecules'
 import {duration_to_human} from 'utils'
-import {BookmarkMenu} from './bookmark_menu'
 import {AddUriMenu} from './add_uri_menu'
-import {SaveMenu} from './save_menu'
+import {SaveMenu, menuStateAtom} from './save_menu'
 
 import Color from 'color'
 import styled from '@emotion/styled'
@@ -112,12 +111,10 @@ let TracklistListPanel = ({dispatch, tracklist, current_tlid}) => {
 const TracklistInfoPanel = ({tracklist}) => {
 
     const mopidy = useSelector(state => state.mopidy.client)
-    const playlists = useSelector(state => state.library.playlists)
-    const currentBookmark = useSelector(state => state.bookmarksState.currentBookmark)
     const bookmarksCli = useSelector(state => state.bookmarks.client)
+    const currentBookmark = useSelector(state => state.bookmarksState.currentBookmark)
     const anchorElRef = React.useRef(null)
-    const [menuState, setMenuState] = React.useState(null)
-
+    const setMenuState = useSetRecoilState(menuStateAtom)
 
     return (
         <Paper style={{paddingLeft: '10px', display: 'flex',
@@ -151,24 +148,33 @@ const TracklistInfoPanel = ({tracklist}) => {
               </Button>
             </Tooltip>
             <Tooltip title="Save as playlist">
-              <Button onClick={() => setMenuState("menu")} ref={anchorElRef}>
+              <Button onClick={() => setMenuState({
+                  uri_scheme: "m3u",
+                  label: "Playlist",
+                  anchorEl: anchorElRef.current,
+                  previousItems: "playlists",
+                  create_callback: () => {}
+              })} ref={anchorElRef}>
                 <SaveAltIcon/>
               </Button>
             </Tooltip>
             <Tooltip title="Bookmark current TL and position">
-              <Button onClick={() => setMenuState("bookmark")}>
+              <Button onClick={() => setMenuState({
+                  uri_scheme: "bookmark",
+                  label: "Bookmark",
+                  anchorEl: anchorElRef.current,
+                  previousItems: "bookmarks",
+                  create_callback: bookmark => {
+                      console.log("Start sync", bookmark)
+                      bookmarksCli.startSync({uri: bookmark.uri})}
+              }
+              )}>
                 <BookmarkBorderIcon/>
               </Button>
             </Tooltip>
-
-            <SaveMenu menuState={menuState} setMenuState={setMenuState}
-                      anchorElRef={anchorElRef} playlists={playlists}
-                      tracklist={tracklist}
-            />
-            <BookmarkMenu menuState={menuState} setMenuState={setMenuState}
-                          anchorElRef={anchorElRef} tracklist={tracklist}/>
-            <AddUriMenu anchorElRef={anchorElRef} setMenuState={setMenuState}
-                        mopidy={mopidy} menuState={menuState}/>
+            <SaveMenu tracklist={tracklist}/>
+            <AddUriMenu anchorElRef={anchorElRef}
+                        mopidy={mopidy}/>
           </ButtonGroup>
         </Paper>)
 }

@@ -18,6 +18,7 @@ import MoreVertIcon from '@material-ui/icons/MoreVert'
 import Icon from '@mdi/react'
 import { mdiPlaylistRemove } from '@mdi/js'
 
+import {confirmDialogStateAtom} from 'components/molecules/confirmDialog'
 import {expand_node, addToTracklist } from './functions'
 
 
@@ -70,13 +71,21 @@ const ResumeBookmarkButton = ({node, ...props}) => {
 const DeletePLButton = ({node, ...props}) => {
     const mopidy = useSelector(state => state.mopidy.client)
     const setExtraButtonsState = useSetRecoilState(extraButtonsState)
-    const action = () => {
+    const setConfirmDialogState = useSetRecoilState(confirmDialogStateAtom)
+    const callback = () => {
         mopidy.playlists.delete({uri: node.uri})
-        setExtraButtonsState({anchorEl: null, children: null})
     }
     const objectName = (node.uri.startsWith("bookmark"))
           ? "bookmark"
           : "playlist"
+
+    const action = () => {
+        setExtraButtonsState({anchorEl: null, children: null})
+        setConfirmDialogState({
+            text: `Delete ${objectName} ${node.name} ?`,
+            callback
+        })
+    }
     return (
         <Tooltip title={`Delete ${objectName} ` + node.name}>
           <Button {...props} onClick={action}>
@@ -133,7 +142,6 @@ export const ExtraButtonsPopover = ({...props}) => {
 const OpenExtraButton = ({children, ...props}) => {
     const setExtraButtonsState = useSetRecoilState(extraButtonsState)
 
-    console.log('EXTRA EXTRA', children)
     const action = (event) => {
         const target = event.currentTarget
         setExtraButtonsState({anchorEl: target, children})

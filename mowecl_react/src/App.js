@@ -17,7 +17,7 @@ import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 
 import Color from 'color'
 import {HotKeysProvider} from './components/molecules/HotKeysProvider'
-
+import {ConfirmDialog} from 'components/molecules/confirmDialog'
 import {useTraceUpdate, getWsAddress, match} from './utils'
 
 let AppContainer = ({colors, children}) => {
@@ -69,6 +69,7 @@ let AppContainer = ({colors, children}) => {
                        scrollbarWidth: 'thin',
                        textAlign: 'center'
                       }}>
+            <ConfirmDialog/>
             <div style={{display: 'flex', flexDirection: 'row',  minHeight: '0', flex: 1}}>
               <SidePanel/>
               {children}

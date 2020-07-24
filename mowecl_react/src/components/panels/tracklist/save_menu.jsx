@@ -1,83 +1,93 @@
-import React from 'react';
+import React from 'react'
 import { useSelector } from 'react-redux'
-import MenuItem from '@material-ui/core/MenuItem';
+import {atom, useRecoilState, useSetRecoilState} from 'recoil'
+import MenuItem from '@material-ui/core/MenuItem'
 
-import Popover from '@material-ui/core/Popover';
-import SaveIcon from '@material-ui/icons/Save';
+import Popover from '@material-ui/core/Popover'
+import SaveIcon from '@material-ui/icons/Save'
 import {Input} from 'components/molecules'
+import {confirmDialogStateAtom} from 'components/molecules/confirmDialog'
+
+export const defaultMenuState = {
+    uri_scheme: null,
+    label: null,
+    anchorEl: null,
+    previousItems: null,
+    create_callback: null,
+}
+
+export const menuStateAtom = atom({
+    key: "playlist_save_menu",
+    default: defaultMenuState
+})
 
 
-export const savePlaylist = async (mopidy, playlist, tracklist) => {
+export const savePlaylist = async (mopidy, uri, tracklist) => {
+    const playlist = await mopidy.playlists.lookup({uri})
     playlist.tracks = tracklist.map(tlt => tlt.track)
     return await mopidy.playlists.save({'playlist': playlist})
 }
 
 export const createPlaylist = async (mopidy, name, tracklist, uri_scheme) => {
     const playlist = await mopidy.playlists.create({'name': name, 'uri_scheme': uri_scheme})
-    return await savePlaylist(mopidy, playlist, tracklist)
+    return await savePlaylist(mopidy, playlist.uri, tracklist)
 }
 
-
-export const SaveMenu = ({menuState, setMenuState, anchorElRef, playlists, tracklist}) => {
+export const SaveMenu = ({
+    tracklist,
+}) => {
     const mopidy = useSelector(state => state.mopidy.client)
 
-    const saveAsNewPlaylist = (playlistName) => {
-        if (!playlistName || playlistName.length === 0) return
-        if (playlists.children.map(pl => pl.name).includes(playlistName)) {
-            console.log("Playlist ", playlistName, "already exists!")
-            return
-        }
+    const [menuState, setMenuState] = useRecoilState(menuStateAtom)
+    const setConfirmDialogState = useSetRecoilState(confirmDialogStateAtom)
+    const playlistsAll = useSelector(state => ({
+        bookmarks: state.library.bookmarks.children,
+        playlists: state.library.playlists.children,
+    }))
 
-        createPlaylist(mopidy, playlistName, tracklist, "m3u")
+    const previousItems = playlistsAll[menuState.previousItems] || []
+
+    const saveAction = (name) => {
+        const previous_playlist = previousItems.filter(item => item.name === name)
+        if (previous_playlist.length > 0) {
+            setConfirmDialogState({
+                text: `Overwrite ${menuState.label} ${name} ?`,
+                callback: () => {
+                    savePlaylist(mopidy, previous_playlist[0].uri, tracklist).then(
+                        playlist => menuState.create_callback(playlist)
+                    )
+                }
+            })
+        } else {
+            console.log("Creating", name, menuState.uri_scheme)
+            createPlaylist(mopidy, name, tracklist, menuState.uri_scheme).then(
+                playlist => menuState.create_callback(playlist)
+            )
+        }
+        setMenuState(defaultMenuState)
     }
 
-    const MainMenu = () => <Popover
-      anchorEl={anchorElRef.current}
-      keepMounted
-      open={(menuState === "menu")}
-      onClose={ () => setMenuState(false)}
-    >
-      <MenuItem>
-        <Input icon={<SaveIcon/>}
-               label={"New Playlist"} action={(name) => {
-                   saveAsNewPlaylist(name)
-                   setMenuState(null)}}/>
-      </MenuItem>
-      <MenuItem onClick={event => setMenuState("submenu")}>
-        Overwrite Playlist
-      </MenuItem>
-    </Popover>
-
-
-    const PlMenuItem = (item) => {
-        const action = () => {
-            savePlaylist(mopidy, item, tracklist)
-            setMenuState(null)
-        }
-
-        return (
-            <MenuItem onClick={action}>
-              {item.name}
-            </MenuItem>)
-    }
-
-    const SaveSubMenu = () =>
+    return (
         <Popover
-          anchorEl={anchorElRef.current}
-          keepMounted
-          open={(menuState === "submenu")}
-          onClose={ () => setMenuState(false)}
+          anchorEl={menuState.anchorEl}
+          open={Boolean(menuState.anchorEl)}
+          onClose={ () => setMenuState(defaultMenuState)}
+          onKeyPress={()=>{}}
         >
+          <MenuItem>
+            <Input
+              label={"New " + menuState.label}
+              icon={<SaveIcon/>}
+              action={saveAction}/>
+          </MenuItem>
           {
-              playlists.children &&
-                  playlists.children.map(
-                      item => <PlMenuItem key={item.uri} item={item}/>
+              previousItems.map(
+                      item =>
+                          <MenuItem key={item.uri}
+                                    onClick={() => saveAction(item.name)}>
+                            {item.name}
+                          </MenuItem>
                   )
           }
-        </Popover>
-
-
-    if (menuState === "menu") {
-        return <MainMenu/>
-    } else {return <SaveSubMenu/>}
-}
+        </Popover>)
+ }
