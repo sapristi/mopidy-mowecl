@@ -6,20 +6,17 @@ import Paper from '@material-ui/core/Paper';
 
 import GitHubIcon from '@material-ui/icons/GitHub';
 
-
-import {version} from 'package.json'
+import {mowecl_version} from 'utils'
 
 const HelpPanel = () => {
 
-
     return (
-
           <Paper style={{
               margin: "20px 20px auto 20px"
 
           }}>
             <Typography variant="h4" style={{marginBottom: '10px'}}>
-              Mowecl {version}
+              Mowecl {mowecl_version}
             </Typography>
             <Typography>
               Made with ♥ by Mathias Millet.

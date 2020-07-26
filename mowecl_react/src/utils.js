@@ -1,4 +1,5 @@
 import React from 'react'
+import {version} from 'package.json'
 
 export const duration_to_human = (ms, default_value='??') => {
     if (ms === undefined || ms === null) return default_value
@@ -116,3 +117,7 @@ export const ObjectComp = (object, mapFn, filterFn) => {
     }
     return Object.fromEntries(res)
 }
+
+export const mowecl_version = (window.mowecl_version == "{{mowecl_version}}")
+      ? (`dev-${version}`)
+      : window.mowecl_version

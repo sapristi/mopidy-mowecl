@@ -17,8 +17,7 @@ import CircularProgress from '@material-ui/core/CircularProgress'
 import { mdiFileTreeOutline } from '@mdi/js'
 import Icon from '@mdi/react'
 
-import { getSearchUris } from 'utils'
-import {version} from 'package.json'
+import { getSearchUris, mowecl_version } from 'utils'
 
 import {SearchInput} from './SearchInput'
 
@@ -172,7 +171,7 @@ const SidePanel = (
 
           <ButtonGroup orientation="vertical">
             {
-                (version !== availableVersion) && (availableVersion) && 
+                (mowecl_version !== availableVersion) && (availableVersion) && 
                     <Tooltip title={`Version ${availableVersion} available on Pypi.`}>
                       <Button
                         href={"https://github.com/sapristi/mopidy-mowecl/tree/master#v" + availableVersion.replace(/\./g, '')}
