@@ -16,25 +16,27 @@ export const useWsClient = (endpoint, init_callback, selector) => {
     const mopidyPort = useSelector(store => store.settings.persistant.mopidy_port)
     const dispatch = useDispatch()
 
-    React.useEffect(() => {
-        stopClient(client)
-        dispatch({type: 'CLIENT_DISCONNECTED', endpoint})
-        console.log("Connecting to ", getWsAddress(mopidyHost, mopidyPort, endpoint))
-        const new_client = new MopidyClient({
-            webSocketUrl: getWsAddress(mopidyHost, mopidyPort, endpoint),
-            autoConnect: false
-        })
-        try {
-            new_client.connect()
-        } catch(error) {
-            console.log("Error when initializing mopidy client", error)
-            stopClient(new_client)
-            dispatch({type: 'CONNECTION_ERROR', endpoint, error})
-        }
-
-        init_callback(new_client)
-        window[endpoint] = new_client
-    }, [mopidyHost, mopidyPort, endpoint, client, dispatch, init_callback])
+    React.useEffect(
+        () => {
+            stopClient(client)
+            dispatch({type: 'CLIENT_DISCONNECTED', endpoint})
+            console.log("Connecting to ", getWsAddress(mopidyHost, mopidyPort, endpoint))
+            const new_client = new MopidyClient({
+                webSocketUrl: getWsAddress(mopidyHost, mopidyPort, endpoint),
+                autoConnect: false
+            })
+            try {
+                new_client.connect()
+            } catch(error) {
+                console.log("Error when initializing mopidy client", error)
+                stopClient(new_client)
+                dispatch({type: 'CONNECTION_ERROR', endpoint, error})
+            }
+            init_callback(new_client)
+            window[endpoint] = new_client
+        },
+        // eslint-disable-next-line
+        [mopidyHost, mopidyPort, endpoint, init_callback])
 
 }
 
