@@ -43,7 +43,7 @@ jobs:
           paths:
             - mopidy_mowecl
           key: cache-$CIRCLE_SHA1
-   deploy:
+  deploy:
     docker:
       - image: nikolaik/python-nodejs:python3.7-nodejs12-stretch
     steps:
