@@ -36,7 +36,7 @@ export const useWsClient = (endpoint, init_callback, selector) => {
             window[endpoint] = new_client
         },
         // eslint-disable-next-line
-        [mopidyHost, mopidyPort, endpoint, init_callback])
+        [mopidyHost, mopidyPort])
 
 }
 
