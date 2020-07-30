@@ -70,7 +70,7 @@ const ResumeBookmarkButton = ({node, ...props}) => {
 
 const DeletePLButton = ({node, ...props}) => {
     const mopidy = useSelector(state => state.mopidy.client)
-    const setExtraButtonsState = useSetRecoilState(extraButtonsState)
+    // const setExtraButtonsState = useSetRecoilState(extraButtonsState)
     const setConfirmDialogState = useSetRecoilState(confirmDialogStateAtom)
     const callback = () => {
         mopidy.playlists.delete({uri: node.uri})
@@ -139,17 +139,17 @@ export const ExtraButtonsPopover = ({...props}) => {
     )
 }
 
-const OpenExtraButton = ({children, ...props}) => {
-    const setExtraButtonsState = useSetRecoilState(extraButtonsState)
+// const OpenExtraButton = ({children, ...props}) => {
+//     const setExtraButtonsState = useSetRecoilState(extraButtonsState)
 
-    const action = (event) => {
-        const target = event.currentTarget
-        setExtraButtonsState({anchorEl: target, children})
-    }
-    return (<Button {...props} onClick={action}>
-              <MoreVertIcon/>
-            </Button>)
-}
+//     const action = (event) => {
+//         const target = event.currentTarget
+//         setExtraButtonsState({anchorEl: target, children})
+//     }
+//     return (<Button {...props} onClick={action}>
+//               <MoreVertIcon/>
+//             </Button>)
+// }
 
 export const PLButtons = ({node}) => {
     return (
