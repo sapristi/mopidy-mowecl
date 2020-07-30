@@ -16,6 +16,8 @@ workflows:
             tags:
               only: /^v.*/
       - deploy:
+          requires:
+            - build
           filters:
             branches:
               only:
