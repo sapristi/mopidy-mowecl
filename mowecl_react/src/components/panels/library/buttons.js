@@ -1,9 +1,10 @@
 import React from 'react'
-import {useSelector} from 'react-redux'
+import {useSelector, useDispatch} from 'react-redux'
 import {atom, useRecoilState, useSetRecoilState} from 'recoil'
 
 import ButtonGroup from '@material-ui/core/ButtonGroup'
 import Button from '@material-ui/core/Button'
+import IconButton from '@material-ui/core/IconButton'
 import Tooltip from '@material-ui/core/Tooltip'
 import Popover from '@material-ui/core/Popover'
 
@@ -14,6 +15,8 @@ import ListItemIcon from '@material-ui/core/ListItemIcon'
 // import ClearIcon from '@material-ui/icons/Clear'
 // import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline'
 import MoreVertIcon from '@material-ui/icons/MoreVert'
+import FavoriteIcon from '@material-ui/icons/Favorite'
+import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder'
 
 import Icon from '@mdi/react'
 import { mdiPlaylistRemove } from '@mdi/js'
@@ -95,9 +98,37 @@ const DeletePLButton = ({node, ...props}) => {
     )
 }
 
+export const FavButton = ({node, ...props}) => {
+    const favorites = useSelector(state => state.library.favorites.children)
+    const bookmarksCli = useSelector(state => state.bookmarks.client)
+    const dispatch = useDispatch()
+    const alreadyFav = favorites.map(f => f.uri).includes(node.uri)
+    const action = () => {
+        const newFavs = (alreadyFav)
+              ? (favorites.filter(c => c.uri != node.uri))
+              : ([...favorites, node])
+
+        dispatch({
+            type: "LIBRARY_SET_CHILDREN",
+            target: ["favorite:"],
+            fun: () => newFavs
+        })
+        const newFavs_slim = newFavs.map(f => ({...f, children: undefined, __model__: undefined}))
+        bookmarksCli.store.set({key: "favorites", value: newFavs_slim})
+    }
+    return (
+        <IconButton size="small" {...props} onClick={action}>
+          {(alreadyFav)
+           ? <FavoriteIcon/>
+           : <FavoriteBorderIcon/>
+          }
+        </IconButton>)
+}
+
 export const DefaultButtons = ({node}) => {
     return (
         <ListItemIcon>
+          <FavButton node={node}/>
           <ButtonGroup size="small">
             <PlayNowButton node={node}/>
             <AddToTLButton node={node}/>
@@ -154,6 +185,7 @@ export const ExtraButtonsPopover = ({...props}) => {
 export const PLButtons = ({node}) => {
     return (
         <ListItemIcon>
+          <FavButton node={node}/>
           <ButtonGroup size="small">
             <PlayNowButton node={node}/>
             <AddToTLButton node={node}/>
@@ -166,6 +198,7 @@ export const PLButtons = ({node}) => {
 export const BMButtons = ({node}) => {
     return (
         <ListItemIcon>
+          <FavButton node={node}/>
           <ButtonGroup size="small">
             <ResumeBookmarkButton node={node}/>
             <AddToTLButton node={node}/>

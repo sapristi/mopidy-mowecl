@@ -98,9 +98,7 @@ let App = (
         (
             <AppContainer colors={colors}>
               <div style={{height: '100%', width: '100%', flexDirection: 'row', display: 'flex'}}>
-                <div style={{ width: '50%', height: '100%', overflow: 'auto',
-                              scrollbarWidth: 'thin'
-                            }}>
+                <div style={{ width: '50%', height: '100%'}}>
                   {activePanel}
                 </div>
                 <div style={{height: '100%', width: '50%',
