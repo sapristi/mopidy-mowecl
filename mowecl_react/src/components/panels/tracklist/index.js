@@ -1,34 +1,33 @@
+import React from 'react'
+import { connect, useSelector } from 'react-redux'
+import {useSetRecoilState} from 'recoil'
+import { ReactSortable } from "react-sortablejs"
 
-import React from 'react';
-import { connect, useDispatch } from 'react-redux';
-import { ReactSortable } from "react-sortablejs";
-
-
-import ButtonGroup from '@material-ui/core/ButtonGroup';
-import Button from '@material-ui/core/Button';
-import PlayArrowIcon from '@material-ui/icons/PlayArrow';
-import AudiotrackIcon from '@material-ui/icons/Audiotrack';
-import ClearAllIcon from '@material-ui/icons/ClearAll';
-import ClearIcon from '@material-ui/icons/Clear';
-import SyncIcon from '@material-ui/icons/Sync';
-import SaveAltIcon from '@material-ui/icons/SaveAlt';
-import BookmarkBorderIcon from '@material-ui/icons/BookmarkBorder';
+import ButtonGroup from '@material-ui/core/ButtonGroup'
+import Button from '@material-ui/core/Button'
+import PlayArrowIcon from '@material-ui/icons/PlayArrow'
+import AudiotrackIcon from '@material-ui/icons/Audiotrack'
+import ClearAllIcon from '@material-ui/icons/ClearAll'
+import ClearIcon from '@material-ui/icons/Clear'
+import SyncIcon from '@material-ui/icons/Sync'
+import { mdiBookmarkMusicOutline } from '@mdi/js'
+import BookmarkBorderIcon from '@material-ui/icons/BookmarkBorder'
 import AddIcon from '@material-ui/icons/Add'
 
-import Tooltip from '@material-ui/core/Tooltip';
-import Chip from '@material-ui/core/Chip';
-import Paper from '@material-ui/core/Paper';
+import Tooltip from '@material-ui/core/Tooltip'
+import Chip from '@material-ui/core/Chip'
+import Paper from '@material-ui/core/Paper'
+import Icon from '@mdi/react'
 
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemText from '@material-ui/core/ListItemText';
+import List from '@material-ui/core/List'
+import ListItem from '@material-ui/core/ListItem'
+import ListItemIcon from '@material-ui/core/ListItemIcon'
+import ListItemText from '@material-ui/core/ListItemText'
 
 import {Track} from 'components/molecules'
-import {AppContext, listEquals, duration_to_human} from 'utils'
-import {BookmarkMenu} from './bookmark_menu'
+import {duration_to_human} from 'utils'
 import {AddUriMenu} from './add_uri_menu'
-import {SaveMenu, saveAsPlaylist} from './save_menu'
+import {SaveMenu, menuStateAtom} from './save_menu'
 
 import Color from 'color'
 import styled from '@emotion/styled'
@@ -59,7 +58,8 @@ border-radius: 5px;
 
 let TracklistListPanel = ({dispatch, tracklist, current_tlid}) => {
 
-    const { mopidy, colors } = React.useContext(AppContext)
+    const mopidy = useSelector(state => state.mopidy.client)
+    const colors = useSelector(state => state.settings.persistant.colors)
 
     return (
              <ReactSortable
@@ -108,86 +108,80 @@ let TracklistListPanel = ({dispatch, tracklist, current_tlid}) => {
 };
 
 
-let TracklistInfoPanel = ({tracklist, playlists, bookmarks, dispatch}) => {
-    const { mopidy } = React.useContext(AppContext)
+const TracklistInfoPanel = ({tracklist}) => {
+
+    const mopidy = useSelector(state => state.mopidy.client)
+    const bookmarksCli = useSelector(state => state.bookmarks.client)
+    const currentBookmark = useSelector(state => state.bookmarksState.currentBookmark)
     const anchorElRef = React.useRef(null)
-    const [menuState, setMenuState] = React.useState(null)
-
-    const [prevTracklist, setPrevTracklist] = React.useState(tracklist)
-    React.useEffect( () => {
-        if (listEquals(tracklist.map(tlt => tlt.track.uri),
-                       prevTracklist.map(tlt => tlt.track.uri))) return
-
-        if (playlists.synced) {
-            saveAsPlaylist(mopidy, playlists.synced.name, tracklist.map(tlt => tlt.track))
-            mopidy.playlists.getItems({uri: playlists.synced.uri}).then(
-                items => dispatch({
-                    type: 'LIBRARY_SET_CHILDREN',
-                    target: ["playlist:", playlists.synced.uri],
-                    fun: () => (items || [])
-                })
-
-            )
-        }
-        setPrevTracklist(tracklist)
-    }, [mopidy, dispatch, playlists, tracklist, prevTracklist, setPrevTracklist])
+    const setSaveMenuState = useSetRecoilState(menuStateAtom)
+    const [addMenuState, setAddMenuState] = React.useState(false)
 
     return (
         <Paper style={{paddingLeft: '10px', display: 'flex',
                      flexDirection: 'row', alignItems: 'center',
                      justifyContent: 'space-between'
-                    }}>
+                      }}>
+          <div>
+            {tracklist.length} tracks
+          </div>
           {
-              playlists.synced &&
+              currentBookmark &&
                   <Chip icon={<SyncIcon/>}
                         color="primary"
-                        onDelete={() => dispatch({type: 'PLAYLIST_UNSYNC'})}
+                        onDelete={() => bookmarksCli.stopSync()}
                         style={{float: 'left'}}
-                        label={playlists.synced.name}
+                        label={currentBookmark}
                         variant='outlined'
                         size="small"
                   />
           }
-          <div>
-            {tracklist.length} tracks
-          </div>
           <ButtonGroup>
             <Tooltip title="Add uri to tracklist">
-              <Button onClick={() => setMenuState("add_uri")}>
+              <Button onClick={() => setAddMenuState(true)}>
                 <AddIcon fontSize="small"/>
               </Button>
             </Tooltip>
 
-            <Tooltip title="Clear playlist">
-              <Button onClick={() => {
-                  dispatch({type: 'TRACKLIST_UNSYNC'})
-                  mopidy.tracklist.clear()}}>
+            <Tooltip title="Clear tracklist">
+              <Button onClick={() => mopidy.tracklist.clear()}>
                 <ClearAllIcon fontSize="small"/>
               </Button>
             </Tooltip>
-            <Tooltip title="Save as...">
-              <Button onClick={() => setMenuState("menu")} ref={anchorElRef}>
-                <SaveAltIcon/>
-              </Button>
-            </Tooltip>
-            <Tooltip title="Bookmark current TL and position">
-              <Button onClick={() => setMenuState("bookmark")}>
+            <Tooltip title="Save as playlist">
+              <Button onClick={() => setSaveMenuState({
+                  uri_scheme: "m3u",
+                  label: "Playlist",
+                  anchorEl: anchorElRef.current,
+                  previousItems: "playlists",
+                  create_callback: () => {}
+              })} ref={anchorElRef}>
                 <BookmarkBorderIcon/>
               </Button>
             </Tooltip>
-
-            <SaveMenu menuState={menuState} setMenuState={setMenuState}
-                      anchorElRef={anchorElRef} playlists={playlists}
-                      tracklist={tracklist}
+            <Tooltip title="Save as bookmark and start syncing">
+              <Button onClick={() => setSaveMenuState({
+                  uri_scheme: "bookmark",
+                  label: "Bookmark",
+                  anchorEl: anchorElRef.current,
+                  previousItems: "bookmarks",
+                  create_callback: bookmark => {
+                      console.log("Start sync", bookmark)
+                      bookmarksCli.startSync({uri: bookmark.uri})}
+              }
+              )}>
+                <Icon path={mdiBookmarkMusicOutline} size={1}/>
+              </Button>
+            </Tooltip>
+            <SaveMenu tracklist={tracklist}/>
+            <AddUriMenu anchorElRef={anchorElRef}
+                        mopidy={mopidy}
+                        menuState={addMenuState}
+                        setMenuState={setAddMenuState}
             />
-            <BookmarkMenu menuState={menuState} setMenuState={setMenuState}
-                          anchorElRef={anchorElRef} tracklist={tracklist}/>
-            <AddUriMenu anchorElRef={anchorElRef} setMenuState={setMenuState}
-                        mopidy={mopidy} menuState={menuState}/>
           </ButtonGroup>
         </Paper>)
 }
-TracklistInfoPanel = connect(state => ({ playlists: state.library.playlists}))(TracklistInfoPanel)
 
 
 let TracklistPanel = ({tracklist, current_tlid, dispatch}) => {

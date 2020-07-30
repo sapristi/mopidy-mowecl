@@ -1,9 +1,8 @@
 import React from 'react'
 
 import Typography from '@material-ui/core/Typography'
-import Link from '@material-ui/core/Link'
 import Color from 'color'
-import { getDefaultWs, getDefaultMopidyHost, match, ObjectComp} from 'utils'
+import {match, ObjectComp} from 'utils'
 
 
 const validate_hex_color = (str) => {
@@ -17,10 +16,15 @@ const validate_hex_color = (str) => {
 
 const staticSettings =
       (window.static_settings_enabled === "true")
-      ? (window.static_settings )
+      ? ({
+          ...window.static_settings,
+          mopidy_host: window.location.hostname,
+          mopidy_port: 6680,
+      })
 // default settings when the app is not served by mopidy
       : ({
-          mopidy_ws: getDefaultWs(),
+          mopidy_host: window.location.hostname,
+          mopidy_port: 6680,
           generic: {
               seek_update_interval: 500,
               search_history_length: 10
@@ -43,11 +47,17 @@ export const settingsSchema = {
     name: "Settings",
     type: "group",
     description: "Commit after making your changes. In case of incorrect setting, the default value will be used instead of your input",
-    mopidy_ws: {
+    mopidy_host: {
         type: "param",
-        name: 'Modidy WebSocker URL',
-        help: 'Modidy WebSocker URL. Do not modify unless you know what you are doing.',
-        validate: v => v || staticSettings.mopidy_ws || getDefaultWs()
+        name: 'Modidy host',
+        help: 'Modidy host. Do not modify unless you know what you are doing.',
+        validate: v => v || staticSettings.mopidy_host
+    },
+    mopidy_port: {
+        type: "param",
+        name: 'Modidy port',
+        help: 'Modidy port. Do not modify unless you know what you are doing.',
+        validate: v => parseInt(v) || staticSettings.mopidy_port
     },
     generic: {
         name: "Generic",
@@ -192,11 +202,12 @@ console.log("SETTINGS INITIAL", initialSettings)
 const defaultSettings = {
     active_panel: 'library',
     persistant: initialSettings,
+    uri_schemes: [],
 }
 
 export const settingsReducer = (state=defaultSettings, action) => (
     match(action.type)
-        .on("ACTIVATE_PANEL", () =>
+        .on("ACTIVE_PANEL", () =>
             ({...state, active_panel: action.target})
            )
         .on('CLEAR_SETTINGS', () => {
@@ -215,8 +226,11 @@ export const settingsReducer = (state=defaultSettings, action) => (
             // console.log("Set", state.persistant)
             return {...state, persistant: newSettings }
         })
-        .on('SET_THEME', () => 
+        .on('SET_THEME', () =>
             ({...state, theme: action.data})
            )
+        .on('URI_SCHEMES', () =>
+            ({...state, uri_schemes: action.data})
+        )
         .otherwise(() => state)
 )

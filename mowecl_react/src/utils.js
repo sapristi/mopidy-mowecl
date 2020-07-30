@@ -1,5 +1,5 @@
 import React from 'react'
-
+import {version} from 'package.json'
 
 export const duration_to_human = (ms, default_value='??') => {
     if (ms === undefined || ms === null) return default_value
@@ -52,19 +52,21 @@ export const getSearchUris = (uris) =>
     .filter( uri => !searchBlacklist.includes(uri))
     .map( (uri) => [uri, uriHumanList[uri] || uri])
 
-export const getDefaultWs = () => {
-    const schema = window.location.protocol === 'https:' ? 'wss' : 'ws'
-    const host = window.location.hostname
-    const port = 6680
-    return `${schema}://${host}:${port}/mopidy/ws`
-}
 
 export const getDefaultMopidyHost = () => {
-    const schema = window.location.protocol === 'https:' ? 'https' : 'http'
     const host = window.location.hostname
     const port = 6680
-    return `${schema}://${host}:${port}`
+    return `${host}:${port}`
 }
+
+export const getWsAddress = (host, port, endpoint) => {
+    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:'
+    return `${protocol}//${host}:${port}/${endpoint}/ws`
+}
+
+export const getWsProtocol = () => (
+    window.location.protocol === 'https:' ? 'wss:' : 'ws:'
+)
 
 export const AppContext = React.createContext(null);
 
@@ -99,11 +101,11 @@ const cleverEval = (fn, x) => (
         ? fn(x) : fn
 )
 
-export const match = x => ({
+export const match = (x, cmp = (a,b) => a===b) => ({
     on: (pred, fn) => (
         (typeof(pred) === "function")
-            ? (pred(x) ? matched(cleverEval(fn, x)) : match(x))
-            : ((x === pred) ? matched(cleverEval(fn, x)) : match(x))
+            ? (pred(x) ? matched(cleverEval(fn, x)) : match(x, cmp))
+            : ((cmp(x, pred)) ? matched(cleverEval(fn, x)) : match(x, cmp))
     ),
     otherwise: fn => cleverEval(fn, x),
 })
@@ -115,3 +117,7 @@ export const ObjectComp = (object, mapFn, filterFn) => {
     }
     return Object.fromEntries(res)
 }
+
+export const mowecl_version = (window.mowecl_version === "{{mowecl_version}}")
+      ? (`dev-${version}`)
+      : window.mowecl_version

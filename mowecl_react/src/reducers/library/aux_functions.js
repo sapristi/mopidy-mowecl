@@ -89,6 +89,17 @@ export const defaultNodeReducer = (node, action) => {
         return node
 
     }
+}
 
-
+export const updateOrInsert = (prevItems, newItem) => {
+    const prevUris = prevItems.map(i => i.uri)
+    if (prevUris.includes(newItem.uri)) {
+        return prevItems.map(
+            item => (item.uri === newItem.uri)
+                ? newItem
+                : item
+        )
+    } else {
+        return [...prevItems, newItem]
+    }
 }

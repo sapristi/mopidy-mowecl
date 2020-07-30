@@ -1,6 +1,9 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import { Provider, connect } from 'react-redux'
+import {Provider,  useDispatch } from 'react-redux'
+import {
+    RecoilRoot,
+} from 'recoil';
 
 import { createStore,  combineReducers } from 'redux'
 
@@ -8,35 +11,35 @@ import { createStore,  combineReducers } from 'redux'
 // import 'semantic-ui-css/semantic.min.css'
 import './index.css'
 import 'typeface-roboto';
-import {AppContext} from './utils'
 
 import App from './App'
 import * as serviceWorker from './serviceWorker'
+import {useWsClient, makeWsClientReducer} from "mopidy-js"
 
-import {mopidyReducer, libraryReducer, playbackReducer, settingsReducer, tracklistReducer} from './reducers'
+import {libraryReducer, playbackReducer, settingsReducer, tracklistReducer} from './reducers'
 
+import {initMopidyEventsDispatcher} from 'client_setup/mopidy'
 
-let MopidyApp = ({mopidy_connected, mopidy_connecting, mopidy_error, settings, dispatch}) => {
-    if (!mopidy_connected && !mopidy_connecting && !mopidy_error) {
-        dispatch({type: 'CONNECT', mopidy_ws: settings.persistant.mopidy_ws, dispatch})
-    }
+import {initBookmarksEventsDispatcher, bookmarksStateReducer} from 'client_setup/bookmarks'
 
+const MopidyApp = ({mopidy_host, mopidy_port,  colors}) => {
+    const dispatch = useDispatch()
+
+    useWsClient(
+        "mopidy",
+        mopidyCli => initMopidyEventsDispatcher(mopidyCli, dispatch),
+        store => store.mopidy.client
+    )
+
+    useWsClient(
+        "bookmarks",
+        bookmarksCli => initBookmarksEventsDispatcher(bookmarksCli, dispatch),
+        store => store.bookmarks.client
+    )
     return (
-        <AppContext.Provider value={{mopidy: window.mopidy, dispatch: dispatch,
-                                     colors: settings.persistant.colors
-                                    }}>
           <App/>
-        </AppContext.Provider>
     )
 }
-
-MopidyApp = connect(
-    state => ({mopidy_connected: state.mopidy.connected,
-               mopidy_connecting: state.mopidy.connecting,
-               mopidy_error: state.mopidy.error,
-               settings: state.settings})
-)(MopidyApp)
-
 
 
 const store = createStore(
@@ -45,7 +48,9 @@ const store = createStore(
         tracklist: tracklistReducer,
         library: libraryReducer,
         settings: settingsReducer,
-        mopidy: mopidyReducer
+        mopidy: makeWsClientReducer("mopidy"),
+        bookmarks: makeWsClientReducer("bookmarks"),
+        bookmarksState: bookmarksStateReducer,
     }),
     window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
 )
@@ -53,10 +58,11 @@ const store = createStore(
 window.$store = store
 
 
-
 ReactDOM.render(
     <Provider store={store} style={{height: '100%'}}>
-      <MopidyApp />
+      <RecoilRoot>
+        <MopidyApp />
+      </RecoilRoot>
     </Provider>
     , document.getElementById('root'))
 
@@ -64,3 +70,10 @@ ReactDOM.render(
 // unregister() to register() below. Note this comes with some pitfalls.
 // Learn more about service workers: https://bit.ly/CRA-PWA
 serviceWorker.unregister()
+
+// Trigger buttons blur so that spacebar doesn't affect them
+document.querySelectorAll("button").forEach( function(item) {
+    item.addEventListener('focus', function() {
+        this.blur();
+    })
+})

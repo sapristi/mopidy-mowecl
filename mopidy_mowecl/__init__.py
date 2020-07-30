@@ -1,17 +1,17 @@
 import logging
 import pathlib
-import json
 import pkg_resources
 import re
 
 from mopidy import config, ext
 
-from tornado.web import RequestHandler, StaticFileHandler
+from tornado.web import StaticFileHandler
 from .file_server import FileServer
 
 __version__ = pkg_resources.get_distribution("Mopidy-Mowecl").version
 
 logger = logging.getLogger(__name__)
+
 
 class ConfigColor(config.String):
 
@@ -20,6 +20,7 @@ class ConfigColor(config.String):
         if not re.fullmatch("#[0-9A-Fa-f]{6}", value):
             raise ValueError(f"Colors must be in the #AAAAAA format; {value} is not")
         return value
+
 
 class Extension(ext.Extension):
 
@@ -60,8 +61,11 @@ class Extension(ext.Extension):
 
     def factory(self, config, core):
         path = pathlib.Path(__file__).parent / "static"
+        server_params = {
+            "path": path, "config": config, "mowecl_version": self.version
+        }
         return [
-            (r"/(index.html)", FileServer, {"config": config, "path": path}),
-            (r"/", FileServer, {"config": config, "path": path}),
+            (r"/(index.html)", server_params),
+            (r"/", FileServer, server_params),
             (r"/(.*)", StaticFileHandler, {"path": path}),
         ]

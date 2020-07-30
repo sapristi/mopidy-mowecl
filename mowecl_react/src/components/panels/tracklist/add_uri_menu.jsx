@@ -1,5 +1,4 @@
 import React from 'react';
-import { connect } from 'react-redux'
 import MenuItem from '@material-ui/core/MenuItem'
 
 import Popover from '@material-ui/core/Popover'
@@ -11,7 +10,7 @@ export const AddUriMenu = ({anchorElRef, menuState, setMenuState, mopidy}) => {
     return (<Popover
           anchorEl={anchorElRef.current}
           keepMounted
-          open={(menuState === "add_uri")}
+          open={menuState}
           onClose={ () => setMenuState(false)}
           onKeyPress={()=>{}}
         >

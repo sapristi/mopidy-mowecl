@@ -1,14 +1,13 @@
 import React from 'react'
 
+import { useSelector } from 'react-redux'
 import Slider from '@material-ui/core/Slider'
 import VolumeDown from '@material-ui/icons/VolumeDown'
 import VolumeUp from '@material-ui/icons/VolumeUp'
 
-import {AppContext} from 'utils'
-
 export const VolumeSlider = ({volume, dispatch, style}) => {
 
-    const { mopidy } = React.useContext(AppContext)
+    const mopidy = useSelector(state => state.mopidy.client)
     const handleChange = (event, newValue) => {
         dispatch({
             type: 'PLAYBACK_INFO',

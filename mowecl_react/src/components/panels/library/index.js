@@ -1,5 +1,5 @@
 import React from 'react'
-import { connect } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 
 import { ReactSortable } from "react-sortablejs";
 
@@ -8,15 +8,13 @@ import List from '@material-ui/core/List';
 import Paper from '@material-ui/core/Paper';
 import ListItemText from '@material-ui/core/ListItemText';
 
-import ButtonGroup from '@material-ui/core/ButtonGroup';
-
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import ExpandLessIcon from '@material-ui/icons/ExpandLess';
 
-import {AppContext, duration_to_human, match} from 'utils'
+import {duration_to_human, match} from 'utils'
 import {Track} from 'components/molecules'
-import { isLeaf, rec_expand_file, addToTracklist, toggleNode } from './functions'
-import {DefaultButtons, PLsRootButtons, TLButtons, PLButtons, BMButtons} from './buttons'
+import { isLeaf, addToTracklist, toggleNode } from './functions'
+import {DefaultButtons, PLButtons, ExtraButtonsPopover, BMButtons} from './buttons'
 
 import Color from 'color'
 import styled from '@emotion/styled'
@@ -32,11 +30,9 @@ const getButtons = (node, dispatch) => {
     return match(node)
         .on(node => node.path && node.path.length === 1, () =>
             null)
-        .on(node => node.type === "tracklist", () =>
-            <TLButtons node={node}/>)
-        .on(node => node.type === "bookmark", () =>
+        .on(node => node.uri.startsWith("bookmark:"), () =>
             <BMButtons node={node}/>)
-        .on(node => node.type === "playlist" && node.uri.startsWith('m3u:'), () =>
+        .on(node => node.type === "playlist", () =>
             <PLButtons node={node}/>)
         .otherwise(() =>
                    <DefaultButtons node={node}/>)
@@ -93,15 +89,15 @@ const ChildrenSideBar = ({callback, color}) => (
 
 
 
-const NodeLeaves = ({node, dispatch, depth, rootElem, colors}) => {
+const NodeLeaves = ({node, depth, rootElem}) => {
 
-    // console.log("node", node.uri)
-    const { mopidy } = React.useContext(AppContext)
-
+    // console.log("Rendering node", node.uri)
+    const dispatch = useDispatch()
+    const mopidy = useSelector(state => state.mopidy.client)
+    const colors = useSelector(state => state.settings.persistant.colors)
     // if (isLeaf(node)) console.log(node)
 
     if (!node) return null
-
 
     const getChildrenNb = (node) => {
         if (isLeaf(node)) return ''
@@ -128,7 +124,7 @@ const NodeLeaves = ({node, dispatch, depth, rootElem, colors}) => {
 
 
 
-    const ChildrenPanel = () => (
+    const ChildrenPanel = ({node, mopidy}) => (
         <ReactSortable
           group={{name: 'library', put: false, pull: "clone" }}
           list={node.children}
@@ -141,7 +137,7 @@ const NodeLeaves = ({node, dispatch, depth, rootElem, colors}) => {
           {
               node.children.map(child => (
                   <NodeLeaves key={child.uri} node={child} dispatch={dispatch}
-                              depth={depth+1} colors={colors}/>
+                              depth={depth+1}/>
               ))
           }
         </ReactSortable>
@@ -169,52 +165,51 @@ const NodeLeaves = ({node, dispatch, depth, rootElem, colors}) => {
                <div style={{display: 'flex', flexDirection: 'row'}}>
                  <ChildrenSideBar callback={() => toggleNode(node, dispatch, mopidy)}
                                   color={colors.primary}/>
-                 <ChildrenPanel/>
+                 <ChildrenPanel node={node} mopidy={mopidy}/>
                </div>
 
             }
           </div>
         </li>
     )
-
 }
 
-let LibraryPanel = ({library, dispatch, colors}) => {
+export const LibraryPanel = () => {
 
-
+    const library = useSelector(state => state.library)
     const full_lib = [
         ...library.mopidyLibrary,
-        library.playlists,
-        library.search_results,
     ]
 
-    if (library.search_history.children.length > 0) {
-        full_lib.push(library.search_history)
-    }
+    const optionalLibItems = [
+        library.playlists,
+        library.bookmarks,
+        library.search_results,
+        library.search_history
+    ]
 
-    if (library.bookmarks.children.length > 0) {
-        full_lib.push(library.bookmarks)
-    }
-
-    console.log("Library:", library, dispatch)
+    optionalLibItems.forEach(
+        item => {
+            if (item.children.length > 0) {
+                full_lib.push(item)
+            }}
+    )
 
     return (
         <Paper style={{minHeight: "100%"}}>
           <List style={{paddingLeft: '10px'}}>
             {
-                full_lib.map( (node) => 
-                              <NodeLeaves node={node} dispatch={dispatch}
+                full_lib.map( (node) =>
+                              <NodeLeaves node={node}
                                           depth={0}
                                           key={node.uri}
                                           rootElem
-                                          colors={colors}
                               />
                             )
             }
           </List>
+          <ExtraButtonsPopover/>
         </Paper>
     )
 }
-
-export default connect( (state) => ({library: state.library, colors: state.settings.persistant.colors}) )(LibraryPanel)
 

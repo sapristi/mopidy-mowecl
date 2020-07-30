@@ -1,9 +1,8 @@
 import React from 'react'
-import { connect } from 'react-redux'
+import { connect, useSelector } from 'react-redux'
 import Button from '@material-ui/core/Button'
 import ButtonGroup from '@material-ui/core/ButtonGroup'
 import SettingsIcon from '@material-ui/icons/Settings'
-import ListIcon from '@material-ui/icons/List'
 import SearchIcon from '@material-ui/icons/Search'
 import HelpOutlineIcon from '@material-ui/icons/HelpOutline'
 import ErrorOutlineIcon from '@material-ui/icons/ErrorOutline'
@@ -18,8 +17,7 @@ import CircularProgress from '@material-ui/core/CircularProgress'
 import { mdiFileTreeOutline } from '@mdi/js'
 import Icon from '@mdi/react'
 
-import { getSearchUris, AppContext } from 'utils'
-import {version} from 'package.json'
+import { getSearchUris, mowecl_version } from 'utils'
 
 import {SearchInput} from './SearchInput'
 
@@ -60,14 +58,20 @@ const MopidyStatus = ({pendingRequestsNb, connected}) => {
 }
 
 
-const SidePanel = ({dispatch, uri_schemes, pendingRequestsNb, connected, search_history_length}) => {
-
+const SidePanel = (
+    {
+        uri_schemes,
+        dispatch,
+        pendingRequestsNb,
+        connected,
+        search_history_length}
+) => {
     const anchorEl = React.useRef(null)
     const [open, setOpen] = React.useState(false)
 
     const [availableVersion, setAvailableVersion] = React.useState(() => null)
 
-    const { mopidy } = React.useContext(AppContext)
+    const mopidy = useSelector(state => state.mopidy.client)
     if (!availableVersion) {
         fetch('https://pypi.org/pypi/Mopidy-Mowecl/json').then(
             response =>  response.json().then(
@@ -77,7 +81,7 @@ const SidePanel = ({dispatch, uri_schemes, pendingRequestsNb, connected, search_
     const searchUris = getSearchUris(uri_schemes)
 
     const activatePanel = function (name) {
-        return () => dispatch({type: 'ACTIVATE_PANEL',
+        return () => dispatch({type: 'ACTIVE_PANEL',
                                target: name
                               })}
 
@@ -167,7 +171,7 @@ const SidePanel = ({dispatch, uri_schemes, pendingRequestsNb, connected, search_
 
           <ButtonGroup orientation="vertical">
             {
-                (version !== availableVersion) && (availableVersion) && 
+                (mowecl_version !== availableVersion) && (availableVersion) && 
                     <Tooltip title={`Version ${availableVersion} available on Pypi.`}>
                       <Button
                         href={"https://github.com/sapristi/mopidy-mowecl/tree/master#v" + availableVersion.replace(/\./g, '')}
@@ -186,7 +190,11 @@ const SidePanel = ({dispatch, uri_schemes, pendingRequestsNb, connected, search_
     )
 }
 
-export default connect(state => ({...state.mopidy,
-                                  search_history_length:
-                                  state.settings.persistant.generic.search_history_length
-                                 }) )(SidePanel)
+export default connect(
+    state => (
+        {
+            ...state.mopidy,
+            search_history_length: state.settings.persistant.generic.search_history_length,
+            uri_schemes: state.settings.uri_schemes
+        }
+    ) )(SidePanel)

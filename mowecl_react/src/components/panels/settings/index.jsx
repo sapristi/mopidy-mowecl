@@ -1,25 +1,20 @@
 import React from 'react'
-import { connect } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import Button from '@material-ui/core/Button'
 import ButtonGroup from '@material-ui/core/ButtonGroup'
 import List from '@material-ui/core/List'
 import ListItem from '@material-ui/core/ListItem'
 import Paper from '@material-ui/core/Paper'
 import Typography from '@material-ui/core/Typography'
-import Switch from '@material-ui/core/Switch'
-import NativeSelect from '@material-ui/core/NativeSelect'
-import IconButton from '@material-ui/core/IconButton'
 
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import ExpandLessIcon from '@material-ui/icons/ExpandLess';
 
-import {HFlex, VFlex} from 'components/atoms'
-
-import {AppContext,match} from 'utils'
+import {HFlex} from 'components/atoms'
 
 import {SettingInput} from './SettingInput'
 
-import {load, settingsSchema} from 'reducers/settings'
+import {settingsSchema} from 'reducers/settings'
 
 const SettingsGroup = ({schema, group, path, setInGroup}) => {
     // console.log("Settings group", group)
@@ -62,6 +57,7 @@ const SettingsGroup = ({schema, group, path, setInGroup}) => {
 
     return (
         <Paper elevation={path.length} style={{width: "100%"}}>
+          {/* eslint-disable-next-line */}
           <a onClick={() => setOpen(prev => !prev)}>
             <HFlex style={{alignItems: "center"}}>
               <Typography variant={headerVariant} component={headerComponent}>
@@ -75,26 +71,21 @@ const SettingsGroup = ({schema, group, path, setInGroup}) => {
 }
 
 
-const SettingsPanel = ({persistant, dispatch}) => {
-    const { mopidy } = React.useContext(AppContext)
+export const SettingsPanel = () => {
+    const persistant = useSelector(state => state.settings.persistant)
+    const dispatch = useDispatch()
     const [settings, setSettings ] = React.useState(persistant)
-
 
     const handleCommit = () => {
         dispatch({
             type: 'COMMIT_SETTINGS',
             data: settings
         })
-        if (settings.mopidy_ws !== mopidy._settings.webSocketUrl)
-            dispatch({type: 'CONNECT', mopidy_ws: settings.mopidy_ws, dispatch})
     }
 
     const handleClear = () => {
         dispatch({
             type: 'CLEAR_SETTINGS'
-        })
-        dispatch({
-            type: 'CONNECT', mopidy_ws: settings.mopidy_ws, dispatch
         })
     }
 
@@ -117,4 +108,3 @@ const SettingsPanel = ({persistant, dispatch}) => {
     )
 }
 
-export default connect(state => ({persistant: state.settings.persistant}))(SettingsPanel)
