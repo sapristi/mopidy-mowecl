@@ -62,7 +62,7 @@ class Extension(ext.Extension):
     def factory(self, config, core):
         path = pathlib.Path(__file__).parent / "static"
         server_params = {
-            "path": path, "config": config, "version": self.version
+            "path": path, "config": config, "mowecl_version": self.version
         }
         return [
             (r"/(index.html)", server_params),

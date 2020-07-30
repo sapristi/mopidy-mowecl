@@ -16,7 +16,11 @@ const validate_hex_color = (str) => {
 
 const staticSettings =
       (window.static_settings_enabled === "true")
-      ? (window.static_settings )
+      ? ({
+          ...window.static_settings,
+          mopidy_host: window.location.hostname,
+          mopidy_port: 6680,
+      })
 // default settings when the app is not served by mopidy
       : ({
           mopidy_host: window.location.hostname,

@@ -18,6 +18,7 @@ import AddIcon from '@material-ui/icons/Add'
 import Tooltip from '@material-ui/core/Tooltip'
 import Chip from '@material-ui/core/Chip'
 import Paper from '@material-ui/core/Paper'
+import Icon from '@mdi/react'
 
 import List from '@material-ui/core/List'
 import ListItem from '@material-ui/core/ListItem'
@@ -155,10 +156,10 @@ const TracklistInfoPanel = ({tracklist}) => {
                   previousItems: "playlists",
                   create_callback: () => {}
               })} ref={anchorElRef}>
-                <SaveAltIcon/>
+                <BookmarkBorderIcon/>
               </Button>
             </Tooltip>
-            <Tooltip title="Bookmark current TL and position">
+            <Tooltip title="Save as bookmark and start syncing">
               <Button onClick={() => setMenuState({
                   uri_scheme: "bookmark",
                   label: "Bookmark",
@@ -169,7 +170,7 @@ const TracklistInfoPanel = ({tracklist}) => {
                       bookmarksCli.startSync({uri: bookmark.uri})}
               }
               )}>
-                <BookmarkBorderIcon/>
+                <Icon path={mdiBookmarkMusicOutline} size={1}/>
               </Button>
             </Tooltip>
             <SaveMenu tracklist={tracklist}/>
