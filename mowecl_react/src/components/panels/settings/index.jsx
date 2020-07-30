@@ -10,7 +10,7 @@ import Typography from '@material-ui/core/Typography'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import ExpandLessIcon from '@material-ui/icons/ExpandLess';
 
-import {HFlex, VFlex} from 'components/atoms'
+import {HFlex} from 'components/atoms'
 
 import {SettingInput} from './SettingInput'
 

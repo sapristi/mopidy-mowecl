@@ -35,7 +35,7 @@ jobs:
           name: Build code
           command: |
               cd mowecl_react
-              yarn build
+              CI=false yarn build
       - run:
           name: Install python dependencies
           command: pip install -e .

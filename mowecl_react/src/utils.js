@@ -118,6 +118,6 @@ export const ObjectComp = (object, mapFn, filterFn) => {
     return Object.fromEntries(res)
 }
 
-export const mowecl_version = (window.mowecl_version == "{{mowecl_version}}")
+export const mowecl_version = (window.mowecl_version === "{{mowecl_version}}")
       ? (`dev-${version}`)
       : window.mowecl_version
