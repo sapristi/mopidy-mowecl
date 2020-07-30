@@ -145,9 +145,11 @@ Changelog
 v0.3.6
 ........................................
 
-- Use bookmarks extension
+- Use `mopidy-bookmarks`_ extension
 - Confirm playlist delete and overwrite
 - Some UI improvements
+
+.. _mopidy-bookmarks: https://github.com/sapristi/mopidy-bookmarks
 
 v0.3.5
 ........................................
