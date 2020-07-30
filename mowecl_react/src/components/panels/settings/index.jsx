@@ -57,6 +57,7 @@ const SettingsGroup = ({schema, group, path, setInGroup}) => {
 
     return (
         <Paper elevation={path.length} style={{width: "100%"}}>
+          {/* eslint-disable-next-line */}
           <a onClick={() => setOpen(prev => !prev)}>
             <HFlex style={{alignItems: "center"}}>
               <Typography variant={headerVariant} component={headerComponent}>

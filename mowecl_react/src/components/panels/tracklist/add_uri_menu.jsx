@@ -10,7 +10,7 @@ export const AddUriMenu = ({anchorElRef, menuState, setMenuState, mopidy}) => {
     return (<Popover
           anchorEl={anchorElRef.current}
           keepMounted
-          open={(menuState === "add_uri")}
+          open={menuState}
           onClose={ () => setMenuState(false)}
           onKeyPress={()=>{}}
         >

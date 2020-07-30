@@ -10,7 +10,6 @@ import AudiotrackIcon from '@material-ui/icons/Audiotrack'
 import ClearAllIcon from '@material-ui/icons/ClearAll'
 import ClearIcon from '@material-ui/icons/Clear'
 import SyncIcon from '@material-ui/icons/Sync'
-import SaveAltIcon from '@material-ui/icons/SaveAlt'
 import { mdiBookmarkMusicOutline } from '@mdi/js'
 import BookmarkBorderIcon from '@material-ui/icons/BookmarkBorder'
 import AddIcon from '@material-ui/icons/Add'
@@ -115,7 +114,8 @@ const TracklistInfoPanel = ({tracklist}) => {
     const bookmarksCli = useSelector(state => state.bookmarks.client)
     const currentBookmark = useSelector(state => state.bookmarksState.currentBookmark)
     const anchorElRef = React.useRef(null)
-    const setMenuState = useSetRecoilState(menuStateAtom)
+    const setSaveMenuState = useSetRecoilState(menuStateAtom)
+    const [addMenuState, setAddMenuState] = React.useState(false)
 
     return (
         <Paper style={{paddingLeft: '10px', display: 'flex',
@@ -138,7 +138,7 @@ const TracklistInfoPanel = ({tracklist}) => {
           }
           <ButtonGroup>
             <Tooltip title="Add uri to tracklist">
-              <Button onClick={() => setMenuState("add_uri")}>
+              <Button onClick={() => setAddMenuState(true)}>
                 <AddIcon fontSize="small"/>
               </Button>
             </Tooltip>
@@ -149,7 +149,7 @@ const TracklistInfoPanel = ({tracklist}) => {
               </Button>
             </Tooltip>
             <Tooltip title="Save as playlist">
-              <Button onClick={() => setMenuState({
+              <Button onClick={() => setSaveMenuState({
                   uri_scheme: "m3u",
                   label: "Playlist",
                   anchorEl: anchorElRef.current,
@@ -160,7 +160,7 @@ const TracklistInfoPanel = ({tracklist}) => {
               </Button>
             </Tooltip>
             <Tooltip title="Save as bookmark and start syncing">
-              <Button onClick={() => setMenuState({
+              <Button onClick={() => setSaveMenuState({
                   uri_scheme: "bookmark",
                   label: "Bookmark",
                   anchorEl: anchorElRef.current,
@@ -175,7 +175,10 @@ const TracklistInfoPanel = ({tracklist}) => {
             </Tooltip>
             <SaveMenu tracklist={tracklist}/>
             <AddUriMenu anchorElRef={anchorElRef}
-                        mopidy={mopidy}/>
+                        mopidy={mopidy}
+                        menuState={addMenuState}
+                        setMenuState={setAddMenuState}
+            />
           </ButtonGroup>
         </Paper>)
 }

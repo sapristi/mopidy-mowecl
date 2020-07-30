@@ -34,7 +34,7 @@ export const useWsClient = (endpoint, init_callback, selector) => {
 
         init_callback(new_client)
         window[endpoint] = new_client
-    }, [mopidyHost, mopidyPort])
+    }, [mopidyHost, mopidyPort, endpoint, client, dispatch, init_callback])
 
 }
 

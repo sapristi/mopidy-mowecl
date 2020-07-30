@@ -5,7 +5,7 @@ import Modal from '@material-ui/core/Modal'
 import Paper from '@material-ui/core/Paper'
 import Button from '@material-ui/core/Button'
 
-import {HFlex, VFlex} from 'components/atoms'
+import {HFlex} from 'components/atoms'
 
 const defaultState = {text: null, callback: () => {}}
 export const confirmDialogStateAtom = atom({
