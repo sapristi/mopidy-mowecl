@@ -14,7 +14,6 @@ workflows:
               only: develop
             tags:
               only: /^v.*/
-    jobs:
       - deploy:
           filters:
             branches:
