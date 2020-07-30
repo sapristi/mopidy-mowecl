@@ -10,14 +10,16 @@ workflows:
       - build:
           filters:
             branches:
-              # ignore: /.*/
-              only: develop
+              only:
+                - /^release.*/
+                - master
             tags:
               only: /^v.*/
       - deploy:
           filters:
             branches:
-              ignore: /.*/
+              only:
+                - master
             tags:
               only: /^v.*/
 jobs:
@@ -41,7 +43,7 @@ jobs:
           command: pip install -e .
       - save_cache:
           paths:
-            - mopidy_mowecl
+            - mopidy_mowecl/mowecl_react/build
           key: cache-$CIRCLE_SHA1
   deploy:
     docker:
