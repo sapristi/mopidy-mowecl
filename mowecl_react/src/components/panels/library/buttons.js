@@ -80,7 +80,7 @@ const DeletePLButton = ({node, ...props}) => {
           : "playlist"
 
     const action = () => {
-        setExtraButtonsState({anchorEl: null, children: null})
+        // setExtraButtonsState({anchorEl: null, children: null})
         setConfirmDialogState({
             text: `Delete ${objectName} ${node.name} ?`,
             callback
@@ -157,9 +157,7 @@ export const PLButtons = ({node}) => {
           <ButtonGroup size="small">
             <PlayNowButton node={node}/>
             <AddToTLButton node={node}/>
-            <OpenExtraButton>
-              <DeletePLButton node={node}/>
-            </OpenExtraButton>
+            <DeletePLButton node={node}/>
           </ButtonGroup>
         </ListItemIcon>
     )
@@ -171,9 +169,7 @@ export const BMButtons = ({node}) => {
           <ButtonGroup size="small">
             <ResumeBookmarkButton node={node}/>
             <AddToTLButton node={node}/>
-            <OpenExtraButton>
-              <DeletePLButton node={node}/>
-            </OpenExtraButton>
+            <DeletePLButton node={node}/>
           </ButtonGroup>
         </ListItemIcon>
     )
