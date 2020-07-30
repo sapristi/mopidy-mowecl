@@ -142,6 +142,13 @@ To run Mowecl in develop mode, do the following:
 Changelog
 =======================================
 
+v0.3.6
+........................................
+
+- Use bookmarks extension
+- Confirm playlist delete and overwrite
+- Some UI improvements
+
 v0.3.5
 ........................................
 
