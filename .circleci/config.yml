@@ -45,7 +45,7 @@ jobs:
           command: pip install -e .
       - save_cache:
           paths:
-            - mopidy_mowecl/mowecl_react/build
+            - mowecl_react/build
           key: cache-$CIRCLE_SHA1
   deploy:
     docker:
