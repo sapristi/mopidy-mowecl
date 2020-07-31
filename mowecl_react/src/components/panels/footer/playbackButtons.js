@@ -15,23 +15,26 @@ import ShuffleIcon from '@material-ui/icons/Shuffle'
 
 export const PlaybackButtons = ({playbackState}) => {
     const mopidy = useSelector(state => state.mopidy.client)
-    return (
-        <ButtonGroup>
-          <Button onClick={() => mopidy.playback.previous()}>
-            <SkipPreviousIcon fontSize="large"/>
-          </Button>
+    const small_screen = useSelector(state => state.settings.persistant.generic.small_screen)
 
+    const groupSize = (small_screen) ? "small" : "large"
+    const size = (small_screen) ? "default" : "large"
+    return (
+        <ButtonGroup size={groupSize}>
+          <Button onClick={() => mopidy.playback.previous()}>
+            <SkipPreviousIcon fontSize={size}/>
+          </Button>
           {
               (playbackState === 'playing') ?
                   <Button onClick={() => mopidy.playback.pause()}>
-                    <PauseIcon fontSize="large"/>
+                    <PauseIcon fontSize={size}/>
                   </Button> :
               <Button onClick={() => mopidy.playback.play()}>
-                <PlayArrowIcon fontSize="large"/>
+                <PlayArrowIcon fontSize={size}/>
               </Button>
           }
           <Button onClick={() => mopidy.playback.next()}>
-            <SkipNextIcon fontSize="large"/>
+            <SkipNextIcon fontSize={size}/>
           </Button>
         </ButtonGroup>
     )

@@ -22,8 +22,6 @@ import {ConfirmDialog} from 'components/molecules/confirmDialog'
 import {useTraceUpdate, getWsAddress, match} from './utils'
 
 let AppContainer = ({colors, children}) => {
-
-
     const text_secondary = (colors.themeType === "light")
           ? (Color(colors.text).lighten(0.25).hex())
           : (Color(colors.text).darken(0.25).hex())
@@ -96,7 +94,7 @@ const ErrorPanel = ({mopidy_ws_url, mopidy_error}) => (
 )
 
 
-let App = (
+export const App = (
     {active_panel_name,
      colors, mopidy_ws_url,
      mopidy_connected,
@@ -129,16 +127,26 @@ let App = (
         )
 }
 
-export default connect(
-    state =>
-        ({
-            active_panel_name: state.settings.active_panel,
-            colors: state.settings.persistant.colors,
-            mopidy_ws_url: getWsAddress(
-                state.settings.persistant.mopidy_host,
-                state.settings.persistant.mopidy_port,
-                "mopidy"),
-            mopidy_connected: state.mopidy.connected,
-            mopidy_error: state.mopidy_error
-         })
-)(App)
+
+
+export const  AppSmall = (
+    {active_panel_name,
+     colors, mopidy_ws_url,
+     mopidy_connected,
+     mopidy_error, dispatch}
+) => {
+    const activePanel = match(active_panel_name)
+          .on('control', <SettingsPanel/>)
+          .on('help', <HelpPanel/>)
+          .on('library', <LibraryPanel/>)
+          .on('tracklist', <TracklistPanel/>)
+          .otherwise(() => console.log("Bad active panel name", active_panel_name))
+
+    return (
+            <AppContainer colors={colors}>
+              {(mopidy_connected)
+               ? activePanel
+               : <SettingsPanel/>}
+            </AppContainer>
+        )
+}

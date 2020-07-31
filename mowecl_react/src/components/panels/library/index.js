@@ -210,29 +210,29 @@ export const LibraryPanel = () => {
     )
 
     return (
-          <VFlex style={{height: "100%"}}>
-            { (library.favorites.children.length > 0) &&
-              <Paper elevation={5} variant='outlined'>
-                <List style={{paddingLeft: '10px'}}>
-                  <NodeLeaves node={library.favorites} depth={0} rootElem/>
-                </List>
-              </Paper>
-            }
-            <Paper style={{height: "100%", overflow: 'auto', scrollbarWidth: 'thin'}}>
-              <List style={{paddingLeft: '10px', paddingTop: 0}}>
-                {
-                    full_lib.map( (node) =>
-                                  <NodeLeaves node={node}
-                                              depth={0}
-                                              key={node.uri}
-                                              rootElem
-                                  />
-                                )
-                }
+        <VFlex style={{height: "100%", width: "100%"}}>
+          { (library.favorites.children.length > 0) &&
+            <Paper elevation={5} variant='outlined'>
+              <List style={{paddingLeft: '10px'}}>
+                <NodeLeaves node={library.favorites} depth={0} rootElem/>
               </List>
             </Paper>
-            <ExtraButtonsPopover/>
-          </VFlex>
+          }
+          <Paper style={{height: "100%", overflow: 'auto', scrollbarWidth: 'thin'}}>
+            <List style={{paddingLeft: '10px', paddingTop: 0}}>
+              {
+                  full_lib.map( (node) =>
+                                <NodeLeaves node={node}
+                                            depth={0}
+                                            key={node.uri}
+                                            rootElem
+                                />
+                              )
+              }
+            </List>
+          </Paper>
+          <ExtraButtonsPopover/>
+        </VFlex>
     )
 }
 

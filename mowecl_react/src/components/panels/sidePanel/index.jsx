@@ -6,6 +6,7 @@ import SettingsIcon from '@material-ui/icons/Settings'
 import SearchIcon from '@material-ui/icons/Search'
 import HelpOutlineIcon from '@material-ui/icons/HelpOutline'
 import ErrorOutlineIcon from '@material-ui/icons/ErrorOutline'
+import QueueMusicIcon from '@material-ui/icons/QueueMusic'
 import Cached from '@material-ui/icons/Cached'
 
 import Paper from '@material-ui/core/Paper'
@@ -50,7 +51,9 @@ const SidePanel = (
         dispatch,
         pendingRequestsNb,
         connected,
-        search_history_length}
+        search_history_length,
+        small_screen
+    }
 ) => {
     const anchorEl = React.useRef(null)
     const [open, setOpen] = React.useState(false)
@@ -119,13 +122,10 @@ const SidePanel = (
                style={{display: 'flex', flexDirection: 'column',
                        justifyContent: 'space-between', zIndex: "10"}}
         >
-
-
           <ButtonGroup orientation='vertical'>
             <MopidyStatus pendingRequestsNb={pendingRequestsNb}
                           connected={connected}
             />
-
             <Tooltip title="Quick search">
               <Button ref={anchorEl}
                       id='popover-search-button'
@@ -141,6 +141,14 @@ const SidePanel = (
               </Button></Tooltip>
           </ButtonGroup>
           <ButtonGroup orientation='vertical'>
+
+            {
+                small_screen &&
+                    <Tooltip title="Tracklist panel">
+                      <Button onClick={activatePanel('tracklist')}>
+                        <QueueMusicIcon/>
+                      </Button></Tooltip>
+            }
 
             <Tooltip title="Library panel">
               <Button onClick={activatePanel('library')}>
@@ -181,6 +189,7 @@ export default connect(
         {
             ...state.mopidy,
             search_history_length: state.settings.persistant.generic.search_history_length,
-            uri_schemes: state.settings.uri_schemes
+            uri_schemes: state.settings.uri_schemes,
+            small_screen: state.settings.persistant.generic.small_screen
         }
     ) )(SidePanel)

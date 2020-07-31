@@ -33,7 +33,8 @@ const staticSettings =
           generic: {
               seek_update_interval: 500,
               search_history_length: 10,
-              disable_dnd: false
+              disable_dnd: false,
+              small_screen: false,
           },
           colors: {
               themeType: "light",
@@ -86,7 +87,15 @@ export const settingsSchema = {
             name: "Disable Drag'n Drop",
             help: "Usefull for touch screens.",
             validate: v => parseBoolean(v) || staticSettings.generic.disable_dnd
-        }
+        },
+        small_screen: {
+            type: "param",
+            inputType: "select",
+            choices: ["true", "false"],
+            name: "Small screen",
+            help: "Enable small screen layout.",
+            validate: v => parseBoolean(v) || staticSettings.generic.small_screen
+        },
     },
     colors: {
         name: "Theme colors",

@@ -91,7 +91,7 @@ export const SettingsPanel = () => {
 
 
     return (
-        <VFlex style={{padding: '5px', height: '100%', alignItems: "center" }}>
+        <VFlex style={{padding: '5px', height: '100%', alignItems: "center", width: "100%" }}>
           <Paper style={{ overflow: 'auto', scrollbarWidth: 'thin', flex: "1"}}>
             <SettingsGroup
               schema={settingsSchema}

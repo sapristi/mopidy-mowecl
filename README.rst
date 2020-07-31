@@ -61,6 +61,7 @@ Here is are the available settings (and default values) of Mowecl in the Mopidy 
     search_history_length = 10
     ## set to true for touch_screens
     disable_dnd = false
+    small_screen = false
 
     # theme config 
     ## light or dark
@@ -153,6 +154,7 @@ v0.3.7
 - Favorites
 - repeat/single/random playback buttons
 - Option to disable drag'n drop (usefull for touch screens)
+- Small screen option (single panel, smaller buttons). Far from perfect but better than nothing.
 
 v0.3.6
 ........................................
