@@ -54,11 +54,20 @@ const searchHistoryReducer =
           action
       ) => defaultNodeReducer(state, action)
 
+const favoritesReducer =
+      (
+          state = {name: "Favorites", uri: 'favorite:',
+                   type: 'favorites_root', path: ['favorite:'], children: []},
+          action
+      ) => defaultNodeReducer(state, action)
+
+
 export const libraryReducer = (
     combineReducers({
         mopidyLibrary: mopidyLibraryReducer,
         playlists: playlistReducer,
         search_results: searchResultsReducer,
         search_history: searchHistoryReducer,
-        bookmarks: bookmarksReducer
+        bookmarks: bookmarksReducer,
+        favorites: favoritesReducer
     }))

@@ -3,9 +3,10 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import Paper from '@material-ui/core/Paper';
-import {PlaybackButtons} from './playbackButtons'
+import {PlaybackButtons, TracklistStateButtons} from './playbackButtons'
 import {PlaybackSlider} from './playbackSlider'
 import {VolumeSlider} from './volumeSlider'
+import {HFlex, VFlex} from 'components/atoms'
 
 const TrackInfo = ({track}) => {
     if (!track) return '...'
@@ -47,14 +48,12 @@ let Footer = ({tltrack, state,
                       padding: '5px'
                      }}
             >
-              <div style={{display: 'flex', flexDirection: 'column'}}>
+              <VFlex>
                 <PlaybackButtons playbackState={state} />
                 <VolumeSlider volume={volume} dispatch={dispatch} 
                               style={{marginTop: 'auto', marginBottom: 'auto'}}/>
-              </div>
-              <div style={{display: 'flex', flexDirection: 'column',
-                           flex: 1,
-                           paddingLeft: '5%', paddingRight: '5%'}}>
+              </VFlex>
+              <VFlex style={{flex: 1, paddingLeft: '5%', paddingRight: '5%'}}>
                 {
                     (state !== "stopped") && (
                         <>
@@ -65,8 +64,8 @@ let Footer = ({tltrack, state,
                         </>
                     )
                 }
-                <div/>
-              </div>
+              </VFlex>
+              <TracklistStateButtons/>
             </Paper>
         )
     };

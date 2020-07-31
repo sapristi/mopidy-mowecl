@@ -39,6 +39,7 @@ class Extension(ext.Extension):
         schema["primary_color"] = ConfigColor(optional=True)
         schema["seek_update_interval"] = config.Integer()
         schema["search_history_length"] = config.Integer()
+        schema["disable_dnd"] = config.Boolean()
 
         schema["key_play_pause"] = config.String(optional=True)
         schema["key_next_track"] = config.String(optional=True)

@@ -30,6 +30,23 @@ const fetchPlaybackInfo = async (mopidyCli, dispatch) => {
 
 }
 
+const fetchTracklistOptions = (mopidyCli, dispatch) => {
+    const options = ["Repeat", "Single", "Random"]
+
+    Promise.all(options.map(
+        option => mopidyCli.tracklist[`get${option}`]()
+    )).then(
+        states => {
+            const tlstate = Object.fromEntries(states.map( (state,i) => [options[i], state] ))
+            dispatch({
+                type: 'SET_TRACKLIST_STATE',
+                target: "Random",
+                data: tlstate
+            })
+
+        }
+    )
+}
 
 export const initMopidyEventsDispatcher = (mopidyCli, dispatch) => {
 
@@ -97,8 +114,7 @@ export const initMopidyEventsDispatcher = (mopidyCli, dispatch) => {
         )
 
         fetchPlaybackInfo(mopidyCli, dispatch)
-
-
+        fetchTracklistOptions(mopidyCli, dispatch)
     })
 
     mopidyCli.on("state:offline", () => dispatch({
@@ -190,6 +206,11 @@ export const initMopidyEventsDispatcher = (mopidyCli, dispatch) => {
                 }))
         fetchPlaybackInfo(mopidyCli, dispatch)
     })
+
+    mopidyCli.on(
+        "event:optionsChanged", () =>
+            fetchTracklistOptions(mopidyCli, dispatch)
+    )
 
     mopidyCli.on("event:volumeChanged", (data) => {
         dispatch({

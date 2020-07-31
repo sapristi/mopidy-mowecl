@@ -1,6 +1,6 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import {Provider,  useDispatch } from 'react-redux'
+import {Provider,  useDispatch, useSelector } from 'react-redux'
 import {
     RecoilRoot,
 } from 'recoil';
@@ -12,19 +12,31 @@ import { createStore,  combineReducers } from 'redux'
 import './index.css'
 import 'typeface-roboto';
 
-import App from './App'
+import {App, AppSmall} from './App'
 import * as serviceWorker from './serviceWorker'
 import {useWsClient, makeWsClientReducer} from "mopidy-js"
 
 import {libraryReducer, playbackReducer, settingsReducer, tracklistReducer} from './reducers'
-
 import {initMopidyEventsDispatcher} from 'client_setup/mopidy'
-
 import {initBookmarksEventsDispatcher, bookmarksStateReducer} from 'client_setup/bookmarks'
+import {getWsAddress} from './utils'
 
-const MopidyApp = ({mopidy_host, mopidy_port,  colors}) => {
+const MopidyApp = () => {
     const dispatch = useDispatch()
-
+    const appProps = useSelector(
+        state =>
+            ({
+                active_panel_name: state.settings.active_panel,
+                colors: state.settings.persistant.colors,
+                mopidy_ws_url: getWsAddress(
+                    state.settings.persistant.mopidy_host,
+                    state.settings.persistant.mopidy_port,
+                    "mopidy"),
+                mopidy_connected: state.mopidy.connected,
+                mopidy_error: state.mopidy_error
+            })
+    )
+    const small_screen = useSelector(state => state.settings.persistant.generic.small_screen)
     useWsClient(
         "mopidy",
         mopidyCli => initMopidyEventsDispatcher(mopidyCli, dispatch),
@@ -36,9 +48,9 @@ const MopidyApp = ({mopidy_host, mopidy_port,  colors}) => {
         bookmarksCli => initBookmarksEventsDispatcher(bookmarksCli, dispatch),
         store => store.bookmarks.client
     )
-    return (
-          <App/>
-    )
+    return (small_screen)
+    ? <AppSmall {...appProps}/>
+    : <App {...appProps}/>
 }
 
 
@@ -56,7 +68,6 @@ const store = createStore(
 )
 
 window.$store = store
-
 
 ReactDOM.render(
     <Provider store={store} style={{height: '100%'}}>

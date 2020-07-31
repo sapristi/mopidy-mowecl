@@ -1,16 +1,17 @@
 import React from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 
-import { ReactSortable } from "react-sortablejs";
+import { ReactSortable } from "react-sortablejs"
 
-import Typography from '@material-ui/core/Typography';
-import List from '@material-ui/core/List';
-import Paper from '@material-ui/core/Paper';
-import ListItemText from '@material-ui/core/ListItemText';
+import Typography from '@material-ui/core/Typography'
+import List from '@material-ui/core/List'
+import Paper from '@material-ui/core/Paper'
+import ListItemText from '@material-ui/core/ListItemText'
 
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import ExpandLessIcon from '@material-ui/icons/ExpandLess';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
+import ExpandLessIcon from '@material-ui/icons/ExpandLess'
 
+import {VFlex} from 'components/atoms'
 import {duration_to_human, match} from 'utils'
 import {Track} from 'components/molecules'
 import { isLeaf, addToTracklist, toggleNode } from './functions'
@@ -25,7 +26,7 @@ const dropTo = (lib_item, at_position, to_object, mopidy) => {
         addToTracklist(lib_item, at_position, mopidy)
 }
 
-const getButtons = (node, dispatch) => {
+const getButtons = (node) => {
 
     return match(node)
         .on(node => node.path && node.path.length === 1, () =>
@@ -89,12 +90,13 @@ const ChildrenSideBar = ({callback, color}) => (
 
 
 
-const NodeLeaves = ({node, depth, rootElem}) => {
+const NodeLeaves = React.memo(({node, depth, rootElem}) => {
 
     // console.log("Rendering node", node.uri)
     const dispatch = useDispatch()
     const mopidy = useSelector(state => state.mopidy.client)
     const colors = useSelector(state => state.settings.persistant.colors)
+    const disableDnd = useSelector(state => state.settings.persistant.generic.disable_dnd)
     // if (isLeaf(node)) console.log(node)
 
     if (!node) return null
@@ -125,24 +127,36 @@ const NodeLeaves = ({node, depth, rootElem}) => {
 
 
     const ChildrenPanel = ({node, mopidy}) => (
-        <ReactSortable
-          group={{name: 'library', put: false, pull: "clone" }}
-          list={node.children}
+        (disableDnd)
+            ? (
+                <List style={{width: '100%'}}>
+                  {
+                      node.children.map(child => (
+                          <NodeLeaves key={child.uri} node={child} dispatch={dispatch}
+                                      depth={depth+1}/>
+                      ))
+                  }
+                </List>
+            )
+            : (
+                <ReactSortable
+                  group={{name: 'library', put: false, pull: "clone" }}
+                  list={node.children}
         /* setList={()=>{console.log("setlist")}} */
-          setList={()=>{}}
-          tag={List}
-          onEnd={(e) => {dropTo(node.children[e.oldIndex], e.newIndex, e.to, mopidy)}}
-          style={{width: '100%'}}
-        >
-          {
-              node.children.map(child => (
-                  <NodeLeaves key={child.uri} node={child} dispatch={dispatch}
-                              depth={depth+1}/>
-              ))
-          }
-        </ReactSortable>
+                  setList={()=>{}}
+                  tag={List}
+                  onEnd={(e) => {dropTo(node.children[e.oldIndex], e.newIndex, e.to, mopidy)}}
+                  style={{width: '100%'}}
+                >
+                  {
+                      node.children.map(child => (
+                          <NodeLeaves key={child.uri} node={child} dispatch={dispatch}
+                                      depth={depth+1}/>
+                      ))
+                  }
+                </ReactSortable>
+            )
     )
-
 
     return (
         <li style={{paddingTop: 0, paddingBottom: 0,
@@ -157,7 +171,7 @@ const NodeLeaves = ({node, depth, rootElem}) => {
                 {getIcon(node)}
               </Typography>
             </ListItemText>
-            {getButtons(node, dispatch)}
+            {getButtons(node)}
           </LibLine>
           <div>
             {  node.expanded && node.children &&
@@ -172,7 +186,7 @@ const NodeLeaves = ({node, depth, rootElem}) => {
           </div>
         </li>
     )
-}
+})
 
 export const LibraryPanel = () => {
 
@@ -196,20 +210,29 @@ export const LibraryPanel = () => {
     )
 
     return (
-        <Paper style={{minHeight: "100%"}}>
-          <List style={{paddingLeft: '10px'}}>
-            {
-                full_lib.map( (node) =>
-                              <NodeLeaves node={node}
-                                          depth={0}
-                                          key={node.uri}
-                                          rootElem
-                              />
-                            )
-            }
-          </List>
+        <VFlex style={{height: "100%", width: "100%"}}>
+          { (library.favorites.children.length > 0) &&
+            <Paper elevation={5} variant='outlined'>
+              <List style={{paddingLeft: '10px'}}>
+                <NodeLeaves node={library.favorites} depth={0} rootElem/>
+              </List>
+            </Paper>
+          }
+          <Paper style={{height: "100%", overflow: 'auto', scrollbarWidth: 'thin'}}>
+            <List style={{paddingLeft: '10px', paddingTop: 0}}>
+              {
+                  full_lib.map( (node) =>
+                                <NodeLeaves node={node}
+                                            depth={0}
+                                            key={node.uri}
+                                            rootElem
+                                />
+                              )
+              }
+            </List>
+          </Paper>
           <ExtraButtonsPopover/>
-        </Paper>
+        </VFlex>
     )
 }
 

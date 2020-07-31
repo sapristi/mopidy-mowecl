@@ -14,14 +14,17 @@ Presentation
 - Dual panel library / tracklist
 - Library / playlists / search results displayed as a single tree view
 - Drag and drop from library to tracklist, and inside tracklist
-- Save tracklist + current track as a bookmark (virtual playlist)
+- Uses the bookmarks_ extension 
 - Configurable hotkeys for playback and volume control
 - Basic color theming
+- Both global and per-client configuration
 
 .. image:: https://mopidy.com/media/ext/mowecl.png
    :target: https://mopidy.com/media/ext/mowecl.png
    :alt: Preview
    :width: 700px
+
+.. _bookmarks: https://github.com/sapristi/mopidy-bookmarks
 
 Implementation
 ..............
@@ -56,6 +59,9 @@ Here is are the available settings (and default values) of Mowecl in the Mopidy 
     # generic config
     seek_update_interval = 500
     search_history_length = 10
+    ## set to true for touch_screens
+    disable_dnd = false
+    small_screen = false
 
     # theme config 
     ## light or dark
@@ -142,11 +148,19 @@ To run Mowecl in develop mode, do the following:
 Changelog
 =======================================
 
+v0.3.7
+........................................
+
+- Favorites
+- repeat/single/random playback buttons
+- Option to disable drag'n drop (usefull for touch screens)
+- Small screen option (single panel, smaller buttons). Far from perfect but better than nothing.
+
 v0.3.6
 ........................................
 
 - Use `mopidy-bookmarks`_ extension
-- Confirm playlist delete and overwrite
+- Confirm dialog for playlist delete and overwrite
 - Some UI improvements
 
 .. _mopidy-bookmarks: https://github.com/sapristi/mopidy-bookmarks

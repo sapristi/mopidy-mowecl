@@ -22,6 +22,17 @@ export const initBookmarksEventsDispatcher = (bookmarksCli, dispatch) => {
                 data: (current_bookmark) ? current_bookmark.name : null
             })
         )
+        bookmarksCli.store.get({key: "favorites"}).then(
+            (favorites) => {
+                if (favorites) {
+                    dispatch({
+                        type: "LIBRARY_SET_CHILDREN",
+                        target: ["favorite:"],
+                        fun: () => favorites
+                    })
+                }
+            }
+        )
         dispatch({type: 'UPDATE_CLIENT', endpoint: "bookmarks", client: bookmarksCli})
     })
 

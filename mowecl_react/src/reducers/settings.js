@@ -14,6 +14,11 @@ const validate_hex_color = (str) => {
     }
 }
 
+const parseBoolean = (v) => {
+    if (typeof(v) === "boolean") {return v}
+    return (v === "true")
+}
+
 const staticSettings =
       (window.static_settings_enabled === "true")
       ? ({
@@ -27,7 +32,9 @@ const staticSettings =
           mopidy_port: 6680,
           generic: {
               seek_update_interval: 500,
-              search_history_length: 10
+              search_history_length: 10,
+              disable_dnd: false,
+              small_screen: false,
           },
           colors: {
               themeType: "light",
@@ -41,7 +48,6 @@ const staticSettings =
               previous: "",
           }
       })
-console.log("SETTINGS STATIC", staticSettings)
 
 export const settingsSchema = {
     name: "Settings",
@@ -73,6 +79,22 @@ export const settingsSchema = {
             name: "Search history length",
             help: 'Number of items in search history. Set 0 to disable.',
             validate: v => parseInt(v) || staticSettings.generic.search_history_length
+        },
+        disable_dnd: {
+            type: "param",
+            inputType: "select",
+            choices: ["true", "false"],
+            name: "Disable Drag'n Drop",
+            help: "Usefull for touch screens.",
+            validate: v => parseBoolean(v) || staticSettings.generic.disable_dnd
+        },
+        small_screen: {
+            type: "param",
+            inputType: "select",
+            choices: ["true", "false"],
+            name: "Small screen",
+            help: "Enable small screen layout.",
+            validate: v => parseBoolean(v) || staticSettings.generic.small_screen
         },
     },
     colors: {
@@ -148,26 +170,6 @@ export const settingsSchema = {
             validate: v => v || staticSettings.globalKeys.volume_down,
         }
     },
-    // remoteSync: {
-    //     name: "Remote sync (experimental)",
-    //     type: "group",
-    //     description: "Allows mowecl to communicate with its backend extension. Consider this an pre-alpha feature.",
-    //     mopidy_host: {
-    //         type: "param",
-    //         name: 'Modidy WebSocker URL',
-    //         default: getDefaultMopidyHost(),
-    //         help: 'Modidy host URL. Do not modify unless you know what you are doing.',
-    //         validate: v => v
-    //     },
-        // sync_tracklists: {
-        //     type: "param",
-        //     inputType: "checkbox",
-        //     name: "Sync tracklists",
-        //     default: false,
-        //     help: "Sync tracklists with mopidy: tracklists will be the same across all machines accessing the same mopidy host",
-        //     validate: v => v
-        // }
-    // }
 }
 
 
@@ -193,12 +195,9 @@ const load_rec = (schema, settings) =>
 
 export const load = settings => load_rec(settingsSchema, settings)
 
-
-console.log("SETTINGS SCHEMA", settingsSchema)
 const saved_settings = JSON.parse(localStorage.getItem("settings")) || {}
 const initialSettings = load(saved_settings)
 
-console.log("SETTINGS INITIAL", initialSettings)
 const defaultSettings = {
     active_panel: 'library',
     persistant: initialSettings,

@@ -1,5 +1,5 @@
 import React from 'react'
-import { connect, useSelector } from 'react-redux'
+import { connect, useSelector, useDispatch } from 'react-redux'
 import {useSetRecoilState} from 'recoil'
 import { ReactSortable } from "react-sortablejs"
 
@@ -46,7 +46,7 @@ const itemToText = (item) => {
     }
 }
 
-const TracklistItem = styled(ListItem)`
+const TracklistItemContainer = styled(ListItem)`
 padding: 0;
 box-sizing: border-box;
 border: 2px solid rgba(0,0,0,0);
@@ -56,56 +56,71 @@ border-radius: 5px;
 }
 `
 
-let TracklistListPanel = ({dispatch, tracklist, current_tlid}) => {
+const TracklistItem = ({item, color, current_tlid, mopidy}) => (
+    <TracklistItemContainer
+      color={color}
+      key={item.tlid}
+    >
+      {
+          (item.tlid === current_tlid)
+              ? <AudiotrackIcon fontSize="small" color="primary"/>
+              : ''
+      }
+      <ListItemText>
+        <Track text={itemToText(item)}
+               duration={duration_to_human(
+                   item.track.length,
+                   '∞')} />
+      </ListItemText>
+      <ListItemIcon>
+        <ButtonGroup>
+          <Button onClick={() => mopidy.playback.play({tlid: item.tlid})}>
+            <PlayArrowIcon fontSize="small"/>
+          </Button>
+          <Button onClick={() => mopidy.tracklist.remove({
+              criteria: {tlid: [item.tlid]}
+          })}>
+            <ClearIcon fontSize="small"/>
+          </Button></ButtonGroup>
+      </ListItemIcon>
+    </TracklistItemContainer>
+)
+
+
+let TracklistListPanel = ({tracklist, current_tlid}) => {
 
     const mopidy = useSelector(state => state.mopidy.client)
     const colors = useSelector(state => state.settings.persistant.colors)
+    const disableDnd = useSelector(state => state.settings.persistant.generic.disable_dnd)
+    const dispatch = useDispatch()
 
-    return (
+    return (disableDnd)
+        ? (
+            <List
+              style={{overflow: 'auto', maxHeight: '100%', padding: 0, scrollbarWidth: 'thin'}}
+            >
+              {tracklist.map(item => (
+                  <TracklistItem item={item} color={colors.primary} key={item.tlid}
+                                 current_tlid={current_tlid} mopidy={mopidy}/>
+              ))}
+            </List>
+        )
+        : (
              <ReactSortable
                list={tracklist}
                setList={() => {}}
                tag={List}
-               style={{overflow: 'auto', maxHeight: '100%', padding: 0}}
+               style={{overflow: 'auto', maxHeight: '100%', padding: 0, scrollbarWidth: 'thin'}}
                group={{name: 'tracklist', pull: true, put: ['library']}}
                onEnd={(e) => tracklistSwap(e, mopidy)}
-
-               id='tracklist'
              >
                {tracklist.map(item => (
-                   <TracklistItem
-                     color={colors.primary}
-                     key={item.tlid}
-                     className={(item.tlid === current_tlid) ?
-                                "tracklist_current" : "" }
-                   >
-                     {(item.tlid === current_tlid) ?
-                      <AudiotrackIcon fontSize="small"/>
-                      : ''
-
-                     }
-                     <ListItemText>
-                       <Track text={itemToText(item)}
-                              duration={duration_to_human(
-                                  item.track.length,
-                                  '∞')} />
-                     </ListItemText>
-                     <ListItemIcon>
-                       <ButtonGroup>
-                       <Button onClick={() => mopidy.playback.play({tlid: item.tlid})}>
-                         <PlayArrowIcon fontSize="small"/>
-                       </Button>
-                       <Button onClick={() => mopidy.tracklist.remove({
-                           criteria: {tlid: [item.tlid]}
-                       })}>
-                         <ClearIcon fontSize="small"/>
-                       </Button></ButtonGroup>
-                     </ListItemIcon>
-                   </TracklistItem>
+                   <TracklistItem item={item} color={colors.primary} key={item.tlid}
+                                  current_tlid={current_tlid} mopidy={mopidy}/>
               ))}
             </ReactSortable>
-    );
-};
+    )
+}
 
 
 const TracklistInfoPanel = ({tracklist}) => {
@@ -184,20 +199,17 @@ const TracklistInfoPanel = ({tracklist}) => {
 }
 
 
-let TracklistPanel = ({tracklist, current_tlid, dispatch}) => {
+let TracklistPanel = ({tracklist, current_tlid}) => {
 
     return (
         <Paper
           style={{display: 'flex', flexDirection: 'column', height: '100%',
-                  paddingLeft: '5px', marginLeft: '5px'
-                 }}>
+                  paddingLeft: '5px', marginLeft: '5px' }}>
           <TracklistInfoPanel
             tracklist={tracklist}
           />
           <TracklistListPanel tracklist={tracklist}
                               current_tlid={current_tlid}
-                              dispatch={dispatch}
-                              style={{overflow: 'auto', height: '100%', maxHeight: '100%'}}
                   />
         </Paper>
     )
