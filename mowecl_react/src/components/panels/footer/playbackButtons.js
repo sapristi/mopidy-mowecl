@@ -9,6 +9,9 @@ import SkipNextIcon from '@material-ui/icons/SkipNext'
 import PlayArrowIcon from '@material-ui/icons/PlayArrow'
 import PauseIcon from '@material-ui/icons/Pause'
 
+import RepeatIcon from '@material-ui/icons/Repeat'
+import RepeatOneIcon from '@material-ui/icons/RepeatOne'
+import ShuffleIcon from '@material-ui/icons/Shuffle'
 
 export const PlaybackButtons = ({playbackState}) => {
     const mopidy = useSelector(state => state.mopidy.client)
@@ -30,6 +33,31 @@ export const PlaybackButtons = ({playbackState}) => {
           <Button onClick={() => mopidy.playback.next()}>
             <SkipNextIcon fontSize="large"/>
           </Button>
+        </ButtonGroup>
+    )
+}
+
+export const TracklistStateButtons = () => {
+    const mopidyCli = useSelector(state => state.mopidy.client)
+    const tracklistState = useSelector(state => state.playback_state.tracklist_state)
+    const makeAction = (name, state) => () => mopidyCli.tracklist[`set${name}`]({value: !state})
+    const iconMap = {
+        Repeat: <RepeatIcon/>,
+        Single: <RepeatOneIcon/>,
+        Random: <ShuffleIcon/>,
+    }
+    return (
+        <ButtonGroup orientation="vertical" size="small">
+          {
+              Object.entries(tracklistState).map(
+                  ([name, value]) => (
+                      <Button onClick={makeAction(name, value)}
+                              color={(value) ? "primary": "default"}
+                              key={name}>
+                        {iconMap[name]}
+                      </Button>
+              ))
+          }
         </ButtonGroup>
     )
 }

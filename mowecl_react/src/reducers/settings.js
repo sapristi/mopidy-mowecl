@@ -41,7 +41,6 @@ const staticSettings =
               previous: "",
           }
       })
-console.log("SETTINGS STATIC", staticSettings)
 
 export const settingsSchema = {
     name: "Settings",
@@ -193,12 +192,9 @@ const load_rec = (schema, settings) =>
 
 export const load = settings => load_rec(settingsSchema, settings)
 
-
-console.log("SETTINGS SCHEMA", settingsSchema)
 const saved_settings = JSON.parse(localStorage.getItem("settings")) || {}
 const initialSettings = load(saved_settings)
 
-console.log("SETTINGS INITIAL", initialSettings)
 const defaultSettings = {
     active_panel: 'library',
     persistant: initialSettings,
