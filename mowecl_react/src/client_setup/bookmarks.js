@@ -23,7 +23,7 @@ export const initBookmarksEventsDispatcher = (bookmarksCli, dispatch) => {
             })
         )
         bookmarksCli.store.get({key: "favorites"}).then(
-            ({value: favorites}) => {
+            (favorites) => {
                 if (favorites) {
                     dispatch({
                         type: "LIBRARY_SET_CHILDREN",

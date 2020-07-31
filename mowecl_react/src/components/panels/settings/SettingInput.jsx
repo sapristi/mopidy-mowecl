@@ -32,7 +32,7 @@ const SettingHelp = ({schema}) =>
                   {schema.help}
                 </Typography>
                 <Typography>
-                  Default: <em>{schema.default}</em> 
+                  Default: <em>{String(schema.validate(null))}</em> 
                 </Typography>
               </Paper>
           }

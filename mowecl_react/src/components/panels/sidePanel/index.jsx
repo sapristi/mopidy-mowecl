@@ -25,36 +25,22 @@ import {SearchInput} from './SearchInput'
 const MopidyStatus = ({pendingRequestsNb, connected}) => {
 
     const style = {marginTop: '15px', marginBottom: '10px'}
+    const props = (connected)
+          ? ((pendingRequestsNb === 0)
+             ? ({variant: 'determinate', value: 100})
+             : ({})
+            )
+          : ({color: "secondary"})
 
-    if (!connected)
         return (
             <div>
               <CircularProgress size={30}
                                 thickness={5}
                                 style={style}
-                                color="secondary"
+                                {...props}
               />
             </div>
         )
-    if (pendingRequestsNb === 0)
-        return (
-            <div>
-              <CircularProgress size={30}
-                                thickness={5}
-                                style={style}
-                                variant="determinate" value={100}
-              />
-            </div>
-        )
-
-    return (
-        <div>
-          <CircularProgress size={30}
-                            thickness={5}
-                            style={style}
-          />
-        </div>
-    )
 }
 
 

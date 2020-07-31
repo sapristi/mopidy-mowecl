@@ -96,6 +96,7 @@ const NodeLeaves = React.memo(({node, depth, rootElem}) => {
     const dispatch = useDispatch()
     const mopidy = useSelector(state => state.mopidy.client)
     const colors = useSelector(state => state.settings.persistant.colors)
+    const disableDnd = useSelector(state => state.settings.persistant.generic.disable_dnd)
     // if (isLeaf(node)) console.log(node)
 
     if (!node) return null
@@ -126,24 +127,36 @@ const NodeLeaves = React.memo(({node, depth, rootElem}) => {
 
 
     const ChildrenPanel = ({node, mopidy}) => (
-        <ReactSortable
-          group={{name: 'library', put: false, pull: "clone" }}
-          list={node.children}
+        (disableDnd)
+            ? (
+                <List style={{width: '100%'}}>
+                  {
+                      node.children.map(child => (
+                          <NodeLeaves key={child.uri} node={child} dispatch={dispatch}
+                                      depth={depth+1}/>
+                      ))
+                  }
+                </List>
+            )
+            : (
+                <ReactSortable
+                  group={{name: 'library', put: false, pull: "clone" }}
+                  list={node.children}
         /* setList={()=>{console.log("setlist")}} */
-          setList={()=>{}}
-          tag={List}
-          onEnd={(e) => {dropTo(node.children[e.oldIndex], e.newIndex, e.to, mopidy)}}
-          style={{width: '100%'}}
-        >
-          {
-              node.children.map(child => (
-                  <NodeLeaves key={child.uri} node={child} dispatch={dispatch}
-                              depth={depth+1}/>
-              ))
-          }
-        </ReactSortable>
+                  setList={()=>{}}
+                  tag={List}
+                  onEnd={(e) => {dropTo(node.children[e.oldIndex], e.newIndex, e.to, mopidy)}}
+                  style={{width: '100%'}}
+                >
+                  {
+                      node.children.map(child => (
+                          <NodeLeaves key={child.uri} node={child} dispatch={dispatch}
+                                      depth={depth+1}/>
+                      ))
+                  }
+                </ReactSortable>
+            )
     )
-
 
     return (
         <li style={{paddingTop: 0, paddingBottom: 0,

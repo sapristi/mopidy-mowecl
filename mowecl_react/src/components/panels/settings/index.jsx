@@ -10,7 +10,7 @@ import Typography from '@material-ui/core/Typography'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import ExpandLessIcon from '@material-ui/icons/ExpandLess';
 
-import {HFlex} from 'components/atoms'
+import {HFlex, VFlex} from 'components/atoms'
 
 import {SettingInput} from './SettingInput'
 
@@ -25,7 +25,7 @@ const SettingsGroup = ({schema, group, path, setInGroup}) => {
     const body = (
         <>
           {schema.description && schema.description}
-          <List>
+          <List style={{maxHeight: "100%"}}>
             {
                 Object.entries(schema)
                     .filter(([key, value]) => (["param", "group"].includes(value.type)))
@@ -91,20 +91,20 @@ export const SettingsPanel = () => {
 
 
     return (
-        <Paper style={{margin: '5px'}}>
-          <SettingsGroup
-            schema={settingsSchema}
-            group={settings}
-            setInGroup={(key, value) =>
-                        setSettings(() => ({...settings, [key]: value}))}
-            path={[]}/>
-
-          <ButtonGroup>
+        <VFlex style={{padding: '5px', height: '100%', alignItems: "center" }}>
+          <Paper style={{ overflow: 'auto', scrollbarWidth: 'thin', flex: "1"}}>
+            <SettingsGroup
+              schema={settingsSchema}
+              group={settings}
+              setInGroup={(key, value) =>
+                          setSettings(() => ({...settings, [key]: value}))}
+              path={[]}/>
+          </Paper>
+          <ButtonGroup style={{padding: "10px"}}>
             <Button onClick={handleCommit}>Commit</Button>
             <Button onClick={handleClear}>Restore defaults</Button>
           </ButtonGroup>
-
-        </Paper>
+        </VFlex>
     )
 }
 

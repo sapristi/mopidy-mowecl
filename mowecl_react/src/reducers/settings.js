@@ -14,6 +14,11 @@ const validate_hex_color = (str) => {
     }
 }
 
+const parseBoolean = (v) => {
+    if (typeof(v) === "boolean") {return v}
+    return (v === "true")
+}
+
 const staticSettings =
       (window.static_settings_enabled === "true")
       ? ({
@@ -27,7 +32,8 @@ const staticSettings =
           mopidy_port: 6680,
           generic: {
               seek_update_interval: 500,
-              search_history_length: 10
+              search_history_length: 10,
+              disable_dnd: false
           },
           colors: {
               themeType: "light",
@@ -73,6 +79,14 @@ export const settingsSchema = {
             help: 'Number of items in search history. Set 0 to disable.',
             validate: v => parseInt(v) || staticSettings.generic.search_history_length
         },
+        disable_dnd: {
+            type: "param",
+            inputType: "select",
+            choices: ["true", "false"],
+            name: "Disable Drag'n Drop",
+            help: "Usefull for touch screens.",
+            validate: v => parseBoolean(v) || staticSettings.generic.disable_dnd
+        }
     },
     colors: {
         name: "Theme colors",
@@ -147,26 +161,6 @@ export const settingsSchema = {
             validate: v => v || staticSettings.globalKeys.volume_down,
         }
     },
-    // remoteSync: {
-    //     name: "Remote sync (experimental)",
-    //     type: "group",
-    //     description: "Allows mowecl to communicate with its backend extension. Consider this an pre-alpha feature.",
-    //     mopidy_host: {
-    //         type: "param",
-    //         name: 'Modidy WebSocker URL',
-    //         default: getDefaultMopidyHost(),
-    //         help: 'Modidy host URL. Do not modify unless you know what you are doing.',
-    //         validate: v => v
-    //     },
-        // sync_tracklists: {
-        //     type: "param",
-        //     inputType: "checkbox",
-        //     name: "Sync tracklists",
-        //     default: false,
-        //     help: "Sync tracklists with mopidy: tracklists will be the same across all machines accessing the same mopidy host",
-        //     validate: v => v
-        // }
-    // }
 }
 
 

@@ -102,6 +102,7 @@ export const FavButton = ({node, ...props}) => {
     const favorites = useSelector(state => state.library.favorites.children)
     const bookmarksCli = useSelector(state => state.bookmarks.client)
     const dispatch = useDispatch()
+
     const alreadyFav = favorites.map(f => f.uri).includes(node.uri)
     const action = () => {
         const newFavs = (alreadyFav)
@@ -117,7 +118,9 @@ export const FavButton = ({node, ...props}) => {
         bookmarksCli.store.set({key: "favorites", value: newFavs_slim})
     }
     return (
-        <IconButton size="small" {...props} onClick={action}>
+        <IconButton size="small" {...props} onClick={action}
+                    style={{marginRight: '10px'}} color="primary"
+        >
           {(alreadyFav)
            ? <FavoriteIcon/>
            : <FavoriteBorderIcon/>
