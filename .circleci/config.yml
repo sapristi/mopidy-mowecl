@@ -10,20 +10,22 @@ workflows:
       - build:
           filters:
             branches:
-              only:
-                - /^release.*/
-                - master
-            tags:
-              only: /^v.*/
+            branches:
+              ignore: /.*/
+
+            #   only:
+            #     - /^release.*/
+            #     - master
+            # tags:
+            #   only: /^v.*/
       - deploy:
           requires:
             - build
           filters:
             branches:
-              only:
-                - master
-            tags:
-              only: /^v.*/
+              ignore: /.*/
+            # tags:
+            #   only: /^v.*/
 jobs:
   build:
     docker:

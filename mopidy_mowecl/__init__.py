@@ -40,6 +40,7 @@ class Extension(ext.Extension):
         schema["seek_update_interval"] = config.Integer()
         schema["search_history_length"] = config.Integer()
         schema["disable_dnd"] = config.Boolean()
+        schema["small_screen"] = config.Boolean()
 
         schema["key_play_pause"] = config.String(optional=True)
         schema["key_next_track"] = config.String(optional=True)
