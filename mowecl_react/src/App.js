@@ -27,6 +27,11 @@ let AppContainer = React.memo(({colors, children}) => {
           : (Color(colors.text).darken(0.25).hex())
     // console.log("COLORS", colors)
     const THEME = createMuiTheme({
+        props: {
+            MuiButtonBase: {
+                disableRipple: true,
+            },
+        },
         palette: {
             type: colors.themeType,
             background: {
