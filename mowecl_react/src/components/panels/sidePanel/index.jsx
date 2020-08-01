@@ -29,9 +29,9 @@ const MopidyStatus = ({pendingRequestsNb, connected}) => {
     const props = (connected)
           ? ((pendingRequestsNb === 0)
              ? ({variant: 'determinate', value: 100})
-             : ({})
+             : ({disableShrink: true})
             )
-          : ({color: "secondary"})
+          : ({color: "secondary", disableShrink: true})
 
         return (
             <div>

@@ -7,7 +7,7 @@ import Typography from '@material-ui/core/Typography'
 import List from '@material-ui/core/List'
 import Paper from '@material-ui/core/Paper'
 import ListItemText from '@material-ui/core/ListItemText'
-
+import Button from '@material-ui/core/Button'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 import ExpandLessIcon from '@material-ui/icons/ExpandLess'
 
@@ -165,11 +165,17 @@ const NodeLeaves = React.memo(({node, depth, rootElem}) => {
                     textAlign: 'left',
                    }}>
           <LibLine color={colors.primary}>
-            <ListItemText onClick={() => toggleNode(node, dispatch, mopidy)}>
-              <Typography style={rootElem ? {fontWeight: 500 }: {}}>
-                {getText(node)}
-                {getIcon(node)}
-              </Typography>
+            <ListItemText>
+              <Button onClick={() => toggleNode(node, dispatch, mopidy)}
+                      style={{padding: 0, width: "100%", justifyContent:"left",
+                              textAlign: "left"}}
+                      variant="text"
+              >
+                <Typography style={rootElem ? {fontWeight: 500 }: {}}>
+                  {getText(node)}
+                  {getIcon(node)}
+                </Typography>
+              </Button>
             </ListItemText>
             {getButtons(node)}
           </LibLine>
