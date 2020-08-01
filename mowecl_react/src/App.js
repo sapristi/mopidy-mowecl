@@ -21,7 +21,7 @@ import {HotKeysProvider} from './components/molecules/HotKeysProvider'
 import {ConfirmDialog} from 'components/molecules/confirmDialog'
 import {useTraceUpdate, getWsAddress, match} from './utils'
 
-let AppContainer = ({colors, children}) => {
+let AppContainer = React.memo(({colors, children}) => {
     const text_secondary = (colors.themeType === "light")
           ? (Color(colors.text).lighten(0.25).hex())
           : (Color(colors.text).darken(0.25).hex())
@@ -76,7 +76,7 @@ let AppContainer = ({colors, children}) => {
           </VFlex>
         </MuiThemeProvider>
     )
-}
+})
 
 const ErrorPanel = ({mopidy_ws_url, mopidy_error}) => (
     <VFlex style={{width: '100%', height: "100%"}}>
@@ -94,7 +94,7 @@ const ErrorPanel = ({mopidy_ws_url, mopidy_error}) => (
 )
 
 
-export const App = (
+export const App = React.memo((
     {active_panel_name,
      colors, mopidy_ws_url,
      mopidy_connected,
@@ -125,7 +125,7 @@ export const App = (
               </HFlex>
             </AppContainer>
         )
-}
+})
 
 
 

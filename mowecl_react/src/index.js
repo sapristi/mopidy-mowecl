@@ -28,10 +28,6 @@ const MopidyApp = () => {
             ({
                 active_panel_name: state.settings.active_panel,
                 colors: state.settings.persistant.colors,
-                mopidy_ws_url: getWsAddress(
-                    state.settings.persistant.mopidy_host,
-                    state.settings.persistant.mopidy_port,
-                    "mopidy"),
                 mopidy_connected: state.mopidy.connected,
                 mopidy_error: state.mopidy_error
             })
@@ -48,9 +44,11 @@ const MopidyApp = () => {
         bookmarksCli => initBookmarksEventsDispatcher(bookmarksCli, dispatch),
         store => store.bookmarks.client
     )
-    return (small_screen)
-    ? <AppSmall {...appProps}/>
-    : <App {...appProps}/>
+    return (
+        (small_screen)
+            ? (<AppSmall {...appProps}/>)
+            : (<App {...appProps}/>)
+    )
 }
 
 
