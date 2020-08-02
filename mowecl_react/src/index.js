@@ -35,14 +35,12 @@ const MopidyApp = () => {
     const small_screen = useSelector(state => state.settings.persistant.generic.small_screen)
     useWsClient(
         "mopidy",
-        mopidyCli => initMopidyEventsDispatcher(mopidyCli, dispatch),
-        store => store.mopidy.client
+        initMopidyEventsDispatcher
     )
 
     useWsClient(
         "bookmarks",
-        bookmarksCli => initBookmarksEventsDispatcher(bookmarksCli, dispatch),
-        store => store.bookmarks.client
+        initBookmarksEventsDispatcher
     )
     return (
         (small_screen)
