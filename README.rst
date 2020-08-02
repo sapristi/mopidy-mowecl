@@ -148,7 +148,7 @@ To run Mowecl in develop mode, do the following:
 Changelog
 =======================================
 
-v0.3.7
+v0.3.8
 ........................................
 
 - Favorites

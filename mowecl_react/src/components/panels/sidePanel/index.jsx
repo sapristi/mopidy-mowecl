@@ -3,46 +3,18 @@ import { connect, useSelector } from 'react-redux'
 import Button from '@material-ui/core/Button'
 import ButtonGroup from '@material-ui/core/ButtonGroup'
 import SettingsIcon from '@material-ui/icons/Settings'
-import SearchIcon from '@material-ui/icons/Search'
 import HelpOutlineIcon from '@material-ui/icons/HelpOutline'
 import ErrorOutlineIcon from '@material-ui/icons/ErrorOutline'
 import QueueMusicIcon from '@material-ui/icons/QueueMusic'
-import Cached from '@material-ui/icons/Cached'
 
 import Paper from '@material-ui/core/Paper'
-import Popover from '@material-ui/core/Popover'
 import Tooltip from '@material-ui/core/Tooltip'
-
-import CircularProgress from '@material-ui/core/CircularProgress'
 
 import { mdiFileTreeOutline } from '@mdi/js'
 import Icon from '@mdi/react'
 
+import {SidePanelUpper} from './upper'
 import { getSearchUris, mowecl_version } from 'utils'
-
-import {SearchInput} from './SearchInput'
-
-
-const MopidyStatus = ({pendingRequestsNb, connected}) => {
-
-    const style = {marginTop: '15px', marginBottom: '10px'}
-    const props = (connected)
-          ? ((pendingRequestsNb === 0)
-             ? ({variant: 'determinate', value: 100})
-             : ({disableShrink: true})
-            )
-          : ({color: "secondary", disableShrink: true})
-
-        return (
-            <div>
-              <CircularProgress size={30}
-                                thickness={5}
-                                style={style}
-                                {...props}
-              />
-            </div>
-        )
-}
 
 
 const SidePanel = (
@@ -56,8 +28,6 @@ const SidePanel = (
         current_panel
     }
 ) => {
-    const anchorEl = React.useRef(null)
-    const [open, setOpen] = React.useState(false)
 
     const [availableVersion, setAvailableVersion] = React.useState(() => null)
 
@@ -81,72 +51,12 @@ const SidePanel = (
         [current_panel]
     )
 
-    const SearchPopover = () => (
-        <Popover
-          open={open}
-          anchorEl={anchorEl.current}
-          onClose={() => setOpen(false)}
-          anchorOrigin={{
-              vertical: 'top',
-              horizontal: 'right',
-          }}
-          transformOrigin={{
-              vertical: 'top',
-              horizontal: 'left',
-          }}
-        >
-          <SearchInput searchUris={searchUris} mopidy={mopidy}
-                       dispatch={dispatch} closePopover={() => setOpen(false)}
-                       search_history_length={search_history_length}
-          />
-        </Popover>
-
-    )
-
-
-    const refreshAll = async function () {
-        await Promise.all( [mopidy.library.refresh(),
-                            mopidy.playlists.refresh()])
-
-        mopidy.library.browse({uri: null}).then(
-            library =>
-                dispatch({
-                    type: 'MOPIDY_LIBRARY_INITIALISE',
-                    data: library
-                }))
-
-        mopidy.playlists.asList().then(
-            playlists => 
-                dispatch({
-                    type: 'LIBRARY_SET_CHILDREN',
-                    target: ["playlist:"],
-                    fun: () => playlists,
-                }))
-    }
-
     return (
         <Paper elevation={5}
                style={{display: 'flex', flexDirection: 'column',
                        justifyContent: 'space-between', zIndex: "10"}}
         >
-          <ButtonGroup orientation='vertical'>
-            <MopidyStatus pendingRequestsNb={pendingRequestsNb}
-                          connected={connected}
-            />
-            <Tooltip title="Quick search">
-              <Button ref={anchorEl}
-                      id='popover-search-button'
-                      onClick={() => setOpen(true)}
-              >
-                <SearchIcon/>
-              </Button></Tooltip>
-            <SearchPopover/>
-
-            <Tooltip title="Refresh lib and playlists">
-              <Button onClick={refreshAll}>
-                <Cached/>
-              </Button></Tooltip>
-          </ButtonGroup>
+          <SidePanelUpper/>
           <ButtonGroup orientation='vertical'>
 
             {
