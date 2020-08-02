@@ -1,5 +1,5 @@
 import React from 'react'
-import { connect, useSelector, useDispatch } from 'react-redux'
+import {connect, useSelector} from 'react-redux'
 import {useSetRecoilState} from 'recoil'
 import { ReactSortable } from "react-sortablejs"
 
@@ -92,7 +92,6 @@ let TracklistListPanel = ({tracklist, current_tlid}) => {
     const mopidy = useSelector(state => state.mopidy.client)
     const colors = useSelector(state => state.settings.persistant.colors)
     const disableDnd = useSelector(state => state.settings.persistant.generic.disable_dnd)
-    const dispatch = useDispatch()
 
     return (disableDnd)
         ? (

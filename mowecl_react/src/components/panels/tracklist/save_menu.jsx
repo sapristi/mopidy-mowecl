@@ -40,10 +40,14 @@ export const SaveMenu = ({
 
     const [menuState, setMenuState] = useRecoilState(menuStateAtom)
     const setConfirmDialogState = useSetRecoilState(confirmDialogStateAtom)
-    const playlistsAll = useSelector(state => ({
-        bookmarks: state.library.bookmarks.children,
-        playlists: state.library.playlists.children,
-    }))
+    const bookmarks =  useSelector(state => state.library.bookmarks.children)
+    const playlists = useSelector(state => state.library.playlists.children)
+    const playlistsAll = React.useMemo(
+        () => ({
+            bookmarks: bookmarks,
+            playlists: playlists,
+        }),
+        [bookmarks, playlists])
 
     const previousItems = playlistsAll[menuState.previousItems] || []
 

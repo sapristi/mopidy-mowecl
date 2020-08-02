@@ -14,7 +14,7 @@ import PlaylistPlayIcon from '@material-ui/icons/PlaylistPlay'
 import ListItemIcon from '@material-ui/core/ListItemIcon'
 // import ClearIcon from '@material-ui/icons/Clear'
 // import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline'
-import MoreVertIcon from '@material-ui/icons/MoreVert'
+// import MoreVertIcon from '@material-ui/icons/MoreVert'
 import FavoriteIcon from '@material-ui/icons/Favorite'
 import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder'
 
@@ -106,7 +106,7 @@ export const FavButton = ({node, ...props}) => {
     const alreadyFav = favorites.map(f => f.uri).includes(node.uri)
     const action = () => {
         const newFavs = (alreadyFav)
-              ? (favorites.filter(c => c.uri != node.uri))
+              ? (favorites.filter(c => c.uri !== node.uri))
               : ([...favorites, node])
 
         dispatch({

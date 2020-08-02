@@ -1,10 +1,9 @@
 import React from 'react'
-import { connect } from 'react-redux'
 
 import './App.css'
 
 import {HFlex, VFlex} from 'components/atoms'
-import Footer from './components/panels/footer'
+import {Footer} from './components/panels/footer'
 import SidePanel from './components/panels/sidePanel'
 import TracklistPanel from './components/panels/tracklist'
 import { LibraryPanel } from './components/panels/library'
@@ -12,14 +11,13 @@ import {SettingsPanel} from './components/panels/settings'
 import HelpPanel from './components/panels/helpPanel'
 
 import CircularProgress from '@material-ui/core/CircularProgress';
-import Paper from '@material-ui/core/Paper';
 
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 
 import Color from 'color'
 import {HotKeysProvider} from './components/molecules/HotKeysProvider'
 import {ConfirmDialog} from 'components/molecules/confirmDialog'
-import {useTraceUpdate, getWsAddress, match} from './utils'
+import {match} from './utils'
 
 let AppContainer = React.memo(({colors, children}) => {
     const text_secondary = React.useMemo(
