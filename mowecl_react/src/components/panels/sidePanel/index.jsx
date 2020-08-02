@@ -52,7 +52,8 @@ const SidePanel = (
         pendingRequestsNb,
         connected,
         search_history_length,
-        small_screen
+        small_screen,
+        current_panel
     }
 ) => {
     const anchorEl = React.useRef(null)
@@ -71,8 +72,14 @@ const SidePanel = (
 
     const activatePanel = function (name) {
         return () => dispatch({type: 'ACTIVE_PANEL',
-                               target: name
-                              })}
+                               target: name })}
+
+    const getButtonColor = React.useCallback(
+        (panelName) => ((panelName === current_panel)
+                        ? "primary"
+                        : "default"),
+        [current_panel]
+    )
 
     const SearchPopover = () => (
         <Popover
@@ -145,18 +152,21 @@ const SidePanel = (
             {
                 small_screen &&
                     <Tooltip title="Tracklist panel">
-                      <Button onClick={activatePanel('tracklist')}>
+                      <Button onClick={activatePanel('tracklist')}
+                              color={getButtonColor("tracklist")}>
                         <QueueMusicIcon/>
                       </Button></Tooltip>
             }
 
             <Tooltip title="Library panel">
-              <Button onClick={activatePanel('library')}>
+              <Button onClick={activatePanel('library')}
+                      color={getButtonColor("library")}>
                 <Icon path={mdiFileTreeOutline} size={1}/>
               </Button></Tooltip>
 
             <Tooltip title="Settings panel">
               <Button style={{height: 'auto'}}
+                      color={getButtonColor("control")}
                       onClick={activatePanel('control')}>
                 <SettingsIcon/>
               </Button></Tooltip>
@@ -176,7 +186,9 @@ const SidePanel = (
                       </Button>
                     </Tooltip>
             }
-            <Button onClick={activatePanel('help')}>
+            <Button onClick={activatePanel('help')}
+                    color={getButtonColor("help")}
+            >
               <HelpOutlineIcon/>
             </Button>
           </ButtonGroup>
@@ -190,6 +202,7 @@ export default connect(
             ...state.mopidy,
             search_history_length: state.settings.persistant.generic.search_history_length,
             uri_schemes: state.settings.uri_schemes,
-            small_screen: state.settings.persistant.generic.small_screen
+            small_screen: state.settings.persistant.generic.small_screen,
+            current_panel: state.settings.active_panel,
         }
     ) )(SidePanel)
