@@ -171,7 +171,7 @@ const NodeLeaves = React.memo(({node, depth, rootElem}) => {
                               textAlign: "left"}}
                       variant="text"
               >
-                <Typography style={rootElem ? {fontWeight: 500 }: {}}>
+                <Typography style={rootElem ? {fontWeight: 500}: {wordBreak: "break-word"}}>
                   {getText(node)}
                   {getIcon(node)}
                 </Typography>

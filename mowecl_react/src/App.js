@@ -135,7 +135,7 @@ export const App = React.memo((
 
 
 
-export const  AppSmall = (
+export const  AppSmall = React.memo((
     {active_panel_name,
      colors, mopidy_ws_url,
      mopidy_connected,
@@ -155,4 +155,4 @@ export const  AppSmall = (
                : <SettingsPanel/>}
             </AppContainer>
         )
-}
+})

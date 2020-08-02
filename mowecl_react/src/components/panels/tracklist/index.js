@@ -204,7 +204,7 @@ let TracklistPanel = ({tracklist, current_tlid}) => {
     return (
         <Paper
           style={{display: 'flex', flexDirection: 'column', height: '100%',
-                  paddingLeft: '5px', marginLeft: '5px' }}>
+                  paddingLeft: '5px', marginLeft: '5px', width: "100%" }}>
           <TracklistInfoPanel
             tracklist={tracklist}
           />
