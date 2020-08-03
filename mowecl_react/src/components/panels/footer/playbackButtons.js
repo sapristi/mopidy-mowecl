@@ -13,37 +13,58 @@ import RepeatIcon from '@material-ui/icons/Repeat'
 import RepeatOneIcon from '@material-ui/icons/RepeatOne'
 import ShuffleIcon from '@material-ui/icons/Shuffle'
 
-export const PlaybackButtons = ({playbackState}) => {
-    const mopidy = useSelector(state => state.mopidy.client)
+const PreviousButton = React.memo(
+    ({size, mopidyCli}) =>
+        <Button onClick={() => mopidyCli.playback.next()}>
+          <SkipNextIcon fontSize={size}/>
+        </Button>
+)
+
+const NextButton = React.memo(
+    ({size, mopidyCli}) =>
+        <Button onClick={() => mopidyCli.playback.previous()}>
+          <SkipPreviousIcon fontSize={size}/>
+        </Button>
+)
+
+const PlayPauseButton = React.memo(
+    ({size, mopidyCli, playbackState}) =>
+        (playbackState === 'playing')
+        ? (<Button onClick={() => mopidyCli.playback.pause()}>
+             <PauseIcon fontSize={size}/>
+           </Button>)
+        : <Button onClick={() => mopidyCli.playback.play()}>
+            <PlayArrowIcon fontSize={size}/>
+          </Button>
+)
+
+
+export const PlaybackButtons = React.memo(({playbackState}) => {
+    const mopidyCli = useSelector(state => state.mopidy.client)
     const small_screen = useSelector(state => state.settings.persistant.generic.small_screen)
 
-    const groupSize = (small_screen) ? "small" : "large"
-    const size = (small_screen) ? "default" : "large"
+    const groupSize = React.useMemo(
+        () => (small_screen) ? "small" : "large",
+        [small_screen])
+    const size = React.useMemo(
+        () => (small_screen) ? "default" : "large",
+        [small_screen])
     return (
         <ButtonGroup size={groupSize}>
-          <Button onClick={() => mopidy.playback.previous()}>
-            <SkipPreviousIcon fontSize={size}/>
-          </Button>
-          {
-              (playbackState === 'playing') ?
-                  <Button onClick={() => mopidy.playback.pause()}>
-                    <PauseIcon fontSize={size}/>
-                  </Button> :
-              <Button onClick={() => mopidy.playback.play()}>
-                <PlayArrowIcon fontSize={size}/>
-              </Button>
-          }
-          <Button onClick={() => mopidy.playback.next()}>
-            <SkipNextIcon fontSize={size}/>
-          </Button>
+          <PreviousButton size={size} mopidyCli={mopidyCli}/>
+          <PlayPauseButton size={size} playbackState={playbackState} mopidyCli={mopidyCli}/>
+          <NextButton size={size} mopidyCli={mopidyCli}/>
         </ButtonGroup>
     )
-}
+})
 
-export const TracklistStateButtons = () => {
+export const TracklistStateButtons = React.memo(() => {
     const mopidyCli = useSelector(state => state.mopidy.client)
     const tracklistState = useSelector(state => state.playback_state.tracklist_state)
-    const makeAction = (name, state) => () => mopidyCli.tracklist[`set${name}`]({value: !state})
+    const makeAction = React.useCallback(
+        (name, state) => () => mopidyCli.tracklist[`set${name}`]({value: !state}),
+        [mopidyCli]
+    )
     const iconMap = {
         Repeat: <RepeatIcon/>,
         Single: <RepeatOneIcon/>,
@@ -63,4 +84,4 @@ export const TracklistStateButtons = () => {
           }
         </ButtonGroup>
     )
-}
+})

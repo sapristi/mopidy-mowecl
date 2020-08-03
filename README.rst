@@ -148,13 +148,14 @@ To run Mowecl in develop mode, do the following:
 Changelog
 =======================================
 
-v0.3.7
+v0.3.8
 ........................................
 
 - Favorites
 - repeat/single/random playback buttons
 - Option to disable drag'n drop (usefull for touch screens)
 - Small screen option (single panel, smaller buttons). Far from perfect but better than nothing.
+- Many performance optimizations
 
 v0.3.6
 ........................................

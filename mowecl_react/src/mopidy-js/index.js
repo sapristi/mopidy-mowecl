@@ -11,14 +11,13 @@ const stopClient = (client) => {
 }
 
 export const useWsClient = (endpoint, init_callback, selector) => {
-    const client = useSelector(selector)
+    // const client = useSelector(selector)
     const mopidyHost = useSelector(store => store.settings.persistant.mopidy_host)
     const mopidyPort = useSelector(store => store.settings.persistant.mopidy_port)
     const dispatch = useDispatch()
 
     React.useEffect(
         () => {
-            stopClient(client)
             dispatch({type: 'CLIENT_DISCONNECTED', endpoint})
             console.log("Connecting to ", getWsAddress(mopidyHost, mopidyPort, endpoint))
             const new_client = new MopidyClient({
@@ -32,12 +31,11 @@ export const useWsClient = (endpoint, init_callback, selector) => {
                 stopClient(new_client)
                 dispatch({type: 'CONNECTION_ERROR', endpoint, error})
             }
-            init_callback(new_client)
+            init_callback(new_client, dispatch)
             window[endpoint] = new_client
+            return () => stopClient(new_client)
         },
-        // eslint-disable-next-line
-        [mopidyHost, mopidyPort])
-
+        [mopidyHost, mopidyPort, dispatch, endpoint, init_callback])
 }
 
 export const makeWsClientReducer = (endpoint) => (

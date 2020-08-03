@@ -22,6 +22,26 @@ const SettingsGroup = ({schema, group, path, setInGroup}) => {
     const headerComponent = "h" + (path.length + 1)
     const headerVariant = "h" + (path.length + 4)
 
+    const Header = () => {
+        if (path.length === 0) {
+            return  (
+                <Typography variant={headerVariant} component={headerComponent}>
+                  {schema.name}
+                </Typography>)
+        } else {
+            return (
+                /* eslint-disable-next-line */
+                <a onClick={() => setOpen(prev => !prev)}>
+                  <HFlex style={{alignItems: "center"}}>
+                    <Typography variant={headerVariant} component={headerComponent}>
+                      {schema.name}</Typography>
+                    {(open) ? <ExpandLessIcon/>: <ExpandMoreIcon/>}
+                  </HFlex>
+                </a>
+            )
+        }
+    }
+
     const body = (
         <>
           {schema.description && schema.description}
@@ -57,14 +77,7 @@ const SettingsGroup = ({schema, group, path, setInGroup}) => {
 
     return (
         <Paper elevation={path.length} style={{width: "100%"}}>
-          {/* eslint-disable-next-line */}
-          <a onClick={() => setOpen(prev => !prev)}>
-            <HFlex style={{alignItems: "center"}}>
-              <Typography variant={headerVariant} component={headerComponent}>
-                {schema.name}</Typography>
-              {(open) ? <ExpandLessIcon/>: <ExpandMoreIcon/>}
-            </HFlex>
-          </a>
+          <Header/>
           {open && body}
         </Paper>
     )
@@ -92,7 +105,7 @@ export const SettingsPanel = () => {
 
     return (
         <VFlex style={{padding: '5px', height: '100%', alignItems: "center", width: "100%" }}>
-          <Paper style={{ overflow: 'auto', scrollbarWidth: 'thin', flex: "1"}}>
+          <Paper style={{ overflow: 'auto', scrollbarWidth: 'thin', flex: "1", width: "100%"}}>
             <SettingsGroup
               schema={settingsSchema}
               group={settings}

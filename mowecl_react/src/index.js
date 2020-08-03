@@ -1,6 +1,6 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import {Provider,  useDispatch, useSelector } from 'react-redux'
+import {Provider, useSelector } from 'react-redux'
 import {
     RecoilRoot,
 } from 'recoil';
@@ -19,19 +19,13 @@ import {useWsClient, makeWsClientReducer} from "mopidy-js"
 import {libraryReducer, playbackReducer, settingsReducer, tracklistReducer} from './reducers'
 import {initMopidyEventsDispatcher} from 'client_setup/mopidy'
 import {initBookmarksEventsDispatcher, bookmarksStateReducer} from 'client_setup/bookmarks'
-import {getWsAddress} from './utils'
 
 const MopidyApp = () => {
-    const dispatch = useDispatch()
     const appProps = useSelector(
         state =>
             ({
                 active_panel_name: state.settings.active_panel,
                 colors: state.settings.persistant.colors,
-                mopidy_ws_url: getWsAddress(
-                    state.settings.persistant.mopidy_host,
-                    state.settings.persistant.mopidy_port,
-                    "mopidy"),
                 mopidy_connected: state.mopidy.connected,
                 mopidy_error: state.mopidy_error
             })
@@ -39,18 +33,18 @@ const MopidyApp = () => {
     const small_screen = useSelector(state => state.settings.persistant.generic.small_screen)
     useWsClient(
         "mopidy",
-        mopidyCli => initMopidyEventsDispatcher(mopidyCli, dispatch),
-        store => store.mopidy.client
+        initMopidyEventsDispatcher
     )
 
     useWsClient(
         "bookmarks",
-        bookmarksCli => initBookmarksEventsDispatcher(bookmarksCli, dispatch),
-        store => store.bookmarks.client
+        initBookmarksEventsDispatcher
     )
-    return (small_screen)
-    ? <AppSmall {...appProps}/>
-    : <App {...appProps}/>
+    return (
+        (small_screen)
+            ? (<AppSmall {...appProps}/>)
+            : (<App {...appProps}/>)
+    )
 }
 
 

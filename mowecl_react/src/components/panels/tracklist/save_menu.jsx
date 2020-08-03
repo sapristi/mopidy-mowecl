@@ -33,17 +33,19 @@ export const createPlaylist = async (mopidy, name, tracklist, uri_scheme) => {
     return await savePlaylist(mopidy, playlist.uri, tracklist)
 }
 
-export const SaveMenu = ({
-    tracklist,
-}) => {
+export const SaveMenu = () => {
     const mopidy = useSelector(state => state.mopidy.client)
-
+    const tracklist = useSelector(state => state.tracklist)
     const [menuState, setMenuState] = useRecoilState(menuStateAtom)
     const setConfirmDialogState = useSetRecoilState(confirmDialogStateAtom)
-    const playlistsAll = useSelector(state => ({
-        bookmarks: state.library.bookmarks.children,
-        playlists: state.library.playlists.children,
-    }))
+    const bookmarks =  useSelector(state => state.library.bookmarks.children)
+    const playlists = useSelector(state => state.library.playlists.children)
+    const playlistsAll = React.useMemo(
+        () => ({
+            bookmarks: bookmarks,
+            playlists: playlists,
+        }),
+        [bookmarks, playlists])
 
     const previousItems = playlistsAll[menuState.previousItems] || []
 

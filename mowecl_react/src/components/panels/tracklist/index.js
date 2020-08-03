@@ -1,5 +1,5 @@
 import React from 'react'
-import { connect, useSelector, useDispatch } from 'react-redux'
+import {useSelector} from 'react-redux'
 import {useSetRecoilState} from 'recoil'
 import { ReactSortable } from "react-sortablejs"
 
@@ -23,6 +23,8 @@ import List from '@material-ui/core/List'
 import ListItem from '@material-ui/core/ListItem'
 import ListItemIcon from '@material-ui/core/ListItemIcon'
 import ListItemText from '@material-ui/core/ListItemText'
+
+import equal from 'fast-deep-equal'
 
 import {Track} from 'components/molecules'
 import {duration_to_human} from 'utils'
@@ -56,7 +58,7 @@ border-radius: 5px;
 }
 `
 
-const TracklistItem = ({item, color, current_tlid, mopidy}) => (
+const TracklistItem = React.memo(({item, color, current_tlid, mopidy}) => (
     <TracklistItemContainer
       color={color}
       key={item.tlid}
@@ -84,23 +86,24 @@ const TracklistItem = ({item, color, current_tlid, mopidy}) => (
           </Button></ButtonGroup>
       </ListItemIcon>
     </TracklistItemContainer>
-)
+), equal)
 
 
-let TracklistListPanel = ({tracklist, current_tlid}) => {
+const TracklistListPanel = () => {
 
     const mopidy = useSelector(state => state.mopidy.client)
-    const colors = useSelector(state => state.settings.persistant.colors)
+    const color_primary = useSelector(state => state.settings.persistant.colors.primary)
     const disableDnd = useSelector(state => state.settings.persistant.generic.disable_dnd)
-    const dispatch = useDispatch()
 
+    const current_tlid = useSelector(state => (state.playback_state.tltrack) ? state.playback_state.tltrack.tlid : null)
+    const tracklist = useSelector(state => state.tracklist)
     return (disableDnd)
         ? (
             <List
               style={{overflow: 'auto', maxHeight: '100%', padding: 0, scrollbarWidth: 'thin'}}
             >
               {tracklist.map(item => (
-                  <TracklistItem item={item} color={colors.primary} key={item.tlid}
+                  <TracklistItem item={item} color={color_primary} key={item.tlid}
                                  current_tlid={current_tlid} mopidy={mopidy}/>
               ))}
             </List>
@@ -115,15 +118,24 @@ let TracklistListPanel = ({tracklist, current_tlid}) => {
                onEnd={(e) => tracklistSwap(e, mopidy)}
              >
                {tracklist.map(item => (
-                   <TracklistItem item={item} color={colors.primary} key={item.tlid}
+                   <TracklistItem item={item} color={color_primary} key={item.tlid}
                                   current_tlid={current_tlid} mopidy={mopidy}/>
               ))}
             </ReactSortable>
     )
 }
 
+const TracklistLength = () => {
+    const tracklist_length = useSelector(state => state.tracklist.length)
+    return (
+        <div>
+          {tracklist_length} tracks
+        </div>
 
-const TracklistInfoPanel = ({tracklist}) => {
+    )
+}
+
+const TracklistInfoPanel = () => {
 
     const mopidy = useSelector(state => state.mopidy.client)
     const bookmarksCli = useSelector(state => state.bookmarks.client)
@@ -137,9 +149,7 @@ const TracklistInfoPanel = ({tracklist}) => {
                      flexDirection: 'row', alignItems: 'center',
                      justifyContent: 'space-between'
                       }}>
-          <div>
-            {tracklist.length} tracks
-          </div>
+          <TracklistLength/>
           {
               currentBookmark &&
                   <Chip icon={<SyncIcon/>}
@@ -188,7 +198,7 @@ const TracklistInfoPanel = ({tracklist}) => {
                 <Icon path={mdiBookmarkMusicOutline} size={1}/>
               </Button>
             </Tooltip>
-            <SaveMenu tracklist={tracklist}/>
+            <SaveMenu/>
             <AddUriMenu anchorElRef={anchorElRef}
                         mopidy={mopidy}
                         menuState={addMenuState}
@@ -199,29 +209,13 @@ const TracklistInfoPanel = ({tracklist}) => {
 }
 
 
-let TracklistPanel = ({tracklist, current_tlid}) => {
-
+export const TracklistPanel = () => {
     return (
         <Paper
           style={{display: 'flex', flexDirection: 'column', height: '100%',
-                  paddingLeft: '5px', marginLeft: '5px' }}>
-          <TracklistInfoPanel
-            tracklist={tracklist}
-          />
-          <TracklistListPanel tracklist={tracklist}
-                              current_tlid={current_tlid}
-                  />
+                  paddingLeft: '5px', marginLeft: '5px', width: "100%" }}>
+          <TracklistInfoPanel />
+          <TracklistListPanel />
         </Paper>
     )
 }
-
-
-
-const getTracklistState = (state) => {
-
-    return {tracklist: state.tracklist,
-            current_tlid: (state.playback_state.tltrack) ? state.playback_state.tltrack.tlid : null,
-           };};
-TracklistPanel = connect(getTracklistState)(TracklistPanel);
-
-export default TracklistPanel;

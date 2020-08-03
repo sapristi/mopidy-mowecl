@@ -6,7 +6,7 @@ import Paper from '@material-ui/core/Paper';
 import {PlaybackButtons, TracklistStateButtons} from './playbackButtons'
 import {PlaybackSlider} from './playbackSlider'
 import {VolumeSlider} from './volumeSlider'
-import {HFlex, VFlex} from 'components/atoms'
+import {VFlex} from 'components/atoms'
 
 const TrackInfo = ({track}) => {
     if (!track) return '...'
@@ -36,46 +36,42 @@ const TrackInfo = ({track}) => {
         </div>)
 }
 
+const footerStyle = {width: '80%', margin: 'auto',
+                     display: 'flex', flexDirection: 'row',
+                     padding: '5px'}
 
-let Footer = ({tltrack, state,
-               volume, dispatch}) =>
-    {
-        return (
-            <Paper
-              elevation={3}
-              style={{width: '80%', margin: 'auto',
-                      display: 'flex', flexDirection: 'row',
-                      padding: '5px'
-                     }}
-            >
-              <VFlex>
-                <PlaybackButtons playbackState={state} />
-                <VolumeSlider volume={volume} dispatch={dispatch} 
-                              style={{marginTop: 'auto', marginBottom: 'auto'}}/>
-              </VFlex>
-              <VFlex style={{flex: 1, paddingLeft: '5%', paddingRight: '5%'}}>
-                {
-                    (state !== "stopped") && (
-                        <>
-                          <TrackInfo track={tltrack.track}/>
-                          <PlaybackSlider
-                            track_length={tltrack.track ? tltrack.track.length : null}
-                          />
-                        </>
-                    )
-                }
-              </VFlex>
-              <TracklistStateButtons/>
-            </Paper>
-        )
-    };
-
-
-const getPlaybackState = (state) => {
-    return {
+export const Footer = connect(
+    state => ({
         tltrack: state.playback_state.tltrack,
         state: state.playback_state.state,
-        volume: state.playback_state.volume,
-    }};
-Footer = connect(getPlaybackState)(Footer);
-export default Footer;
+    })
+)(
+    React.memo((
+        {tltrack, state, volume, dispatch}
+    ) =>
+        {
+            return (
+                <Paper
+                  elevation={3}
+                  style={footerStyle}>
+                  <VFlex>
+                    <PlaybackButtons playbackState={state} />
+                    <VolumeSlider/>
+                  </VFlex>
+                  <VFlex style={{flex: 1, paddingLeft: '5%', paddingRight: '5%'}}>
+                    {
+                        (state !== "stopped") && (
+                            <>
+                              <TrackInfo track={tltrack.track}/>
+                              <PlaybackSlider
+                                track_length={tltrack.track ? tltrack.track.length : null}
+                              />
+                            </>
+                        )
+                    }
+                  </VFlex>
+                  <TracklistStateButtons/>
+                </Paper>
+            )
+        }))
+

@@ -15,8 +15,20 @@ const validate_hex_color = (str) => {
 }
 
 const parseBoolean = (v) => {
-    if (typeof(v) === "boolean") {return v}
-    return (v === "true")
+    let res = null
+    if (typeof(v) === "boolean") {res = v}
+    if (typeof(v) === "string") {v = v.toLowerCase()}
+    if (v === "true" || v === "false") {res = (v === "true")}
+    return res
+}
+
+const nonNull = (values) => {
+    let res = null
+    for (let v of values) {
+        res = v
+        if (v !== null && v !== undefined && ! isNaN(v)) {break}
+    }
+    return res
 }
 
 const staticSettings =
@@ -25,6 +37,11 @@ const staticSettings =
           ...window.static_settings,
           mopidy_host: window.location.hostname,
           mopidy_port: 6680,
+          generic: {
+              ...window.static_settings.generic,
+              disable_dnd: parseBoolean(window.static_settings.generic.disable_dnd),
+              small_screen: parseBoolean(window.static_settings.generic.small_screen),
+          }
       })
 // default settings when the app is not served by mopidy
       : ({
@@ -48,6 +65,8 @@ const staticSettings =
               previous: "",
           }
       })
+
+console.log("STATIC??", window)
 
 export const settingsSchema = {
     name: "Settings",
@@ -78,7 +97,8 @@ export const settingsSchema = {
             type: "param",
             name: "Search history length",
             help: 'Number of items in search history. Set 0 to disable.',
-            validate: v => parseInt(v) || staticSettings.generic.search_history_length
+            validate: v => nonNull([parseInt(v),
+                                    staticSettings.generic.search_history_length])
         },
         disable_dnd: {
             type: "param",
@@ -86,7 +106,7 @@ export const settingsSchema = {
             choices: ["true", "false"],
             name: "Disable Drag'n Drop",
             help: "Usefull for touch screens.",
-            validate: v => parseBoolean(v) || staticSettings.generic.disable_dnd
+            validate: v => nonNull([parseBoolean(v), staticSettings.generic.disable_dnd])
         },
         small_screen: {
             type: "param",
@@ -94,7 +114,7 @@ export const settingsSchema = {
             choices: ["true", "false"],
             name: "Small screen",
             help: "Enable small screen layout.",
-            validate: v => parseBoolean(v) || staticSettings.generic.small_screen
+            validate: v => nonNull([parseBoolean(v), staticSettings.generic.small_screen])
         },
     },
     colors: {
@@ -174,7 +194,7 @@ export const settingsSchema = {
 
 
 
-const load_rec = (schema, settings) => 
+const load_rec = (schema, settings) =>
       ObjectComp(
           schema,
           ([k, v]) =>
@@ -186,7 +206,7 @@ const load_rec = (schema, settings) =>
                     }
                    ])
                  )
-              .on("param", () => 
+              .on("param", () =>
                   ([k, v.validate(settings[k])])
                  )
               .otherwise(null),
@@ -218,6 +238,7 @@ export const settingsReducer = (state=defaultSettings, action) => (
         })
         .on('COMMIT_SETTINGS', () => {
             const newSettings = load(action.data)
+            console.log("Commit ", newSettings)
             localStorage.setItem(
                 "settings",
                 JSON.stringify(newSettings)
