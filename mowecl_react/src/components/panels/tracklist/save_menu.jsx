@@ -33,11 +33,9 @@ export const createPlaylist = async (mopidy, name, tracklist, uri_scheme) => {
     return await savePlaylist(mopidy, playlist.uri, tracklist)
 }
 
-export const SaveMenu = ({
-    tracklist,
-}) => {
+export const SaveMenu = () => {
     const mopidy = useSelector(state => state.mopidy.client)
-
+    const tracklist = useSelector(state => state.tracklist)
     const [menuState, setMenuState] = useRecoilState(menuStateAtom)
     const setConfirmDialogState = useSetRecoilState(confirmDialogStateAtom)
     const bookmarks =  useSelector(state => state.library.bookmarks.children)

@@ -21,8 +21,6 @@ const SidePanel = (
     {
         uri_schemes,
         dispatch,
-        pendingRequestsNb,
-        connected,
         search_history_length,
         small_screen,
         current_panel
@@ -106,7 +104,6 @@ const SidePanel = (
 export default connect(
     state => (
         {
-            ...state.mopidy,
             search_history_length: state.settings.persistant.generic.search_history_length,
             uri_schemes: state.settings.uri_schemes,
             small_screen: state.settings.persistant.generic.small_screen,

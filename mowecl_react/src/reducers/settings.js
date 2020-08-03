@@ -15,8 +15,20 @@ const validate_hex_color = (str) => {
 }
 
 const parseBoolean = (v) => {
-    if (typeof(v) === "boolean") {return v}
-    return (v === "true")
+    let res = null
+    if (typeof(v) === "boolean") {res = v}
+    if (typeof(v) === "string") {v = v.toLowerCase()}
+    if (v === "true" || v === "false") {res = (v === "true")}
+    return res
+}
+
+const nonNull = (values) => {
+    let res = null
+    for (let v of values) {
+        res = v
+        if (v !== null && v !== undefined && ! isNaN(v)) {break}
+    }
+    return res
 }
 
 const staticSettings =
@@ -49,6 +61,8 @@ const staticSettings =
           }
       })
 
+console.log("STATIC??", window)
+
 export const settingsSchema = {
     name: "Settings",
     type: "group",
@@ -78,7 +92,8 @@ export const settingsSchema = {
             type: "param",
             name: "Search history length",
             help: 'Number of items in search history. Set 0 to disable.',
-            validate: v => parseInt(v) || staticSettings.generic.search_history_length
+            validate: v => nonNull([parseInt(v),
+                                    staticSettings.generic.search_history_length])
         },
         disable_dnd: {
             type: "param",
@@ -86,7 +101,7 @@ export const settingsSchema = {
             choices: ["true", "false"],
             name: "Disable Drag'n Drop",
             help: "Usefull for touch screens.",
-            validate: v => parseBoolean(v) || staticSettings.generic.disable_dnd
+            validate: v => nonNull([parseBoolean(v), parseBoolean(staticSettings.generic.disable_dnd)])
         },
         small_screen: {
             type: "param",
@@ -94,7 +109,7 @@ export const settingsSchema = {
             choices: ["true", "false"],
             name: "Small screen",
             help: "Enable small screen layout.",
-            validate: v => parseBoolean(v) || staticSettings.generic.small_screen
+            validate: v => nonNull([parseBoolean(v), parseBoolean(staticSettings.generic.small_screen)])
         },
     },
     colors: {
@@ -218,6 +233,7 @@ export const settingsReducer = (state=defaultSettings, action) => (
         })
         .on('COMMIT_SETTINGS', () => {
             const newSettings = load(action.data)
+            console.log("Commit ", newSettings)
             localStorage.setItem(
                 "settings",
                 JSON.stringify(newSettings)

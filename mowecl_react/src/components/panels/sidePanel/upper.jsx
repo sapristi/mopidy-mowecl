@@ -1,5 +1,5 @@
 import React from 'react'
-import {connect} from 'react-redux'
+import {useDispatch, useSelector} from 'react-redux'
 
 import CircularProgress from '@material-ui/core/CircularProgress'
 import Popover from '@material-ui/core/Popover'
@@ -12,7 +12,9 @@ import Cached from '@material-ui/icons/Cached'
 
 import {SearchInput} from './SearchInput'
 
-const MopidyStatus = ({pendingRequestsNb, connected}) => {
+const MopidyStatus = () => {
+    const connected = useSelector(state => state.mopidy.connected)
+    const pendingRequestsNb = useSelector(state => state.mopidy.pendingRequestsNb + state.bookmarks.pendingRequestsNb,)
 
     const style = {marginTop: '15px', marginBottom: '10px'}
     const props = (connected)
@@ -72,18 +74,14 @@ const refreshAll = async function (mopidyCli, dispatch) {
             }))
 }
 
-export const SidePanelUpper = connect(
-    state => ({
-        mopidyCli: state.mopidy.client,
-        pendingRequestsNb: state.mopidy.pendingRequestsNb + state.bookmarks.pendingRequestsNb,
-        connected: state.mopidy.connected
-    })
-)(React.memo(({mopidyCli, pendingRequestsNb, connected, dispatch}) => {
+export const SidePanelUpper = React.memo(() => {
+    const mopidyCli = useSelector(state => state.mopidy.client)
+    const dispatch = useDispatch()
     const anchorEl = React.useRef(null)
     const [open, setOpen] = React.useState(false)
     return (
         <ButtonGroup orientation='vertical'>
-          <MopidyStatus pendingRequestsNb={pendingRequestsNb} connected={connected}/>
+          <MopidyStatus/>
           <Tooltip title="Quick search">
             <Button ref={anchorEl}
                     id='popover-search-button'
@@ -98,5 +96,5 @@ export const SidePanelUpper = connect(
             </Button></Tooltip>
         </ButtonGroup>
     )
-}))
+})
 

@@ -7,7 +7,7 @@ logger = logging.getLogger(__name__)
 
 def sanitize_config(config):
     def sanitize_param(p):
-        return p if p else ""
+        return p if p is not None else ""
     return {k: sanitize_param(v) for k, v in config.items()}
 
 
@@ -19,6 +19,7 @@ class FileServer(tornado.web.RequestHandler):
 
     def get(self, path=None):
         config_sanitized = sanitize_config(self.config["mowecl"])
+        logger.warning("CONFIG %s", config_sanitized)
         template_params = {
             **config_sanitized,
             "static_settings_enabled": "true",
