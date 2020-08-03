@@ -37,6 +37,11 @@ const staticSettings =
           ...window.static_settings,
           mopidy_host: window.location.hostname,
           mopidy_port: 6680,
+          generic: {
+              ...window.static_settings.generic,
+              disable_dnd: parseBoolean(window.static_settings.generic.disable_dnd),
+              small_screen: parseBoolean(window.static_settings.generic.small_screen),
+          }
       })
 // default settings when the app is not served by mopidy
       : ({
@@ -101,7 +106,7 @@ export const settingsSchema = {
             choices: ["true", "false"],
             name: "Disable Drag'n Drop",
             help: "Usefull for touch screens.",
-            validate: v => nonNull([parseBoolean(v), parseBoolean(staticSettings.generic.disable_dnd)])
+            validate: v => nonNull([parseBoolean(v), staticSettings.generic.disable_dnd])
         },
         small_screen: {
             type: "param",
@@ -109,7 +114,7 @@ export const settingsSchema = {
             choices: ["true", "false"],
             name: "Small screen",
             help: "Enable small screen layout.",
-            validate: v => nonNull([parseBoolean(v), parseBoolean(staticSettings.generic.small_screen)])
+            validate: v => nonNull([parseBoolean(v), staticSettings.generic.small_screen])
         },
     },
     colors: {
@@ -189,7 +194,7 @@ export const settingsSchema = {
 
 
 
-const load_rec = (schema, settings) => 
+const load_rec = (schema, settings) =>
       ObjectComp(
           schema,
           ([k, v]) =>
@@ -201,7 +206,7 @@ const load_rec = (schema, settings) =>
                     }
                    ])
                  )
-              .on("param", () => 
+              .on("param", () =>
                   ([k, v.validate(settings[k])])
                  )
               .otherwise(null),
