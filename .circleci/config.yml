@@ -14,25 +14,24 @@ workflows:
                 - /^release.*/
                 - master
                 - feature/test-ci
-            # tags:
-            #   only: /^v.*/
+            tags:
+              only: /^v.*/
       - deploy:
           requires:
             - build
           filters:
             branches:
               ignore: /.*/
-            # tags:
-            #   only: /^v.*/
+            tags:
+              only: /^v.*/
       - deploy-test:
           requires:
             - build
           filters:
             branches:
               only:
-                feature/test-ci
-            # tags:
-            #   only: /^v.*/
+                - /^release.*/
+                - feature/test-ci
 
 jobs:
   build:
