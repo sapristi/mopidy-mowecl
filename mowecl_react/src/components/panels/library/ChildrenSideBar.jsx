@@ -8,16 +8,16 @@ const MyBar = styled.div`
 
    &:hover {
       opacity: 1;
-   }
+   };
+   padding-left: 1px;
 `
 
 export const ChildrenSideBar = ({callback, color}) => (
     <MyBar onClick={callback}>
       <div style={{
-          width: 0,
-          height: 0,
-          borderBottom: '6px solid ' + color,
-          borderLeft: '6px solid transparent'
+          width: "40px",
+          height: "6px",
+          backgroundColor: color,
       }}/>
       <div
         style={{
@@ -30,7 +30,7 @@ export const ChildrenSideBar = ({callback, color}) => (
             width: 0,
             height: 0,
             borderTop: '6px solid ' + color,
-            borderLeft: '6px solid transparent'
+            borderRight: '6px solid transparent'
         }}
       />
     </MyBar>

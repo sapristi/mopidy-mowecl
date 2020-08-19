@@ -45,23 +45,6 @@ const getChildrenNb = (node) => {
     if (Array.isArray(node.children)) return `(${node.children.length})`
     return '(?)'
 }
-const getText = (node) => {
-    if (isLeaf(node)) {
-        if (node.length) return <Track text={node.name}
-                                       duration={duration_to_human(node.length)}/>
-        else return node.name
-    } else {
-        return `${node.name} ${getChildrenNb(node)}`
-    }
-}
-
-const getIcon = (node) => {
-    if (!isLeaf(node)) {
-        if (node.expanded) {
-            return <ExpandLessIcon style={{verticalAlign: 'text-bottom'}}/>
-        } else {return <ExpandMoreIcon style={{verticalAlign: 'text-bottom'}}/>}
-    } else return ''
-}
 
 const LibLine = styled.div`
 display: flex;
@@ -95,8 +78,7 @@ const ChildrenPanel = ({node, mopidy, depth, dispatch}) => {
                 <List style={{width: '100%'}}>
                     {
                         node.children.map(child => (
-                            <NodeLeaves key={child.uri} node={child} dispatch={dispatch}
-                                        depth={depth+1}/>
+                            <NodeLeaves key={child.uri} node={child} depth={depth+1}/>
                         ))
                     }
                 </List>
@@ -113,8 +95,7 @@ const ChildrenPanel = ({node, mopidy, depth, dispatch}) => {
                 >
                     {
                         node.children.map(child => (
-                            <NodeLeaves key={child.uri} node={child} dispatch={dispatch}
-                                        depth={depth+1}/>
+                            <NodeLeaves key={child.uri} node={child} depth={depth+1}/>
                         ))
                     }
                 </ReactSortable>
@@ -122,7 +103,40 @@ const ChildrenPanel = ({node, mopidy, depth, dispatch}) => {
 )}
 
 
-export const NodeLeaves = React.memo(({node, depth, rootElem}) => {
+
+const NodeText = ({node, rootElem, dispatch, mopidy}) => {
+
+    if (isLeaf(node)) {
+         const text = (node.length)
+               ? <Track text={node.name} duration={duration_to_human(node.length)}/>
+               : node.name
+        return (
+            <Typography style={{wordBreak: "break-word", textAlign: "left"}}>
+              {text}
+            </Typography>
+        )
+    } else {
+        const icon = (node.expanded)
+              ? (<ExpandLessIcon style={{verticalAlign: 'text-bottom'}}/>)
+              : (<ExpandMoreIcon style={{verticalAlign: 'text-bottom'}}/>)
+
+        return (
+            <Button onClick={() => toggleNode(node, dispatch, mopidy)}
+                    style={{padding: 0, width: "100%", justifyContent:"left",
+                            textAlign: "left"}}
+                    variant="text"
+            >
+              <Typography style={rootElem ? {fontWeight: 500}: {wordBreak: "break-word"}}>
+                {node.name} {getChildrenNb(node)}
+                {icon}
+              </Typography>
+            </Button>)
+    }
+}
+
+
+
+export const NodeLeaves = React.memo(({node, depth}) => {
 
     // console.log("Rendering node", node.uri)
     const dispatch = useDispatch()
@@ -136,16 +150,7 @@ export const NodeLeaves = React.memo(({node, depth, rootElem}) => {
         <NodeLeavesLi>
           <LibLine color={colors.primary}>
             <ListItemText>
-              <Button onClick={() => toggleNode(node, dispatch, mopidy)}
-                      style={{padding: 0, width: "100%", justifyContent:"left",
-                              textAlign: "left"}}
-                      variant="text"
-              >
-                <Typography style={rootElem ? {fontWeight: 500}: {wordBreak: "break-word"}}>
-                  {getText(node)}
-                  {getIcon(node)}
-                </Typography>
-              </Button>
+              <NodeText node={node} rootElem={depth===0} dispatch={dispatch} mopidy={mopidy}/>
             </ListItemText>
             {getButtons(node)}
           </LibLine>

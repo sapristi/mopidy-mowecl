@@ -35,7 +35,7 @@ export const LibraryPanel = () => {
           { (library.favorites.children.length > 0) &&
             <Paper elevation={5} variant='outlined'>
               <List style={{paddingLeft: '10px'}}>
-                <NodeLeaves node={library.favorites} depth={0} rootElem/>
+                <NodeLeaves node={library.favorites} depth={0}/>
               </List>
             </Paper>
           }
