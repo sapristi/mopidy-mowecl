@@ -15,15 +15,15 @@ import ShuffleIcon from '@material-ui/icons/Shuffle'
 
 const PreviousButton = React.memo(
     ({size, mopidyCli}) =>
-        <Button onClick={() => mopidyCli.playback.next()}>
-          <SkipNextIcon fontSize={size}/>
+        <Button onClick={() => mopidyCli.playback.previous()}>
+          <SkipPreviousIcon fontSize={size}/>
         </Button>
 )
 
 const NextButton = React.memo(
     ({size, mopidyCli}) =>
-        <Button onClick={() => mopidyCli.playback.previous()}>
-          <SkipPreviousIcon fontSize={size}/>
+        <Button onClick={() => mopidyCli.playback.next()}>
+          <SkipNextIcon fontSize={size}/>
         </Button>
 )
 
