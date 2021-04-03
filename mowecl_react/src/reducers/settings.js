@@ -66,7 +66,6 @@ const staticSettings =
           }
       })
 
-console.log("STATIC??", window)
 
 export const settingsSchema = {
     name: "Settings",
