@@ -13,7 +13,7 @@ Presentation
 
 - Dual panel library / tracklist
 - Library / playlists / search results displayed as a single tree view
-- Drag and drop from library to tracklist, and inside tracklist
+- Reorder tracklist with drag and drop
 - Uses the bookmarks_ extension 
 - Configurable hotkeys for playback and volume control
 - Basic color theming
@@ -148,7 +148,7 @@ To run Mowecl in develop mode, do the following:
 Changelog
 =======================================
 
-v0.4.1
+v0.4.2
 ........................................
 
  - update javascript dependancies
