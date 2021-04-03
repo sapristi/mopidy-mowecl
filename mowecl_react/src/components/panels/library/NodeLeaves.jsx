@@ -3,7 +3,6 @@ import { useSelector, useDispatch } from 'react-redux'
 
 import styled from '@emotion/styled'
 import Color from 'color'
-import { ReactSortable } from "react-sortablejs"
 
 import List from '@material-ui/core/List'
 import ListItemText from '@material-ui/core/ListItemText'
@@ -18,14 +17,8 @@ import {duration_to_human, match} from 'utils'
 
 import {ChildrenSideBar} from "./ChildrenSideBar"
 import {DefaultButtons, PLButtons, BMButtons} from './buttons'
-import { isLeaf, addToTracklist, toggleNode } from './functions'
+import { isLeaf, toggleNode } from './functions'
 
-
-const dropTo = (lib_item, at_position, to_object, mopidy) => {
-
-    if (to_object.id === 'tracklist')
-        addToTracklist(lib_item, at_position, mopidy)
-}
 
 const getButtons = (node) => {
 
@@ -45,6 +38,7 @@ const getChildrenNb = (node) => {
     if (Array.isArray(node.children)) return `(${node.children.length})`
     return '(?)'
 }
+
 
 const LibLine = styled.div`
 display: flex;
@@ -70,36 +64,16 @@ text-align: left,
 `
 
 const ChildrenPanel = ({node, mopidy, depth, dispatch}) => {
-    const disableDnd = useSelector(state => state.settings.persistant.generic.disable_dnd)
-
     return (
-        (disableDnd)
-            ? (
-                <List style={{width: '100%'}}>
-                    {
-                        node.children.map(child => (
-                            <NodeLeaves key={child.uri} node={child} depth={depth+1}/>
-                        ))
-                    }
-                </List>
-            )
-            : (
-                <ReactSortable
-                    group={{name: 'library', put: false, pull: "clone" }}
-                    list={node.children}
-        /* setList={()=>{console.log("setlist")}} */
-                    setList={()=>{}}
-                    tag={List}
-                    onEnd={(e) => {dropTo(node.children[e.oldIndex], e.newIndex, e.to, mopidy)}}
-                    style={{width: '100%'}}
-                >
-                    {
-                        node.children.map(child => (
-                            <NodeLeaves key={child.uri} node={child} depth={depth+1}/>
-                        ))
-                    }
-                </ReactSortable>
-            )
+        (
+            <List style={{width: '100%'}}>
+              {
+                  node.children.map(child => (
+                      <NodeLeaves key={child.uri} node={child} depth={depth+1}/>
+                  ))
+              }
+            </List>
+        )
 )}
 
 
