@@ -151,14 +151,14 @@ Changelog
 v0.4.3
 ........................................
 
- - fix release
+- fix release
 
 v0.4.2
 ........................................
 
 Note: release file on pypi is bugged, do not install this version from pypi !
 
- - update javascript dependancies
+- update javascript dependancies
 
 
 v0.4.0
