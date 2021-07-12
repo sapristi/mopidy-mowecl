@@ -19,7 +19,7 @@ class FileServer(tornado.web.RequestHandler):
 
     def get(self, path=None):
         config_sanitized = sanitize_config(self.config["mowecl"])
-        logger.warning("CONFIG %s", config_sanitized)
+        logger.debug("Mowecl config: %s", config_sanitized)
         template_params = {
             **config_sanitized,
             "static_settings_enabled": "true",
