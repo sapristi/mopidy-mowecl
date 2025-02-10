@@ -1,9 +1,9 @@
 [build-system]
-requires = ["setuptools >= 30.3.0", "wheel"]
-
+requires = ["pdm-backend"]
+build-backend = "pdm.backend"
 
 [tool.black]
-target-version = ["py37", "py38"]
+target-version = ["py39", "py310"]
 line-length = 80
 
 
@@ -15,3 +15,67 @@ use_parentheses = true
 line_length = 88
 known_tests = "tests"
 sections = "FUTURE,STDLIB,THIRDPARTY,FIRSTPARTY,TESTS,LOCALFOLDER"
+
+[tool.pdm]
+distribution = true
+
+[project]
+name = "Mopidy-Mowecl"
+version = "0.4.3"
+description = "Web client for Mopidy"
+authors = [
+    {name = "Mathias Millet", email = "mathias@mmill.eu"},
+]
+dependencies = [
+    "setuptools>=75.8.0",
+    "Mopidy >= 3.0",
+    "Mopidy-Bookmarks >= 0.1.4",
+    "Pykka >= 2.0.1",
+]
+requires-python = ">= 3.9"
+readme = "README.rst"
+license = {text = "Apache License, Version 2.0"}
+classifiers = [
+    "Environment :: No Input/Output (Daemon)",
+    "Intended Audience :: End Users/Desktop",
+    "License :: OSI Approved :: Apache Software License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Topic :: Multimedia :: Sound/Audio :: Players",
+]
+
+[project.urls]
+Homepage = "https://github.com/sapristi/mopidy-mowecl"
+
+[project.optional-dependencies]
+lint = [
+    "black",
+    "check-manifest",
+    "flake8",
+    "flake8-bugbear",
+    "flake8-import-order",
+    "isort[pyproject]",
+]
+release = [
+    "twine",
+    "wheel",
+]
+test = [
+    "pytest",
+    "pytest-cov",
+]
+dev = [
+    "black",
+    "check-manifest",
+    "flake8",
+    "flake8-bugbear",
+    "flake8-import-order",
+    "isort[pyproject]",
+    "pytest",
+    "pytest-cov",
+    "twine",
+    "wheel",
+]
+
+[project.entry-points."mopidy.ext"]
+mowecl = "mopidy_mowecl:Extension"
