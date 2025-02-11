@@ -1,10 +1,10 @@
-import React from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 
 import equal from 'fast-deep-equal'
-import { getWsAddress, match} from 'utils'
+import { getWsAddress, match } from '@/utils'
 import MopidyClient from "./mopidy-js.js"
 
+import {memo, useEffect, useRef, useCallback, createContext, useState} from 'react'
 
 const stopClient = (client) => {
     client.removeAllListeners(); client.close(); client.off()
@@ -16,7 +16,7 @@ export const useWsClient = (endpoint, init_callback, selector) => {
     const mopidyPort = useSelector(store => store.settings.persistant.mopidy_port)
     const dispatch = useDispatch()
 
-    React.useEffect(
+    useEffect(
         () => {
             dispatch({type: 'CLIENT_DISCONNECTED', endpoint})
             console.log("Connecting to ", getWsAddress(mopidyHost, mopidyPort, endpoint))

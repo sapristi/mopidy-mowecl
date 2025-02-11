@@ -1,5 +1,5 @@
-import {obj_reducer} from 'utils'
-import {updateOrInsert} from 'reducers/library/aux_functions'
+import {obj_reducer} from '@/utils'
+import {updateOrInsert} from '@/reducers/library/aux_functions'
 
 const fetchPlaybackInfo = async (mopidyCli, dispatch) => {
 

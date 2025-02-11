@@ -1,12 +1,12 @@
 
-import React from 'react'
+import {memo, useEffect, useRef, useCallback, createContext, useState} from 'react'
 
-import Typography from '@material-ui/core/Typography';
-import Paper from '@material-ui/core/Paper';
+import Typography from '@mui/material/Typography';
+import Paper from '@mui/material/Paper';
 
-import GitHubIcon from '@material-ui/icons/GitHub';
+import GitHubIcon from '@mui/icons-material/GitHub';
 
-import {mowecl_version} from 'utils'
+import {mowecl_version} from '@/utils'
 
 const HelpPanel = () => {
 

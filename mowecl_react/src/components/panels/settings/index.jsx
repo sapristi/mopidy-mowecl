@@ -1,24 +1,24 @@
-import React from 'react'
+import {memo, useEffect, useRef, useCallback, createContext, useState} from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import Button from '@material-ui/core/Button'
-import ButtonGroup from '@material-ui/core/ButtonGroup'
-import List from '@material-ui/core/List'
-import ListItem from '@material-ui/core/ListItem'
-import Paper from '@material-ui/core/Paper'
-import Typography from '@material-ui/core/Typography'
+import Button from '@mui/material/Button'
+import ButtonGroup from '@mui/material/ButtonGroup'
+import List from '@mui/material/List'
+import ListItem from '@mui/material/ListItem'
+import Paper from '@mui/material/Paper'
+import Typography from '@mui/material/Typography'
 
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import ExpandLessIcon from '@material-ui/icons/ExpandLess';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 
-import {HFlex, VFlex} from 'components/atoms'
+import {HFlex, VFlex} from '@/components/atoms'
 
 import {SettingInput} from './SettingInput'
 
-import {settingsSchema} from 'reducers/settings'
+import {settingsSchema} from '@/reducers/settings'
 
 const SettingsGroup = ({schema, group, path, setInGroup}) => {
     // console.log("Settings group", group)
-    const [open, setOpen] = React.useState(() => (path.length === 0))
+    const [open, setOpen] = useState(() => (path.length === 0))
     const headerComponent = "h" + (path.length + 1)
     const headerVariant = "h" + (path.length + 4)
 
@@ -31,14 +31,14 @@ const SettingsGroup = ({schema, group, path, setInGroup}) => {
         } else {
             return (
                 /* eslint-disable-next-line */
-                <a onClick={() => setOpen(prev => !prev)}>
-                  <HFlex style={{alignItems: "center"}}>
-                    <Typography variant={headerVariant} component={headerComponent}>
-                      {schema.name}</Typography>
-                    {(open) ? <ExpandLessIcon/>: <ExpandMoreIcon/>}
-                  </HFlex>
-                </a>
-            )
+                (<a onClick={() => setOpen(prev => !prev)}>
+                    <HFlex style={{alignItems: "center"}}>
+                      <Typography variant={headerVariant} component={headerComponent}>
+                        {schema.name}</Typography>
+                      {(open) ? <ExpandLessIcon/>: <ExpandMoreIcon/>}
+                    </HFlex>
+                </a>)
+            );
         }
     }
 
@@ -87,7 +87,7 @@ const SettingsGroup = ({schema, group, path, setInGroup}) => {
 export const SettingsPanel = () => {
     const persistant = useSelector(state => state.settings.persistant)
     const dispatch = useDispatch()
-    const [settings, setSettings ] = React.useState(persistant)
+    const [settings, setSettings ] = useState(persistant)
 
     const handleCommit = () => {
         dispatch({

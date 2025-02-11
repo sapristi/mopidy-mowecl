@@ -1,4 +1,4 @@
-import {match} from 'utils'
+import {match} from '@/utils'
 import { combineReducers } from 'redux'
 import { setChildren, setExpanded, defaultNodeReducer, updateChildren } from './aux_functions'
 

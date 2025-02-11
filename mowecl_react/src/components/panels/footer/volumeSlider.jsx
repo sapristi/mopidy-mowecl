@@ -1,20 +1,20 @@
-import React from 'react'
+import {memo, useEffect, useRef, useCallback, createContext, useState} from 'react'
 
 import {  useDispatch, connect } from 'react-redux'
-import Slider from '@material-ui/core/Slider'
-import IconButton from '@material-ui/core/IconButton'
-import VolumeDown from '@material-ui/icons/VolumeDown'
-import VolumeUp from '@material-ui/icons/VolumeUp'
+import Slider from '@mui/material/Slider'
+import IconButton from '@mui/material/IconButton'
+import VolumeDown from '@mui/icons-material/VolumeDown'
+import VolumeUp from '@mui/icons-material/VolumeUp'
 
 export const VolumeSlider = connect(
     state => ({
         mopidyCli: state.mopidy.client,
         volume: state.playback_state.volume})
 )(
-    React.memo(
+    memo(
         ({mopidyCli, volume}) => {
         const dispatch = useDispatch()
-        const handleChange = React.useCallback(
+        const handleChange = useCallback(
             (event, newValue) => {
                 dispatch({
                     type: 'PLAYBACK_INFO',
@@ -25,17 +25,17 @@ export const VolumeSlider = connect(
             [dispatch]
         )
 
-        const handleChangeCommitted = React.useCallback(
+        const handleChangeCommitted = useCallback(
             (event, newValue) => {
                 mopidyCli.mixer.setVolume({volume: newValue})
             },
             [mopidyCli]
         )
 
-        const volume_incr = React.useCallback(
+        const volume_incr = useCallback(
             () => Math.min(100, Math.floor(volume * 1.1 + 1)),
             [volume])
-        const volume_decr = React.useCallback(
+        const volume_decr = useCallback(
             () => Math.floor(volume * 0.9),
             [volume])
 
@@ -51,6 +51,8 @@ export const VolumeSlider = connect(
                         onChange={handleChange}
                         onChangeCommitted={handleChangeCommitted}
                         valueLabelDisplay='auto'
+                        color="info"
+                        size="small"
                 />
               </div>
               <IconButton size="small"

@@ -1,4 +1,4 @@
-import React from 'react'
+import {memo, useEffect, useRef, useCallback, createContext, useState} from 'react'
 import { connect, useSelector } from 'react-redux'
 
 import {GlobalHotKeys} from 'react-hotkeys';
@@ -6,9 +6,9 @@ import {GlobalHotKeys} from 'react-hotkeys';
 const HotKeysProviderUnc = ({playbackState, volume, hotkeys_conf}) => {
     const mopidy = useSelector(state => state.mopidy.client)
 
-    const [HotKeys, setHotKeys] = React.useState(() => () => null)
+    const [HotKeys, setHotKeys] = useState(() => () => null)
 
-    React.useEffect(() => {
+    useEffect(() => {
 
         const volume_incr = () => Math.min(100, Math.floor(volume * 1.1 + 1))
         const volume_decr = () => Math.floor(volume * 0.9)

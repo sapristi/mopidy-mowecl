@@ -1,4 +1,4 @@
-import { match } from 'utils'
+import { match } from '@/utils'
 
 export const initBookmarksEventsDispatcher = (bookmarksCli, dispatch) => {
     bookmarksCli.on('event', console.log)

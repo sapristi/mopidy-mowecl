@@ -1,16 +1,16 @@
-import React from 'react'
+import {memo, useEffect, useRef, useCallback, createContext, useState} from 'react'
 import { connect, useSelector, useDispatch} from 'react-redux'
 
-import Slider from '@material-ui/core/Slider'
-import LinearProgress from '@material-ui/core/LinearProgress'
+import Slider from '@mui/material/Slider'
+import LinearProgress from '@mui/material/LinearProgress'
 
-import { duration_to_human } from 'utils'
+import { duration_to_human } from '@/utils'
 const sliderSteps = 300
 
 
 const PlaybackUpdaterUnc = ({state, time_position, time_position_updater, seek_update_interval}) => {
     const dispatch = useDispatch()
-    React.useEffect( () => {
+    useEffect( () => {
         if (state === 'playing'
             && typeof(time_position) === 'number'
             && !time_position_updater.pending)
@@ -64,6 +64,8 @@ export const PlaybackSlider = ({track_length}) => {
                       valueLabelDisplay='auto'
                       valueLabelFormat={ (args) => duration_to_human(args * track_length / sliderSteps)}
                       style={{flex: 1, marginRight: '5%', marginLeft: '5%'}}
+                      color="info"
+                      size="small"
               />
               <div>
                 {duration_to_human(track_length)}

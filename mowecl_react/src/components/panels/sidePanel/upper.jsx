@@ -1,14 +1,14 @@
-import React from 'react'
+import {memo, useEffect, useRef, useCallback, createContext, useState} from 'react'
 import {useDispatch, useSelector} from 'react-redux'
 
-import CircularProgress from '@material-ui/core/CircularProgress'
-import Popover from '@material-ui/core/Popover'
+import CircularProgress from '@mui/material/CircularProgress'
+import Popover from '@mui/material/Popover'
 
-import ButtonGroup from '@material-ui/core/ButtonGroup'
-import Button from '@material-ui/core/Button'
-import Tooltip from '@material-ui/core/Tooltip'
-import SearchIcon from '@material-ui/icons/Search'
-import Cached from '@material-ui/icons/Cached'
+import ButtonGroup from '@mui/material/ButtonGroup'
+import Button from '@mui/material/Button'
+import Tooltip from '@mui/material/Tooltip'
+import SearchIcon from '@mui/icons-material/Search'
+import Cached from '@mui/icons-material/Cached'
 
 import {SearchInput} from './SearchInput'
 
@@ -19,10 +19,10 @@ const MopidyStatus = () => {
     const style = {marginTop: '15px', marginBottom: '10px'}
     const props = (connected)
           ? ((pendingRequestsNb === 0)
-             ? ({variant: 'determinate', value: 100})
-             : ({disableShrink: true})
+             ? ({color: "info", variant: 'determinate', value: 100})
+             : ({color: "secondary", disableShrink: true})
             )
-          : ({color: "secondary", disableShrink: true})
+          : ({color: "error", disableShrink: true})
 
         return (
             <div>
@@ -74,11 +74,11 @@ const refreshAll = async function (mopidyCli, dispatch) {
             }))
 }
 
-export const SidePanelUpper = React.memo(() => {
+export const SidePanelUpper = memo(() => {
     const mopidyCli = useSelector(state => state.mopidy.client)
     const dispatch = useDispatch()
-    const anchorEl = React.useRef(null)
-    const [open, setOpen] = React.useState(false)
+    const anchorEl = useRef(null)
+    const [open, setOpen] = useState(false)
     return (
         <ButtonGroup orientation='vertical'>
           <MopidyStatus/>

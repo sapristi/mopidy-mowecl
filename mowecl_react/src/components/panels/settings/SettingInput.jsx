@@ -1,25 +1,25 @@
-import React from 'react'
+import {memo, useEffect, useRef, useCallback, createContext, useState} from 'react'
 
-import ListItemIcon from '@material-ui/core/ListItemIcon'
-import HTMLTooltip from '@material-ui/core/Tooltip'
-import InputLabel from '@material-ui/core/InputLabel'
-import FormControl from '@material-ui/core/FormControl'
-import Paper from '@material-ui/core/Paper'
-import Typography from '@material-ui/core/Typography'
-import Select from '@material-ui/core/Select'
-import TextField from '@material-ui/core/TextField'
-import MenuItem from '@material-ui/core/MenuItem'
+import ListItemIcon from '@mui/material/ListItemIcon'
+import HTMLTooltip from '@mui/material/Tooltip'
+import InputLabel from '@mui/material/InputLabel'
+import FormControl from '@mui/material/FormControl'
+import Paper from '@mui/material/Paper'
+import Typography from '@mui/material/Typography'
+import Select from '@mui/material/Select'
+import TextField from '@mui/material/TextField'
+import MenuItem from '@mui/material/MenuItem'
 
 
-import Dialog from '@material-ui/core/Dialog'
-import DialogTitle from '@material-ui/core/DialogTitle'
+import Dialog from '@mui/material/Dialog'
+import DialogTitle from '@mui/material/DialogTitle'
 
-import Button from '@material-ui/core/Button'
+import Button from '@mui/material/Button'
 
-import {HFlex} from 'components/atoms'
+import {HFlex} from '@/components/atoms'
 
-import {match} from 'utils'
-import HelpOutlineIcon from '@material-ui/icons/HelpOutline'
+import {match} from '@/utils'
+import HelpOutlineIcon from '@mui/icons-material/HelpOutline'
 import { recordKeyCombination } from 'react-hotkeys'
 import { getApplicationKeyMap } from 'react-hotkeys'
 
@@ -67,9 +67,9 @@ const SelectSettingInput = ({schema, value, handleChange}) =>
 
 const KeyInputDialog = ({open, onClose, name}) => {
     const nullFunc = () => {}
-    const [cancel, setCancel] = React.useState(() => nullFunc)
+    const [cancel, setCancel] = useState(() => nullFunc)
 
-    React.useEffect( () => {
+    useEffect( () => {
         if (open) {
             const cancelListening = recordKeyCombination(({id, keys}) => {
                 console.log("FOUND", id, keys)
@@ -97,7 +97,7 @@ const KeyInputDialog = ({open, onClose, name}) => {
 
 
 const KeySettingInput = ({schema, value, handleChange}) => {
-    const [dialogOpen, setDialogOpen] = React.useState(() => false)
+    const [dialogOpen, setDialogOpen] = useState(() => false)
 
 
     const onClose = (action) => {

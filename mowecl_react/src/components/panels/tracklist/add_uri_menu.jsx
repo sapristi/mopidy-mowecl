@@ -1,10 +1,10 @@
-import React from 'react';
-import MenuItem from '@material-ui/core/MenuItem'
+import {memo, useEffect, useRef, useCallback, createContext, useState} from 'react';
+import MenuItem from '@mui/material/MenuItem'
 
-import Popover from '@material-ui/core/Popover'
-import AddIcon from '@material-ui/icons/Add'
+import Popover from '@mui/material/Popover'
+import AddIcon from '@mui/icons-material/Add'
 
-import {Input} from 'components/molecules'
+import {Input} from '@/components/molecules'
 
 export const AddUriMenu = ({anchorElRef, menuState, setMenuState, mopidy}) => {
     return (<Popover

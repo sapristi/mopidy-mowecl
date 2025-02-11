@@ -3,8 +3,10 @@ Mopidy-js from https://github.com/mopidy/mopidy.js
 */
 
 
-const EventEmitter = require("events");
-const WebSocket = require("isomorphic-ws");
+// const EventEmitter = require("events");
+import { EventEmitter} from  "events";
+import WebSocket from "isomorphic-ws"
+// const WebSocket = require("isomorphic-ws");
 
 function snakeToCamel(name) {
   return name.replace(/(_[a-z])/g, match =>

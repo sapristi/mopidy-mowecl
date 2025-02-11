@@ -1,11 +1,11 @@
-import React from 'react'
+import {memo, useEffect, useRef, useCallback, createContext, useState, useMemo} from 'react'
 import {connect} from 'react-redux'
 
-import TextField from '@material-ui/core/TextField'
-import FormControl from '@material-ui/core/FormControl'
-import Select from '@material-ui/core/Select'
+import TextField from '@mui/material/TextField'
+import FormControl from '@mui/material/FormControl'
+import Select from '@mui/material/Select'
 
-import {getSearchUris} from 'utils'
+import {getSearchUris} from '@/utils'
 
 export const SearchInput = connect(
     state => ({
@@ -15,14 +15,14 @@ export const SearchInput = connect(
     })
 )(({mopidyCli, uri_schemes, dispatch, closePopover, search_history_length}) => {
 
-    const searchUris = React.useMemo(
+    const searchUris = useMemo(
         () => getSearchUris(uri_schemes),
         [uri_schemes]
     )
     const initialSelecterUri = localStorage.getItem("searchSelectedURI") || "all"
 
-    const [selectedUri, setSelectedUri] = React.useState(initialSelecterUri)
-    const [input, setInput] = React.useState(() => '')
+    const [selectedUri, setSelectedUri] = useState(initialSelecterUri)
+    const [input, setInput] = useState(() => '')
 
     const triggerSearch = (key) => {
         if (key !== 'Enter') return

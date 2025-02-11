@@ -1,5 +1,5 @@
-import React from 'react'
-import ReactDOM from 'react-dom'
+import {StrictMode} from 'react';
+import {createRoot} from 'react-dom/client';
 import {Provider, useSelector } from 'react-redux'
 import {
     RecoilRoot,
@@ -14,11 +14,11 @@ import 'typeface-roboto';
 
 import {App, AppSmall} from './App'
 import * as serviceWorker from './serviceWorker'
-import {useWsClient, makeWsClientReducer} from "mopidy-js"
+import {useWsClient, makeWsClientReducer} from "./mopidy-js"
 
 import {libraryReducer, playbackReducer, settingsReducer, tracklistReducer} from './reducers'
-import {initMopidyEventsDispatcher} from 'client_setup/mopidy'
-import {initBookmarksEventsDispatcher, bookmarksStateReducer} from 'client_setup/bookmarks'
+import {initMopidyEventsDispatcher} from './client_setup/mopidy'
+import {initBookmarksEventsDispatcher, bookmarksStateReducer} from './client_setup/bookmarks'
 
 const MopidyApp = () => {
     const appProps = useSelector(
@@ -40,11 +40,11 @@ const MopidyApp = () => {
         "bookmarks",
         initBookmarksEventsDispatcher
     )
-    return (
-        (small_screen)
-            ? (<AppSmall {...appProps}/>)
-            : (<App {...appProps}/>)
-    )
+    if (small_screen) {
+        return <AppSmall {...appProps}/>
+    } else {
+        return <App {...appProps}/>
+    }
 }
 
 
@@ -63,13 +63,17 @@ const store = createStore(
 
 window.$store = store
 
-ReactDOM.render(
-    <Provider store={store} style={{height: '100%'}}>
-      <RecoilRoot>
-        <MopidyApp />
-      </RecoilRoot>
-    </Provider>
-    , document.getElementById('root'))
+const rootElement = document.getElementById('root');
+const root = createRoot(rootElement);
+root.render(
+    <StrictMode>
+      <Provider store={store} style={{height: '100%'}}>
+        <RecoilRoot>
+          <MopidyApp />
+        </RecoilRoot>
+      </Provider>
+    </StrictMode>
+);
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.

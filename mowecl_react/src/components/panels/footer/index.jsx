@@ -1,12 +1,12 @@
 
-import React from 'react';
+import {memo, useEffect, useRef, useCallback, createContext, useState} from 'react';
 import { connect } from 'react-redux';
 
-import Paper from '@material-ui/core/Paper';
+import Paper from '@mui/material/Paper';
 import {PlaybackButtons, TracklistStateButtons} from './playbackButtons'
 import {PlaybackSlider} from './playbackSlider'
 import {VolumeSlider} from './volumeSlider'
-import {VFlex} from 'components/atoms'
+import {VFlex} from '@/components/atoms'
 
 const TrackInfo = ({track}) => {
     if (!track) return '...'
@@ -46,7 +46,7 @@ export const Footer = connect(
         state: state.playback_state.state,
     })
 )(
-    React.memo((
+    memo((
         {tltrack, state, volume, dispatch}
     ) =>
         {

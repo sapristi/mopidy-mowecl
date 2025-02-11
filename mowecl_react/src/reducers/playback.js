@@ -1,4 +1,4 @@
-import {match} from 'utils'
+import {match} from '@/utils'
 
 const default_playback = {
     tltrack: {

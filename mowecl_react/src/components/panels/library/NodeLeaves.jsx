@@ -1,19 +1,19 @@
-import React from 'react'
+import {memo, useEffect, useRef, useCallback, createContext, useState} from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 
 import styled from '@emotion/styled'
 import Color from 'color'
 
-import List from '@material-ui/core/List'
-import ListItemText from '@material-ui/core/ListItemText'
-import Button from '@material-ui/core/Button'
-import Typography from '@material-ui/core/Typography'
+import List from '@mui/material/List'
+import ListItemText from '@mui/material/ListItemText'
+import Button from '@mui/material/Button'
+import Typography from '@mui/material/Typography'
 
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
-import ExpandLessIcon from '@material-ui/icons/ExpandLess'
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
+import ExpandLessIcon from '@mui/icons-material/ExpandLess'
 
-import {Track} from 'components/molecules'
-import {duration_to_human, match} from 'utils'
+import {Track} from '@/components/molecules'
+import {duration_to_human, match} from '@/utils'
 
 import {ChildrenSideBar} from "./ChildrenSideBar"
 import {DefaultButtons, PLButtons, BMButtons} from './buttons'
@@ -110,7 +110,7 @@ const NodeText = ({node, rootElem, dispatch, mopidy}) => {
 
 
 
-export const NodeLeaves = React.memo(({node, depth}) => {
+export const NodeLeaves = memo(({node, depth}) => {
 
     // console.log("Rendering node", node.uri)
     const dispatch = useDispatch()

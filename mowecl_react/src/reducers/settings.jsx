@@ -1,8 +1,8 @@
-import React from 'react'
+import {memo, useEffect, useRef, useCallback, createContext, useState} from 'react'
 
-import Typography from '@material-ui/core/Typography'
+import Typography from '@mui/material/Typography'
 import Color from 'color'
-import {match, ObjectComp} from 'utils'
+import {match, ObjectComp} from '@/utils'
 
 
 const validate_hex_color = (str) => {
@@ -190,7 +190,6 @@ export const settingsSchema = {
         }
     },
 }
-
 
 
 const load_rec = (schema, settings) =>

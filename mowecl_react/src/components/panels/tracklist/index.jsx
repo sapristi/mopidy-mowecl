@@ -1,33 +1,33 @@
-import React from 'react'
+import {memo, useEffect, useRef, useCallback, createContext, useState} from 'react'
 import {useSelector} from 'react-redux'
 import {useSetRecoilState} from 'recoil'
 import { ReactSortable } from "react-sortablejs"
 
-import ButtonGroup from '@material-ui/core/ButtonGroup'
-import Button from '@material-ui/core/Button'
-import PlayArrowIcon from '@material-ui/icons/PlayArrow'
-import AudiotrackIcon from '@material-ui/icons/Audiotrack'
-import ClearAllIcon from '@material-ui/icons/ClearAll'
-import ClearIcon from '@material-ui/icons/Clear'
-import SyncIcon from '@material-ui/icons/Sync'
+import ButtonGroup from '@mui/material/ButtonGroup'
+import Button from '@mui/material/Button'
+import PlayArrowIcon from '@mui/icons-material/PlayArrow'
+import AudiotrackIcon from '@mui/icons-material/Audiotrack'
+import ClearAllIcon from '@mui/icons-material/ClearAll'
+import ClearIcon from '@mui/icons-material/Clear'
+import SyncIcon from '@mui/icons-material/Sync'
 import { mdiBookmarkMusicOutline } from '@mdi/js'
-import BookmarkBorderIcon from '@material-ui/icons/BookmarkBorder'
-import AddIcon from '@material-ui/icons/Add'
+import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder'
+import AddIcon from '@mui/icons-material/Add'
 
-import Tooltip from '@material-ui/core/Tooltip'
-import Chip from '@material-ui/core/Chip'
-import Paper from '@material-ui/core/Paper'
+import Tooltip from '@mui/material/Tooltip'
+import Chip from '@mui/material/Chip'
+import Paper from '@mui/material/Paper'
 import Icon from '@mdi/react'
 
-import List from '@material-ui/core/List'
-import ListItem from '@material-ui/core/ListItem'
-import ListItemIcon from '@material-ui/core/ListItemIcon'
-import ListItemText from '@material-ui/core/ListItemText'
+import List from '@mui/material/List'
+import ListItem from '@mui/material/ListItem'
+import ListItemIcon from '@mui/material/ListItemIcon'
+import ListItemText from '@mui/material/ListItemText'
 
 import equal from 'fast-deep-equal'
 
-import {Track} from 'components/molecules'
-import {duration_to_human} from 'utils'
+import {Track} from '@/components/molecules'
+import {duration_to_human} from '@/utils'
 import {AddUriMenu} from './add_uri_menu'
 import {SaveMenu, menuStateAtom} from './save_menu'
 
@@ -58,7 +58,7 @@ border-radius: 5px;
 }
 `
 
-const TracklistItem = React.memo(({item, color, current_tlid, mopidy}) => (
+const TracklistItem = memo(({item, color, current_tlid, mopidy}) => (
     <TracklistItemContainer
       color={color}
       key={item.tlid}
@@ -140,9 +140,9 @@ const TracklistInfoPanel = () => {
     const mopidy = useSelector(state => state.mopidy.client)
     const bookmarksCli = useSelector(state => state.bookmarks.client)
     const currentBookmark = useSelector(state => state.bookmarksState.currentBookmark)
-    const anchorElRef = React.useRef(null)
+    const anchorElRef = useRef(null)
     const setSaveMenuState = useSetRecoilState(menuStateAtom)
-    const [addMenuState, setAddMenuState] = React.useState(false)
+    const [addMenuState, setAddMenuState] = useState(false)
 
     return (
         <Paper style={{paddingLeft: '10px', display: 'flex',
