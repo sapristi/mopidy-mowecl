@@ -95,12 +95,12 @@ export const App = memo((
     return (
             <AppContainer >
               <HFlex style={{height: '100%', width: '100%'}}>
-                <div style={{ width: '50%', height: '100%'}}>
+                <div style={{ width: '50%', height: '100%', overflow: 'auto'}}>
                   {(mopidy_connected)
                    ? activePanel
                    : <SettingsPanel/>}
                 </div>
-                <div style={{height: '100%', width: '50%',}}>
+                <div style={{height: '100%', width: '50%'}}>
                   {(mopidy_connected)
                    ? <TracklistPanel/>
                    : <ErrorPanel

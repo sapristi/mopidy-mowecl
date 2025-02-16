@@ -113,7 +113,7 @@ const TracklistListPanel = () => {
     return (disableDnd)
         ? (
             <List
-              style={{overflow: 'auto', maxHeight: '100%', padding: 0, scrollbarWidth: 'thin'}}
+              style={{overflow: 'auto', maxHeight: '100%', padding: 0, paddingLeft: "5px", }}
             >
               {tracklist.map(item => (
                   <TracklistItem item={item}
@@ -127,7 +127,7 @@ const TracklistListPanel = () => {
                list={tracklist}
                setList={() => {}}
                tag={List}
-               style={{overflow: 'auto', maxHeight: '100%', padding: 0, scrollbarWidth: 'thin'}}
+               style={{overflow: 'auto', maxHeight: '100%', padding: 0, paddingLeft: "5px"}}
                group={{name: 'tracklist', pull: true, put: ['library']}}
                onEnd={(e) => tracklistSwap(e, mopidy)}
              >
@@ -228,7 +228,7 @@ export const TracklistPanel = () => {
     return (
         <Paper
           style={{display: 'flex', flexDirection: 'column', height: '100%',
-                  paddingLeft: '5px', marginLeft: '5px', width: "100%" }}>
+                 }}>
           <TracklistInfoPanel />
           <TracklistListPanel />
         </Paper>
