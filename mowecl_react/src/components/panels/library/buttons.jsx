@@ -22,16 +22,14 @@ import Icon from '@mdi/react'
 import { mdiPlaylistRemove } from '@mdi/js'
 
 import {confirmDialogStateAtom} from '@/components/molecules/confirmDialog'
-import {expand_node, addToTracklist } from './functions'
+import {expand_node, addToTracklist,  addToTracklistAndPlay} from './functions'
 
 
 const PlayNowButton = ({node, ...props}) => {
     const mopidy = useSelector(state => state.mopidy.client)
     const action = () => {
         mopidy.tracklist.clear()
-        addToTracklist(node, 0, mopidy).then(
-            (tltracks) => { mopidy.playback.play() }
-        )
+        addToTracklistAndPlay(node, mopidy)
     }
 
     return (

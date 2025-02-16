@@ -116,3 +116,16 @@ export const addToTracklist = async (node, at_position, mopidy) => {
     return tltracks
 }
 
+
+
+export const addToTracklistAndPlay = async (node, mopidy) => {
+    mopidy.tracklist.clear()
+    const uris = await expand_node(node, mopidy)
+    if (!uris.length) {
+        return
+    }
+    mopidy.tracklist.add({uris: [uris[0]], at_position: 0})
+    mopidy.playback.play()
+    await mopidy.tracklist.add({uris: uris.slice(1), at_position:1})
+}
+
