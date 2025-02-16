@@ -33,7 +33,7 @@ export const LibraryPanel = () => {
     return (
         <VFlex style={{height: "100%", width: "100%"}}>
           { (library.favorites.children.length > 0) &&
-            <Paper elevation={5} variant='outlined'>
+            <Paper variant='outlined'>
               <List style={{paddingLeft: '10px'}}>
                 <NodeLeaves node={library.favorites} depth={0}/>
               </List>
