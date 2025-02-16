@@ -16,6 +16,7 @@
     "@mdi/react": "^1.6.1",
     "@mui/icons-material": "^6.4.4",
     "@mui/material": "^6.4.3",
+    "@reduxjs/toolkit": "^2.5.1",
     "color": "^4.2.3",
     "events": "^3.3.0",
     "fast-deep-equal": "^3.1.3",

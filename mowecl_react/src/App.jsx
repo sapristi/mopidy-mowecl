@@ -19,8 +19,13 @@ import Color from 'color'
 import {HotKeysProvider} from '@/components/molecules/HotKeysProvider'
 import {ConfirmDialog} from '@/components/molecules/confirmDialog'
 import {match, createCustomTheme} from '@/utils'
+import {useSelector } from 'react-redux'
 
-let AppContainer = memo(({colors, children}) => {
+let AppContainer = memo(({children}) => {
+    const colors = useSelector(
+        state => state.settings.persistant.colors
+    )
+
     const text_secondary = useMemo(
         () => (colors.themeType === "light")
             ? (Color(colors.text).lighten(0.25).hex())
@@ -77,7 +82,7 @@ const ErrorPanel = ({mopidy_ws_url, mopidy_error}) => (
 
 export const App = memo((
     {active_panel_name,
-     colors, mopidy_ws_url,
+      mopidy_ws_url,
      mopidy_connected,
      mopidy_error, dispatch}
 ) => {
@@ -88,7 +93,7 @@ export const App = memo((
           .otherwise(() => console.log("Bad active panel name", active_panel_name))
 
     return (
-            <AppContainer colors={colors}>
+            <AppContainer >
               <HFlex style={{height: '100%', width: '100%'}}>
                 <div style={{ width: '50%', height: '100%'}}>
                   {(mopidy_connected)
@@ -112,7 +117,7 @@ export const App = memo((
 
 export const  AppSmall = memo((
     {active_panel_name,
-     colors, mopidy_ws_url,
+     mopidy_ws_url,
      mopidy_connected,
      mopidy_error, dispatch}
 ) => {
@@ -124,7 +129,7 @@ export const  AppSmall = memo((
           .otherwise(() => console.log("Bad active panel name", active_panel_name))
 
     return (
-            <AppContainer colors={colors}>
+            <AppContainer>
               {(mopidy_connected)
                ? activePanel
                : <SettingsPanel/>}

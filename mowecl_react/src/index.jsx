@@ -21,15 +21,14 @@ import {initMopidyEventsDispatcher} from './client_setup/mopidy'
 import {initBookmarksEventsDispatcher, bookmarksStateReducer} from './client_setup/bookmarks'
 
 const MopidyApp = () => {
-    const appProps = useSelector(
-        state =>
-            ({
-                active_panel_name: state.settings.active_panel,
-                colors: state.settings.persistant.colors,
-                mopidy_connected: state.mopidy.connected,
-                mopidy_error: state.mopidy_error
-            })
-    )
+    const active_panel_name = useSelector(state => state.settings.active_panel)
+    const mopidy_connected = useSelector(state => state.mopidy.connected)
+    const mopidy_error = useSelector(state => state.mopidy.error)
+    const appProps = {
+        active_panel_name,
+        mopidy_connected,
+        mopidy_error
+    }
     const small_screen = useSelector(state => state.settings.persistant.generic.small_screen)
     useWsClient(
         "mopidy",
