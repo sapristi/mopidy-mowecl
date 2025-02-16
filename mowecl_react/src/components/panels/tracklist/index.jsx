@@ -1,4 +1,5 @@
 import {memo, useEffect, useRef, useCallback, createContext, useState} from 'react'
+import {HFlex, VFlex} from '@/components/atoms'
 import {useSelector} from 'react-redux'
 import {useSetRecoilState} from 'recoil'
 import { ReactSortable } from "react-sortablejs"
@@ -19,6 +20,7 @@ import Chip from '@mui/material/Chip'
 import Paper from '@mui/material/Paper'
 import Icon from '@mdi/react'
 
+import Typography from '@mui/material/Typography'
 import List from '@mui/material/List'
 import ListItem from '@mui/material/ListItem'
 import ListItemIcon from '@mui/material/ListItemIcon'
@@ -30,6 +32,7 @@ import {Track} from '@/components/molecules'
 import {duration_to_human} from '@/utils'
 import {AddUriMenu} from './add_uri_menu'
 import {SaveMenu, menuStateAtom} from './save_menu'
+import Handlebars from "handlebars";
 
 import Color from 'color'
 import styled from '@emotion/styled'
@@ -40,8 +43,19 @@ const tracklistSwap = (e, mopidy) => {
 }
 
 const itemToText = (item) => {
+
     try {
-        return `${item.track.album.name} / ${item.track.track_no}. ${item.track.name}`
+
+        const template_str = useSelector(state => state.settings.persistant.generic.tracklist_template)
+        const template = Handlebars.compile(template_str.replaceAll("{", "{{{").replaceAll("}", "}}}"));
+        const artist = item.track.artists[0].name
+        const album = item.track.album.name
+        const date = item.track.album.date
+        const trackno = item.track.track_no
+        const title = item.track.name
+
+        return template({artist, album, trackno, title, date})
+
     }
     catch (e) {
         return item.track.name || item.track.uri
