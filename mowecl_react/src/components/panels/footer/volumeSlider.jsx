@@ -51,7 +51,7 @@ export const VolumeSlider = connect(
                         onChange={handleChange}
                         onChangeCommitted={handleChangeCommitted}
                         valueLabelDisplay='auto'
-                        color="info"
+                        color="primary"
                         size="small"
                 />
               </div>

@@ -92,7 +92,6 @@ const TracklistItem = memo(({item, color, current_tlid, mopidy}) => (
 const TracklistListPanel = () => {
 
     const mopidy = useSelector(state => state.mopidy.client)
-    const color_primary = useSelector(state => state.settings.persistant.colors.primary)
     const disableDnd = useSelector(state => state.settings.persistant.generic.disable_dnd)
 
     const current_tlid = useSelector(state => (state.playback_state.tltrack) ? state.playback_state.tltrack.tlid : null)
@@ -103,7 +102,8 @@ const TracklistListPanel = () => {
               style={{overflow: 'auto', maxHeight: '100%', padding: 0, scrollbarWidth: 'thin'}}
             >
               {tracklist.map(item => (
-                  <TracklistItem item={item} color={color_primary} key={item.tlid}
+                  <TracklistItem item={item}
+                                 key={item.tlid}
                                  current_tlid={current_tlid} mopidy={mopidy}/>
               ))}
             </List>
@@ -118,7 +118,8 @@ const TracklistListPanel = () => {
                onEnd={(e) => tracklistSwap(e, mopidy)}
              >
                {tracklist.map(item => (
-                   <TracklistItem item={item} color={color_primary} key={item.tlid}
+                   <TracklistItem item={item}
+                                  key={item.tlid}
                                   current_tlid={current_tlid} mopidy={mopidy}/>
               ))}
             </ReactSortable>

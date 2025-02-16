@@ -19,7 +19,7 @@ const MopidyStatus = () => {
     const style = {marginTop: '15px', marginBottom: '10px'}
     const props = (connected)
           ? ((pendingRequestsNb === 0)
-             ? ({color: "info", variant: 'determinate', value: 100})
+             ? ({color: "primary", variant: 'determinate', value: 100})
              : ({color: "secondary", disableShrink: true})
             )
           : ({color: "error", disableShrink: true})

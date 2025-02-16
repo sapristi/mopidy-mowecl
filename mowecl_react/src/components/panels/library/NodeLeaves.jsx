@@ -122,7 +122,7 @@ export const NodeLeaves = memo(({node, depth}) => {
 
     return (
         <NodeLeavesLi>
-          <LibLine color={colors.primary}>
+          <LibLine>
             <ListItemText>
               <NodeText node={node} rootElem={depth===0} dispatch={dispatch} mopidy={mopidy}/>
             </ListItemText>

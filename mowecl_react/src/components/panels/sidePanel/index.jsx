@@ -41,7 +41,7 @@ const SidePanel = (
 
     const getButtonColor = useCallback(
         (panelName) => ((panelName === current_panel)
-                        ? "info"
+                        ? "primary"
                         : "default"),
         [current_panel]
     )

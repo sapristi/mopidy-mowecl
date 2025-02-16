@@ -122,10 +122,23 @@ export const ObjectComp = (object, mapFn, filterFn) => {
 export const mowecl_version = "__VERSION__"
 
 export const createCustomTheme = (themeType, text, text_secondary, primary, secondary, background) => {
-    let theme = createTheme()
-    console.log({main: text})
-    console.log(theme.palette.augmentColor({color: {main: text}}))
-    let primaryColor = theme.palette.augmentColor({color: {main: text}})
+    let theme = createTheme({
+        components: {
+            MuiButton: {
+                defaultProps: {
+                    color: "default",
+                },
+            },
+            MuiButtonGroup: {
+                defaultProps: {
+                    color: "default",
+                },
+            },
+
+        }
+    })
+    let defaultColor = theme.palette.augmentColor({color: {main: text}})
+    let primaryColor = theme.palette.augmentColor({color: {main: primary}})
     return createTheme(
         theme,
         {
@@ -137,6 +150,7 @@ export const createCustomTheme = (themeType, text, text_secondary, primary, seco
             },
             palette: {
                 mode: themeType,
+                default: defaultColor,
                 background: {
                     paper: background,
                     default: background,
@@ -146,9 +160,6 @@ export const createCustomTheme = (themeType, text, text_secondary, primary, seco
                     primary: text,
                     secondary: text_secondary,
                 },
-                info: {
-                    main: primary
-                }
             },
             overrides: {
                 MuiLinearProgress: {
