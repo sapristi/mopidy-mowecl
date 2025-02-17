@@ -1,6 +1,6 @@
 import {memo, useEffect, useRef, useCallback, createContext, useState} from 'react'
 import {HFlex, VFlex} from '@/components/atoms'
-import {useSelector} from 'react-redux'
+import {useSelector, useDispatch} from 'react-redux'
 import {useSetRecoilState} from 'recoil'
 import { ReactSortable } from "react-sortablejs"
 
@@ -14,7 +14,10 @@ import SyncIcon from '@mui/icons-material/Sync'
 import { mdiBookmarkMusicOutline } from '@mdi/js'
 import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder'
 import AddIcon from '@mui/icons-material/Add'
+import MoreVertIcon from '@mui/icons-material/MoreVert';
+import BlurLinearIcon from '@mui/icons-material/BlurLinear';
 
+import Popper from '@mui/material/Popper';
 import Tooltip from '@mui/material/Tooltip'
 import Chip from '@mui/material/Chip'
 import Paper from '@mui/material/Paper'
@@ -36,6 +39,8 @@ import Handlebars from "handlebars";
 
 import Color from 'color'
 import styled from '@emotion/styled'
+
+import {exploreItem} from '@/components/panels/library/functions.js'
 
 const tracklistSwap = (e, mopidy) => {
     // console.log(e)
@@ -72,35 +77,87 @@ border-radius: 5px;
 }
 `
 
-const TracklistItem = memo(({item, color, current_tlid, mopidy}) => (
-    <TracklistItemContainer
-      color={color}
-      key={item.tlid}
-    >
-      {
-          (item.tlid === current_tlid)
-              ? <AudiotrackIcon fontSize="small" color="primary"/>
-              : ''
-      }
-      <ListItemText>
-        <Track text={itemToText(item)}
-               duration={duration_to_human(
-                   item.track.length,
-                   '∞')} />
-      </ListItemText>
-      <ListItemIcon>
-        <ButtonGroup>
-          <Button onClick={() => mopidy.playback.play({tlid: item.tlid})}>
-            <PlayArrowIcon fontSize="small"/>
+const TracklistItemButtonsPopop = memo(({item, mopidy}) => {
+
+    const handleRemoveClick = () => mopidy.tracklist.remove({
+        criteria: {tlid: [item.tlid]}
+    })
+    const dispatch = useDispatch()
+    let exploreArtistsButtons = []
+    console.log(item, item.track.uri.startsWith("tidal:"))
+    if (item.track.uri.startsWith("tidal:")) {
+        exploreArtistsButtons = item.track.artists.map(
+            (artist) => <Button
+                          startIcon={<BlurLinearIcon fontSize="small"/>}
+                          onClick={() => exploreItem(artist, dispatch, mopidy)}
+                        >Explore {artist.name}</Button>
+        )
+    }
+
+    return (
+        <Paper>
+        <ButtonGroup orientation="vertical"
+                     color="info"
+                     /* variant="contained" */
+        >
+          <Button onClick={handleRemoveClick} startIcon={<ClearIcon fontSize="small"/>}>
+            Remove from tracklist
           </Button>
-          <Button onClick={() => mopidy.tracklist.remove({
-              criteria: {tlid: [item.tlid]}
-          })}>
-            <ClearIcon fontSize="small"/>
-          </Button></ButtonGroup>
-      </ListItemIcon>
-    </TracklistItemContainer>
-), equal)
+          {
+              ...exploreArtistsButtons 
+          }
+        </ButtonGroup>
+        </Paper>
+    )
+}, equal
+)
+
+const TracklistItem = memo(({item, color, current_tlid, mopidy}) => {
+    const [anchor, setAnchor] = useState(null);
+
+    const handlePopperClick = (event) => {
+        setAnchor(anchor ? null : event.currentTarget);
+    };
+
+    const open = Boolean(anchor);
+    const id = open ? 'actions-popper' : undefined;
+
+    const handleRemoveClick = () => mopidy.tracklist.remove({
+        criteria: {tlid: [item.tlid]}
+    })
+
+    return (
+        <TracklistItemContainer
+          color={color}
+          key={item.tlid}
+        >
+          {
+              (item.tlid === current_tlid)
+                  ? <AudiotrackIcon fontSize="small" color="primary"/>
+                  : ''
+          }
+          <ListItemText>
+            <Track text={itemToText(item)}
+                   duration={duration_to_human(
+                       item.track.length,
+                       '∞')} />
+          </ListItemText>
+          <ListItemIcon>
+            <ButtonGroup>
+              <Button onClick={() => mopidy.playback.play({tlid: item.tlid})}>
+                <PlayArrowIcon fontSize="small"/>
+              </Button>
+              <Button aria-describedby={id} type="button" onClick={handlePopperClick} color={open ? "info" : "default"}>
+                <MoreVertIcon/>
+              </Button>
+              <Popper id={id} open={open} anchorEl={anchor}>
+                <TracklistItemButtonsPopop item={item} mopidy={mopidy} />
+              </Popper>
+            </ButtonGroup>
+          </ListItemIcon>
+        </TracklistItemContainer>
+    )
+}, equal)
 
 
 const TracklistListPanel = () => {

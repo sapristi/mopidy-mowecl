@@ -129,3 +129,27 @@ export const addToTracklistAndPlay = async (node, mopidy) => {
     await mopidy.tracklist.add({uris: uris.slice(1), at_position:1})
 }
 
+
+export const exploreItem = async (item, dispatch, mopidy) => {
+    console.log(item)
+    const addToItems = (newItem, prevItems) => {
+        for (const item of prevItems) {
+            if (item.uri == newItem.uri) {
+                return [prevItems]
+            }
+        }
+
+        return [...prevItems, newItem]
+    }
+    dispatch({
+        type: 'LIBRARY_SET_CHILDREN',
+        fun: (prevItems) => addToItems(item, prevItems),
+        target: ['explore:'],
+    })
+    dispatch({
+        type: 'LIBRARY_SET_EXPANDED',
+        target: ['explore:'],
+        data: true
+    })
+
+}

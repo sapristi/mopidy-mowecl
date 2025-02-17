@@ -32,7 +32,6 @@ let AppContainer = memo(({children}) => {
             : (Color(colors.text).darken(0.25).hex()),
         [colors]
     )
-    // console.log("COLORS", colors)
     const THEME = useMemo(
         () => createCustomTheme(
             colors.themeType, colors.text, text_secondary, colors.primary,

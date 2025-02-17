@@ -62,6 +62,14 @@ const favoritesReducer =
       ) => defaultNodeReducer(state, action)
 
 
+const exploreReducer =
+      (
+          state = {name: "Explore", uri: 'explore:',
+                   type: 'explore_root', path: ['explore:'], children: []},
+          action
+      ) => defaultNodeReducer(state, action)
+
+
 export const libraryReducer = (
     combineReducers({
         mopidyLibrary: mopidyLibraryReducer,
@@ -69,5 +77,6 @@ export const libraryReducer = (
         search_results: searchResultsReducer,
         search_history: searchHistoryReducer,
         bookmarks: bookmarksReducer,
-        favorites: favoritesReducer
+        favorites: favoritesReducer,
+        explore: exploreReducer,
     }))

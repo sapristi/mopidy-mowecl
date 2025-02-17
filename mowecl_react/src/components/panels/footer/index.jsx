@@ -1,6 +1,6 @@
 
 import {memo, useEffect, useRef, useCallback, createContext, useState} from 'react';
-import { connect } from 'react-redux';
+import { connect, useSelector, useDispatch } from 'react-redux';
 
 import Paper from '@mui/material/Paper';
 import {PlaybackButtons, TracklistStateButtons} from './playbackButtons'
@@ -8,10 +8,14 @@ import {PlaybackSlider} from './playbackSlider'
 import {VolumeSlider} from './volumeSlider'
 import {VFlex} from '@/components/atoms'
 
+
 const TrackInfo = ({track}) => {
+
+    const mopidy = useSelector(state => state.mopidy.client)
+    const dispatch = useDispatch()
+
     if (!track) return '...'
 
-    // console.log("TrackInfo",track);
     const name = (
         (track.name) ?
             <div>{track.name}</div>:
@@ -47,7 +51,7 @@ export const Footer = connect(
     })
 )(
     memo((
-        {tltrack, state, volume, dispatch}
+        {tltrack, state, volume}
     ) =>
         {
             return (

@@ -20,7 +20,8 @@ export const LibraryPanel = () => {
         library.playlists,
         library.bookmarks,
         library.search_results,
-        library.search_history
+        library.search_history,
+        library.explore,
     ]
 
     optionalLibItems.forEach(
