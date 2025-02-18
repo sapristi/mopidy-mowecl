@@ -161,18 +161,17 @@ export const createCustomTheme = (themeType, text, text_secondary, primary, seco
                     secondary: text_secondary,
                 },
             },
-            overrides: {
+            components: {
                 MuiLinearProgress: {
-                    colorPrimary: {
-                        backgroundColor: background
-                    },
-                    bar1Indeterminate: {
-                        animation: "MuiLinearProgress-keyframes-indeterminate1 6.3s cubic-bezier(0.65, 0.815, 0.735, 0.395) infinite"
-                    },
-                    bar2Indeterminate: {
-                        animation: "MuiLinearProgress-keyframes-indeterminate2 6.3s cubic-bezier(0.165, 0.84, 0.44, 1) 4.45s infinite"
+                    styleOverrides: {
+                        bar1Indeterminate: {
+                            "animation-duration": "6.3s"
+                        },
+                        bar2Indeterminate: {
+                            "animation-duration": "6.3s"
+                        },
                     }
                 }
-            }
+            },
         })
 }
