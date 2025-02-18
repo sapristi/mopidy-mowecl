@@ -78,7 +78,7 @@ const SidePanel = (
             </ButtonGroup>
             <ButtonGroup orientation="vertical">
               {
-                  (window.mowecl_version !== availableVersion) && (availableVersion) && 
+                  (window.mowecl_version !== availableVersion) && (availableVersion) &&
                       <Tooltip title={`Version ${availableVersion} available on Pypi.`}>
                         <Button
                           href={"https://github.com/sapristi/mopidy-mowecl/tree/master#v" + availableVersion.replace(/\./g, '')}

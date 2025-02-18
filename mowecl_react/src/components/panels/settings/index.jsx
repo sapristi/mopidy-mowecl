@@ -104,20 +104,24 @@ export const SettingsPanel = () => {
 
 
     return (
-        <VFlex style={{padding: '5px', height: '100%', alignItems: "center", width: "100%" }}>
-          <Paper style={{ overflow: 'auto', scrollbarWidth: 'thin', flex: "1", width: "100%"}}>
-            <SettingsGroup
-              schema={settingsSchema}
-              group={settings}
-              setInGroup={(key, value) =>
-                          setSettings(() => ({...settings, [key]: value}))}
-              path={[]}/>
-          </Paper>
-          <ButtonGroup style={{padding: "10px"}}>
-            <Button onClick={handleCommit}>Commit</Button>
-            <Button onClick={handleClear}>Restore defaults</Button>
-          </ButtonGroup>
-        </VFlex>
+        <Paper style={{ height: "100%"}}>
+          <VFlex style={{height: '100%', alignItems: "center", width: "100%" }}>
+            <div style={{ overflow: 'auto', scrollbarWidth: 'thin', flex: "1", width: "100%"}}>
+              <SettingsGroup
+                schema={settingsSchema}
+                group={settings}
+                setInGroup={(key, value) =>
+                    setSettings(() => ({...settings, [key]: value}))}
+                path={[]}/>
+            </div>
+            <Paper elevation={1} style={{ width: "100%" }}>
+              <ButtonGroup style={{padding: "10px"}}>
+                <Button onClick={handleCommit}>Commit</Button>
+                <Button onClick={handleClear}>Restore defaults</Button>
+              </ButtonGroup>
+            </Paper>
+          </VFlex>
+        </Paper>
     )
 }
 
