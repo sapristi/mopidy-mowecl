@@ -5,9 +5,7 @@ import Typography from '@mui/material/Typography';
 import Paper from '@mui/material/Paper';
 
 import GitHubIcon from '@mui/icons-material/GitHub';
-
-import {mowecl_version} from '@/utils'
-
+ 
 const HelpPanel = () => {
 
     return (
@@ -16,7 +14,7 @@ const HelpPanel = () => {
 
           }}>
             <Typography variant="h4" style={{marginBottom: '10px'}}>
-              Mowecl {mowecl_version}
+              Mowecl {window.mowecl_version}
             </Typography>
             <Typography>
               Made with ♥ by Mathias Millet.

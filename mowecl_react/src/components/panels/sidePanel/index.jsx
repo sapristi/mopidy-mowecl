@@ -14,7 +14,6 @@ import { mdiFileTreeOutline } from '@mdi/js'
 import Icon from '@mdi/react'
 
 import {SidePanelUpper} from './upper'
-import { mowecl_version } from '@/utils'
 
 
 const SidePanel = (
@@ -79,7 +78,7 @@ const SidePanel = (
             </ButtonGroup>
             <ButtonGroup orientation="vertical">
               {
-                  (mowecl_version !== availableVersion) && (availableVersion) && 
+                  (window.mowecl_version !== availableVersion) && (availableVersion) && 
                       <Tooltip title={`Version ${availableVersion} available on Pypi.`}>
                         <Button
                           href={"https://github.com/sapristi/mopidy-mowecl/tree/master#v" + availableVersion.replace(/\./g, '')}
