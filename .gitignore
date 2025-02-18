@@ -10,6 +10,7 @@
 
 mowecl_react/node_modules
 mowecl_react/build
+mowecl_react/dist
 .tern-port
 .token
 

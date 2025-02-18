@@ -1,6 +1,7 @@
 import logging
 import pathlib
 import pkg_resources
+import sysconfig
 import re
 
 from mopidy import config, ext
@@ -62,12 +63,12 @@ class Extension(ext.Extension):
         )
 
     def factory(self, config, core):
-        path = pathlib.Path(__file__).parent / "static"
+        root = pathlib.Path(sysconfig.get_path("data")) / "mopidy_mowecl" / "static"
         server_params = {
-            "path": path, "config": config, "mowecl_version": self.version
+            "path": root, "config": config, "mowecl_version": self.version
         }
         return [
             (r"/(index.html)", server_params),
             (r"/", FileServer, server_params),
-            (r"/(.*)", StaticFileHandler, {"path": path}),
+            (r"/(.*)", StaticFileHandler, {"path": root}),
         ]

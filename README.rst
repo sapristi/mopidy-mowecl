@@ -112,8 +112,8 @@ Mowecl is a React application served by a python app. Building the application t
 Requirements
 .......................................
 
-- The `yarn` program
-- The `setuptools` and `wheel` python packages (installable via `pip`)
+- The `pnpm` program
+- The `pdm` python package
 
 Steps
 .......................................
@@ -123,8 +123,8 @@ From the root of Mowecl directory, running the following commands will build the
 .. code-block:: bash
 
     cd mowecl_react
-    yarn install
-    yarn build
+    pnpm install
+    pnpm build
     cd ..
     python3 setup.py sdist bdist_wheel
     ls dist
