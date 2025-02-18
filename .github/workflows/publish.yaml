@@ -1,0 +1,44 @@
+name: Publish Python distributions to PyPI
+
+on:
+  push:
+    tags:
+     - '*'
+
+jobs:
+  build-n-publish:
+    name: Build and publish Python distributions to PyPI
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write # this permission is mandatory for Trusted Publishing
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+          run_install: false
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Build deps
+        run: |
+          cd mowecl_react
+          pnpm install
+          pnpm build
+
+      - name: Set up Python 3.10
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+      - name: Setup and build
+        run: |
+          python -m pip install pdm
+          version=$(echo $GITHUB_REF | cut -d / -f 3)
+          sed -i "s/version = .*/version = \"$version\"/g" pyproject.toml
+          pdm build
+
+      - name: Publish distribution to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1

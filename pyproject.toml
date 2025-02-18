@@ -14,7 +14,7 @@ data = [{path = "mopidy_mowecl/static/**/*", relative-to = "."}]
 
 [project]
 name = "Mopidy-Mowecl"
-version = "0.5.0a"
+version = "dev"
 description = "Web client for Mopidy"
 authors = [
     {name = "Mathias Millet", email = "mathias@mmill.eu"},
@@ -68,6 +68,7 @@ dev = [
     "twine",
     "wheel",
     "setuptools>=75.8.0",
+    "pre-commit>=4.1.0",
 ]
 
 [project.entry-points."mopidy.ext"]

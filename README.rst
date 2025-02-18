@@ -126,8 +126,7 @@ From the root of Mowecl directory, running the following commands will build the
     pnpm install
     pnpm build
     cd ..
-    python3 setup.py sdist bdist_wheel
-    ls dist
+    pdm build
 
 You can then install the built package with pip, e.g.
 ::
@@ -142,11 +141,19 @@ To run Mowecl in develop mode, do the following:
 .. code-block:: bash
 
     cd mowecl_react
-    yarn install
-    yarn start
+    pnpm install
+    pnpm dev
 
 Changelog
 =======================================
+
+v0.5.0
+........................................
+
+- small ui fixes
+- tracklist item template
+- some tidal integration (explore given artist) - more to come !
+
 
 v0.4.3
 ........................................
