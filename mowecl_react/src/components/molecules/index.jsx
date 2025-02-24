@@ -39,3 +39,5 @@ export const Track = ({text, duration}) => (
       </div>
     </HFlex>
 )
+
+export const GIcon = ({name}) =>  <span className="material-symbols-outlined">{name}</span>

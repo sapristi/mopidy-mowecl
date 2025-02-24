@@ -1,4 +1,3 @@
-import {memo, useEffect, useRef, useCallback, createContext, useState} from 'react'
 import { createTheme } from '@mui/material/styles';
 
 
@@ -69,26 +68,9 @@ export const getWsProtocol = () => (
     window.location.protocol === 'https:' ? 'wss:' : 'ws:'
 )
 
-export const AppContext = createContext(null);
 
 export const listEquals = (l1, l2) => {
     return l1.map((e,i) => [e, l2[i]]).every(([e1,e2]) => e1 === e2)
-}
-
-export function useTraceUpdate(props) {
-    const prev = useRef(props);
-    useEffect(() => {
-        const changedProps = Object.entries(props).reduce((ps, [k, v]) => {
-            if (prev.current[k] !== v) {
-                ps[k] = [prev.current[k], v];
-            }
-            return ps;
-        }, {});
-        if (Object.keys(changedProps).length > 0) {
-            console.log('Changed props:', changedProps);
-        }
-        prev.current = props;
-    });
 }
 
 
@@ -175,3 +157,4 @@ export const createCustomTheme = (themeType, text, text_secondary, primary, seco
             },
         })
 }
+

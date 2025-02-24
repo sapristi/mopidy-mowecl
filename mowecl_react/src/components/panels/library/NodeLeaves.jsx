@@ -21,7 +21,6 @@ import { isLeaf, toggleNode } from './functions'
 
 
 const getButtons = (node) => {
-
     return match(node)
         .on(node => node.path && node.path.length === 1, () =>
             null)

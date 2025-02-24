@@ -31,7 +31,6 @@ import ListItemText from '@mui/material/ListItemText'
 
 import equal from 'fast-deep-equal'
 
-import {Track} from '@/components/molecules'
 import {duration_to_human} from '@/utils'
 import {AddUriMenu} from './add_uri_menu'
 import {SaveMenu, menuStateAtom} from './save_menu'
@@ -40,32 +39,67 @@ import Handlebars from "handlebars";
 import Color from 'color'
 import styled from '@emotion/styled'
 
-import {exploreItem} from '@/components/panels/library/functions.js'
+import { TracklistItemMenu} from '@/components/panels/tracklist/track_buttons'
+import { GIcon } from '@/components/molecules'
+import { useMenuAnchor } from '@/hooks'
 
 const tracklistSwap = (e, mopidy) => {
     // console.log(e)
     mopidy.tracklist.move({start: e.oldIndex, end: e.oldIndex, to_position: e.newIndex})
 }
 
-const itemToText = (item) => {
+
+export const Track = ({item}) => {
+
+    // line-height: 0px needed to center item vertically
+    const sep = <span style={{lineHeight: "0px"}}> ⁕ </span>
+    const trackElem = <span>{item.track.name || item.track.uri} </span>
+    let artistElem = null
+    let albumElem = null
+
+    const duration = duration_to_human(item.track.length,'∞')
 
     try {
-
-        const template_str = useSelector(state => state.settings.persistant.generic.tracklist_template)
-        const template = Handlebars.compile(template_str.replaceAll("{", "{{{").replaceAll("}", "}}}"));
+        const artistIcon = <GIcon name="artist"/>
         const artist = item.track.artists[0].name
-        const album = item.track.album.name
-        const date = item.track.album.date
-        const trackno = item.track.track_no
-        const title = item.track.name
-
-        return template({artist, album, trackno, title, date})
-
+        artistElem = (<>
+                        {sep}
+                        {artistIcon}
+                        <span>{artist}</span>
+                      </>
+                     )
     }
     catch (e) {
-        return item.track.name || item.track.uri
+        console.warn("Failed formatting artist")
     }
+    try {
+        const albumIcon = <GIcon name="album"/>
+        const album = item.track.album.name
+        const date = item.track.album.date
+        albumElem = (<>
+                       {sep}
+                       {albumIcon}
+                       <span> {album} ({date})</span>
+                     </>)
+    }
+    catch (e) {
+        console.warn("Failed formatting album")
+    }
+
+    return (
+        <HFlex style={{justifyContent: "space-between"}}>
+          <HFlex style={{alignItems: "center"}}>
+            {trackElem}
+            {artistElem}
+            {albumElem}
+          </HFlex>
+          <div style={{textAlign: "right", paddingRight: '4px'}}>
+            {duration}
+          </div>
+        </HFlex>
+    )
 }
+
 
 const TracklistItemContainer = styled(ListItem)`
 padding: 0;
@@ -77,54 +111,9 @@ border-radius: 5px;
 }
 `
 
-const TracklistItemButtonsPopop = memo(({item, mopidy}) => {
-
-    const handleRemoveClick = () => mopidy.tracklist.remove({
-        criteria: {tlid: [item.tlid]}
-    })
-    const dispatch = useDispatch()
-    let exploreArtistsButtons = []
-    console.log(item, item.track.uri.startsWith("tidal:"))
-    if (item.track.uri.startsWith("tidal:")) {
-        exploreArtistsButtons = item.track.artists.map(
-            (artist) => <Button
-                          startIcon={<BlurLinearIcon fontSize="small"/>}
-                          onClick={() => exploreItem(artist, dispatch, mopidy)}
-                        >Explore {artist.name}</Button>
-        )
-    }
-
-    return (
-        <Paper>
-        <ButtonGroup orientation="vertical"
-                     color="info"
-                     /* variant="contained" */
-        >
-          <Button onClick={handleRemoveClick} startIcon={<ClearIcon fontSize="small"/>}>
-            Remove from tracklist
-          </Button>
-          {
-              ...exploreArtistsButtons 
-          }
-        </ButtonGroup>
-        </Paper>
-    )
-}, equal
-)
-
 const TracklistItem = memo(({item, color, current_tlid, mopidy}) => {
-    const [anchor, setAnchor] = useState(null);
 
-    const handlePopperClick = (event) => {
-        setAnchor(anchor ? null : event.currentTarget);
-    };
-
-    const open = Boolean(anchor);
-    const id = open ? 'actions-popper' : undefined;
-
-    const handleRemoveClick = () => mopidy.tracklist.remove({
-        criteria: {tlid: [item.tlid]}
-    })
+    const { menuId, handleClick, menuProps } = useMenuAnchor("track-item-menu")
 
     return (
         <TracklistItemContainer
@@ -137,22 +126,17 @@ const TracklistItem = memo(({item, color, current_tlid, mopidy}) => {
                   : ''
           }
           <ListItemText>
-            <Track text={itemToText(item)}
-                   duration={duration_to_human(
-                       item.track.length,
-                       '∞')} />
+            <Track item={item} />
           </ListItemText>
           <ListItemIcon>
             <ButtonGroup>
               <Button onClick={() => mopidy.playback.play({tlid: item.tlid})}>
                 <PlayArrowIcon fontSize="small"/>
               </Button>
-              <Button aria-describedby={id} type="button" onClick={handlePopperClick} color={open ? "info" : "default"}>
+              <Button aria-describedby={menuId} type="button" onClick={handleClick} color={menuProps.open ? "info" : "default"}>
                 <MoreVertIcon/>
               </Button>
-              <Popper id={id} open={open} anchorEl={anchor}>
-                <TracklistItemButtonsPopop item={item} mopidy={mopidy} />
-              </Popper>
+              <TracklistItemMenu id={menuId} item={item} mopidy={mopidy} {...menuProps}/>
             </ButtonGroup>
           </ListItemIcon>
         </TracklistItemContainer>

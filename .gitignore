@@ -16,3 +16,4 @@ mowecl_react/dist
 
 .pdm-python
 pdm.lock
+.projectile

@@ -86,12 +86,12 @@ export const settingsSchema = {
     generic: {
         name: "Generic",
         type: "group",
-        tracklist_template: {
-            type: "param",
-            name: "Track template in tracklist",
-            help: 'Template used to display tracklist items.',
-            validate: v => v || "{title}  ⁕  {artist}  ⁕  {album} ({date})"
-        },
+        // tracklist_template: {
+        //     type: "param",
+        //     name: "Track template in tracklist",
+        //     help: 'Template used to display tracklist items.',
+        //     validate: v => v || "{title}  ⁕  👤 {artist}  ⁕  ⊙ {album} ({date})"
+        // },
         seek_update_interval: {
             type: "param",
             name: "Progress update interval",

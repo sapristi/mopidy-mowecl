@@ -31,11 +31,25 @@ export const SearchInput = connect(
         const uri = (selectedUri === "all") ? {} : {uris: [selectedUri + ':']}
         console.log("Search:",  {query: {any: [input]}, ...uri})
         mopidyCli.library.search({query: {any: [input]}, ...uri}).then(
-            search_result => {
+            raw_search_results => {
+                console.log("search", raw_search_results)
 
-                const search_results = search_result.map(
-                    item => ({...item, name: item.uri, children: item.tracks,
-                              type: 'search_result', expanded: true}))
+                const search_results = raw_search_results.map(
+                    (item, i) => ({...item, name: item.uri, children: item.tracks,
+                                   type: 'search_result', expanded: true, uri: `search_result_${input}_${i}`}))
+
+                console.log("search", search_results)
+                // const search_results = {
+                //     uri: "search_result_" + input,
+                //     name: `Search: ${input}`,
+                //     children: [
+                //         {
+                //             uri: "search_result_" + input + "_tracks",
+                //             name: `Tracks`,
+                //             children: raw_search_result.tracks
+                //         }
+                //     ]
+                // }
                 dispatch({
                     type: 'LIBRARY_SET_CHILDREN',
                     fun: () => search_results,
