@@ -40,4 +40,4 @@ export const Track = ({text, duration}) => (
     </HFlex>
 )
 
-export const GIcon = ({name}) =>  <span className="material-symbols-outlined">{name}</span>
+export const GIcon = ({name, ...props}) =>  <span className="material-symbols-outlined" {...props}>{name}</span>

@@ -17,7 +17,6 @@ import AddIcon from '@mui/icons-material/Add'
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import BlurLinearIcon from '@mui/icons-material/BlurLinear';
 
-import Popper from '@mui/material/Popper';
 import Tooltip from '@mui/material/Tooltip'
 import Chip from '@mui/material/Chip'
 import Paper from '@mui/material/Paper'
@@ -34,7 +33,6 @@ import equal from 'fast-deep-equal'
 import {duration_to_human} from '@/utils'
 import {AddUriMenu} from './add_uri_menu'
 import {SaveMenu, menuStateAtom} from './save_menu'
-import Handlebars from "handlebars";
 
 import Color from 'color'
 import styled from '@emotion/styled'
@@ -111,15 +109,16 @@ border-radius: 5px;
 }
 `
 
-const TracklistItem = memo(({item, color, current_tlid, mopidy}) => {
+const TracklistItem = memo(({item, color, current_tlid, mopidy, sortable}) => {
 
-    const { menuId, handleClick, menuProps } = useMenuAnchor("track-item-menu")
+    const { toggleMenu, menuProps } = useMenuAnchor()
 
     return (
         <TracklistItemContainer
           color={color}
           key={item.tlid}
         >
+          { sortable && <div className="tracklist-handle"><GIcon name="drag_handle"/></div>}
           {
               (item.tlid === current_tlid)
                   ? <AudiotrackIcon fontSize="small" color="primary"/>
@@ -133,10 +132,10 @@ const TracklistItem = memo(({item, color, current_tlid, mopidy}) => {
               <Button onClick={() => mopidy.playback.play({tlid: item.tlid})}>
                 <PlayArrowIcon fontSize="small"/>
               </Button>
-              <Button aria-describedby={menuId} type="button" onClick={handleClick} color={menuProps.open ? "info" : "default"}>
+              <Button type="button" onClick={toggleMenu} color={menuProps.open ? "info" : "default"}>
                 <MoreVertIcon/>
               </Button>
-              <TracklistItemMenu id={menuId} item={item} mopidy={mopidy} {...menuProps}/>
+              <TracklistItemMenu item={item} mopidy={mopidy} {...menuProps}/>
             </ButtonGroup>
           </ListItemIcon>
         </TracklistItemContainer>
@@ -171,11 +170,14 @@ const TracklistListPanel = () => {
                style={{overflow: 'auto', maxHeight: '100%', padding: 0, paddingLeft: "5px"}}
                group={{name: 'tracklist', pull: true, put: ['library']}}
                onEnd={(e) => tracklistSwap(e, mopidy)}
+               handle=".tracklist-handle"
              >
                {tracklist.map(item => (
                    <TracklistItem item={item}
                                   key={item.tlid}
-                                  current_tlid={current_tlid} mopidy={mopidy}/>
+                                  current_tlid={current_tlid} mopidy={mopidy}
+                                  sortable={true}
+                   />
               ))}
             </ReactSortable>
     )

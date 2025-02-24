@@ -18,18 +18,17 @@ export function useTraceUpdate(props) {
 
 
 
-export const useMenuAnchor = (id) => {
+export const useMenuAnchor = () => {
     const [anchorEl, setanchorEl] = useState(null);
 
-    const handleClick = (event) => {
+    const toggleMenu = (event) => {
         const target = event.target
         setanchorEl(anchorEl ? null : target);
     };
-    const onClose = () => {
+    const closeMenu = () => {
         setanchorEl(null);
     };
 
     const open = Boolean(anchorEl);
-    const menuId = open ? id : undefined;
-    return { menuId, handleClick, menuProps: { onClose, anchorEl, open} }
+    return { toggleMenu, menuProps: { onClose: closeMenu, anchorEl, open} }
 }
