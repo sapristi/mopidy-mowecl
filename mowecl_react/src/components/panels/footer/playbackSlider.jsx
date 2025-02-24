@@ -63,7 +63,7 @@ export const PlaybackSlider = ({track_length}) => {
                       max={sliderSteps}
                       valueLabelDisplay='auto'
                       valueLabelFormat={ (args) => duration_to_human(args * track_length / sliderSteps)}
-                      style={{flex: 1, marginRight: '5%', marginLeft: '5%'}}
+                      style={{flex: 1, marginRight: '10px', marginLeft: '10px'}}
                       color="primary"
                       size="small"
               />

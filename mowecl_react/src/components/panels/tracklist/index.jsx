@@ -58,7 +58,7 @@ export const Track = ({item}) => {
     const duration = duration_to_human(item.track.length,'∞')
 
     try {
-        const artistIcon = <GIcon name="artist"/>
+        const artistIcon = <GIcon name="artist" style={{paddingRight: "3px"}}/>
         const artist = item.track.artists[0].name
         artistElem = (<>
                         {sep}
@@ -71,7 +71,7 @@ export const Track = ({item}) => {
         console.warn("Failed formatting artist")
     }
     try {
-        const albumIcon = <GIcon name="album"/>
+        const albumIcon = <GIcon name="album" style={{paddingRight: "3px"}}/>
         const album = item.track.album.name
         const date = item.track.album.date
         albumElem = (<>
