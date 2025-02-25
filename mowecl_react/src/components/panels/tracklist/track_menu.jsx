@@ -2,13 +2,17 @@ import {memo, useEffect, useRef, useCallback, createContext, useState} from 'rea
 import {useSelector, useDispatch} from 'react-redux'
 
 import ClearIcon from '@mui/icons-material/Clear'
-import BlurLinearIcon from '@mui/icons-material/BlurLinear';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 
+import BlurLinearIcon from '@mui/icons-material/BlurLinear';
+import RemoveIcon from '@mui/icons-material/Remove';
+import PlaylistAddIcon from '@mui/icons-material/PlaylistAdd';
+import MenuOpenIcon from '@mui/icons-material/MenuOpen';
 
 import {exploreItem} from '@/components/panels/library/functions.js'
 import { useMenuAnchor } from '@/hooks'
+import { ListItemIcon, ListItemText } from '@mui/material';
 
 
 const AddToPlaylistMenu = ({item, mopidy, ...props}) => {
@@ -52,8 +56,13 @@ const AddToPlaylistMenu = ({item, mopidy, ...props}) => {
             {
                 playlists.map(
                     pl_item =>{
+                        const playlist_provider = pl_item.uri.split(":")[0]
+                        console.log(pl_item)
                         const onClick = () => handleAddToPlaylist(item, pl_item)
-                        return <MenuItem key={pl_item.uri} onClick={onClick}>Add to {pl_item.name}</MenuItem>
+                        return <MenuItem key={pl_item.uri} onClick={onClick}>
+                                 <ListItemIcon><PlaylistAddIcon/></ListItemIcon>
+                                 <ListItemText>Add to {pl_item.name} ({playlist_provider})</ListItemText>
+                               </MenuItem>
                     }
                 )
             }
@@ -81,7 +90,11 @@ export const TracklistItemMenu = ({item, mopidy, ...props}) => {
                         >Explore {artist.name}</MenuItem>
         )
         addToPlaylistMenuButton = (
-            <MenuItem onClick={toggleMenu}>Add to playlist</MenuItem>
+            <MenuItem onClick={toggleMenu}>
+              <ListItemIcon><MenuOpenIcon/></ListItemIcon>
+              <ListItemText>Add to playlist</ListItemText>
+              <AddToPlaylistMenu item={item} mopidy={mopidy} {...menuProps}/>
+            </MenuItem>
         )
     }
 
@@ -89,11 +102,11 @@ export const TracklistItemMenu = ({item, mopidy, ...props}) => {
     return (
         <Menu {...props} >
           <MenuItem onClick={handleRemoveClick} startIcon={<ClearIcon fontSize="small"/>}>
-            Remove from tracklist
+            <ListItemIcon><RemoveIcon/></ListItemIcon>
+            <ListItemText>Remove from tracklist</ListItemText>
           </MenuItem>
           {...exploreArtistsMenuItems}
           {addToPlaylistMenuButton}
-          <AddToPlaylistMenu item={item} mopidy={mopidy} {...menuProps}/>
         </Menu>
     )
 }

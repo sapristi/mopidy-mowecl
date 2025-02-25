@@ -37,7 +37,7 @@ import {SaveMenu, menuStateAtom} from './save_menu'
 import Color from 'color'
 import styled from '@emotion/styled'
 
-import { TracklistItemMenu} from '@/components/panels/tracklist/track_buttons'
+import { TracklistItemMenu} from '@/components/panels/tracklist/track_menu'
 import { GIcon } from '@/components/molecules'
 import { useMenuAnchor } from '@/hooks'
 
