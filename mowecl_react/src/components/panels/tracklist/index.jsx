@@ -207,7 +207,7 @@ const TracklistInfoPanel = () => {
               </Button>
             </Tooltip>
             <SaveMenu/>
-            <AddUriMenu anchorElRef={anchorElRef}
+            <AddUriMenu anchorEl={anchorElRef}
                         mopidy={mopidy}
                         {...menuProps}
             />
