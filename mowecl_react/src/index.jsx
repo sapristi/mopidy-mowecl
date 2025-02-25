@@ -1,9 +1,6 @@
 import {StrictMode} from 'react';
 import {createRoot} from 'react-dom/client';
 import {Provider, useSelector } from 'react-redux'
-import {
-    RecoilRoot,
-} from 'recoil';
 
 import { createStore,  combineReducers } from 'redux'
 
@@ -67,9 +64,7 @@ const root = createRoot(rootElement);
 root.render(
     <StrictMode>
       <Provider store={store} style={{height: '100%'}}>
-        <RecoilRoot>
-          <MopidyApp />
-        </RecoilRoot>
+        <MopidyApp />
       </Provider>
     </StrictMode>
 );

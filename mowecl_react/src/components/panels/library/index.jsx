@@ -5,7 +5,6 @@ import List from '@mui/material/List'
 import Paper from '@mui/material/Paper'
 
 import {VFlex} from '@/components/atoms'
-import {ExtraButtonsPopover} from './buttons'
 
 import {NodeLeaves} from './NodeLeaves'
 
@@ -53,7 +52,6 @@ export const LibraryPanel = () => {
               }
             </List>
           </Paper>
-          <ExtraButtonsPopover/>
         </VFlex>
     )
 }

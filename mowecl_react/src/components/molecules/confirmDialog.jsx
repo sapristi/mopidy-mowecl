@@ -1,5 +1,5 @@
 import {memo, useEffect, useRef, useCallback, createContext, useState} from 'react'
-import {atom, useRecoilState} from 'recoil'
+import { create } from 'zustand'
 
 import Modal from '@mui/material/Modal'
 import Paper from '@mui/material/Paper'
@@ -7,15 +7,21 @@ import Button from '@mui/material/Button'
 
 import {HFlex} from '@/components/atoms'
 
-const defaultState = {text: null, callback: () => {}}
-export const confirmDialogStateAtom = atom({
-    key: "confirm_dialog",
-    default: defaultState
-})
+const defaultState = {
+    text: null,
+    callback: () => {}
+}
+
+export const useConfirmDialogStore = create((set) => ({
+    ...defaultState,
+    setState: set,
+    reset: () => set(defaultState),
+}))
+
 
 export const ConfirmDialog = () => {
-    const [state, setState] = useRecoilState(confirmDialogStateAtom)
-    const callback = () => {state.callback(); setState(defaultState)}
+    const state = useConfirmDialogStore()
+    const callback = () => {state.callback(); state.reset()}
     const acceptEnter = (event) => {
         const key = event.key
         if (key === "Enter") {
@@ -24,7 +30,7 @@ export const ConfirmDialog = () => {
     }
     return (
         <Modal open={Boolean(state.text)}
-               onClose={() => setState(defaultState)}
+               onClose={state.reset}
                onKeyPress={acceptEnter}
         >
           <Paper style={{
@@ -43,7 +49,7 @@ export const ConfirmDialog = () => {
                 >OK
                 </Button>
                 <Button
-                  onClick={() => setState(defaultState)}
+                  onClick={state.reset}
                   variant="outlined"
                   color="secondary"
                 >Cancel

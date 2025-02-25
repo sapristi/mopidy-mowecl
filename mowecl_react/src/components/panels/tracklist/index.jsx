@@ -1,7 +1,6 @@
 import {memo, useEffect, useRef, useCallback, createContext, useState} from 'react'
 import {HFlex, VFlex} from '@/components/atoms'
 import {useSelector, useDispatch} from 'react-redux'
-import {useSetRecoilState} from 'recoil'
 import { ReactSortable } from "react-sortablejs"
 
 import ButtonGroup from '@mui/material/ButtonGroup'
@@ -32,7 +31,7 @@ import equal from 'fast-deep-equal'
 
 import {duration_to_human} from '@/utils'
 import {AddUriMenu} from './add_uri_menu'
-import {SaveMenu, menuStateAtom} from './save_menu'
+import { SaveMenu, usePlaylistSaveMenuStore } from './save_menu'
 
 import Color from 'color'
 import styled from '@emotion/styled'
@@ -199,7 +198,7 @@ const TracklistInfoPanel = () => {
     const bookmarksCli = useSelector(state => state.bookmarks.client)
     const currentBookmark = useSelector(state => state.bookmarksState.currentBookmark)
     const anchorElRef = useRef(null)
-    const setSaveMenuState = useSetRecoilState(menuStateAtom)
+    const setPlSaveMenuState = usePlaylistSaveMenuStore((state) => state.setState)
     const { toggleMenu, menuProps } = useMenuAnchor()
 
     return (
@@ -232,7 +231,7 @@ const TracklistInfoPanel = () => {
               </Button>
             </Tooltip>
             <Tooltip title="Save as playlist">
-              <Button onClick={() => setSaveMenuState({
+              <Button onClick={() => setPlSaveMenuState({
                   uri_scheme: "m3u",
                   label: "Playlist",
                   anchorEl: anchorElRef.current,
@@ -243,7 +242,7 @@ const TracklistInfoPanel = () => {
               </Button>
             </Tooltip>
             <Tooltip title="Save as bookmark and start syncing">
-              <Button onClick={() => setSaveMenuState({
+              <Button onClick={() => setPlSaveMenuState({
                   uri_scheme: "bookmark",
                   label: "Bookmark",
                   anchorEl: anchorElRef.current,

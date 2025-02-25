@@ -1,12 +1,10 @@
 import {memo, useEffect, useRef, useCallback, createContext, useState} from 'react'
 import {useSelector, useDispatch} from 'react-redux'
-import {atom, useRecoilState, useSetRecoilState} from 'recoil'
 
 import ButtonGroup from '@mui/material/ButtonGroup'
 import Button from '@mui/material/Button'
 import IconButton from '@mui/material/IconButton'
 import Tooltip from '@mui/material/Tooltip'
-import Popover from '@mui/material/Popover'
 
 import PlaylistAddIcon from '@mui/icons-material/PlaylistAdd'
 import PlaylistPlayIcon from '@mui/icons-material/PlaylistPlay'
@@ -21,7 +19,7 @@ import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder'
 import Icon from '@mdi/react'
 import { mdiPlaylistRemove } from '@mdi/js'
 
-import {confirmDialogStateAtom} from '@/components/molecules/confirmDialog'
+import { useConfirmDialogStore } from '@/components/molecules/confirmDialog'
 import {expand_node, addToTracklist,  addToTracklistAndPlay} from './functions'
 
 
@@ -71,8 +69,8 @@ const ResumeBookmarkButton = ({node, ...props}) => {
 
 const DeletePLButton = ({node, ...props}) => {
     const mopidy = useSelector(state => state.mopidy.client)
-    // const setExtraButtonsState = useSetRecoilState(extraButtonsState)
-    const setConfirmDialogState = useSetRecoilState(confirmDialogStateAtom)
+    const setConfirmDialogState = useConfirmDialogStore(state => state.setState)
+
     const callback = () => {
         mopidy.playlists.delete({uri: node.uri})
     }
@@ -81,7 +79,6 @@ const DeletePLButton = ({node, ...props}) => {
           : "playlist"
 
     const action = () => {
-        // setExtraButtonsState({anchorEl: null, children: null})
         setConfirmDialogState({
             text: `Delete ${objectName} ${node.name} ?`,
             callback
@@ -137,51 +134,6 @@ export const DefaultButtons = ({node}) => {
         </ListItemIcon>
     )
 }
-
-const extraButtonsState = atom({
-    key: "libExtraButtons",
-    default: {
-        anchorEl: null,
-        children: null
-    }
-})
-
-export const ExtraButtonsPopover = ({...props}) => {
-    const [{anchorEl, children}, setExtraButtonsState] = useRecoilState(extraButtonsState)
-    const open = Boolean(anchorEl)
-    const handleClose = () => setExtraButtonsState({anchorEl: null, children: null})
-    return (
-        <Popover
-          open={open}
-          anchorEl={anchorEl}
-          onClose={handleClose}
-          anchorOrigin={{
-              vertical: 'bottom',
-              horizontal: 'center',
-          }}
-          transformOrigin={{
-              vertical: 'top',
-              horizontal: 'center',
-          }}
-        >
-          <ButtonGroup size="small">
-            {children}
-          </ButtonGroup>
-        </Popover>
-    )
-}
-
-// const OpenExtraButton = ({children, ...props}) => {
-//     const setExtraButtonsState = useSetRecoilState(extraButtonsState)
-
-//     const action = (event) => {
-//         const target = event.currentTarget
-//         setExtraButtonsState({anchorEl: target, children})
-//     }
-//     return (<Button {...props} onClick={action}>
-//               <MoreVertIcon/>
-//             </Button>)
-// }
 
 export const PLButtons = ({node}) => {
     return (

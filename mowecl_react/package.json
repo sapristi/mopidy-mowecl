@@ -27,9 +27,9 @@
     "react-hotkeys": "^2.0.0",
     "react-redux": "^9.2.0",
     "react-sortablejs": "^6.1.4",
-    "recoil": "^0.7.7",
     "redux": "^5.0.1",
-    "typeface-roboto": "^1.1.13"
+    "typeface-roboto": "^1.1.13",
+    "zustand": "^5.0.3"
   },
   "devDependencies": {
     "@eslint/js": "^9.19.0",
