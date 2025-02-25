@@ -147,10 +147,10 @@ export const createCustomTheme = (themeType, text, text_secondary, primary, seco
                 MuiLinearProgress: {
                     styleOverrides: {
                         bar1Indeterminate: {
-                            "animation-duration": "6.3s"
+                            "animationDuration": "6.3s"
                         },
                         bar2Indeterminate: {
-                            "animation-duration": "6.3s"
+                            "animationDuration": "6.3s"
                         },
                     }
                 }
