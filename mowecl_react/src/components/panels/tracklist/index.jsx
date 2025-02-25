@@ -200,7 +200,7 @@ const TracklistInfoPanel = () => {
     const currentBookmark = useSelector(state => state.bookmarksState.currentBookmark)
     const anchorElRef = useRef(null)
     const setSaveMenuState = useSetRecoilState(menuStateAtom)
-    const [addMenuState, setAddMenuState] = useState(false)
+    const { toggleMenu, menuProps } = useMenuAnchor()
 
     return (
         <Paper style={{paddingLeft: '10px', display: 'flex',
@@ -221,7 +221,7 @@ const TracklistInfoPanel = () => {
           }
           <ButtonGroup>
             <Tooltip title="Add uri to tracklist">
-              <Button onClick={() => setAddMenuState(true)}>
+              <Button onClick={toggleMenu}>
                 <AddIcon fontSize="small"/>
               </Button>
             </Tooltip>
@@ -259,8 +259,7 @@ const TracklistInfoPanel = () => {
             <SaveMenu/>
             <AddUriMenu anchorElRef={anchorElRef}
                         mopidy={mopidy}
-                        menuState={addMenuState}
-                        setMenuState={setAddMenuState}
+                        {...menuProps}
             />
           </ButtonGroup>
         </Paper>)

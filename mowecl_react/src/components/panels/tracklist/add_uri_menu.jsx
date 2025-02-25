@@ -5,24 +5,24 @@ import Popover from '@mui/material/Popover'
 import AddIcon from '@mui/icons-material/Add'
 
 import {Input} from '@/components/molecules'
+import { Menu } from '@mui/material';
 
-export const AddUriMenu = ({anchorElRef, menuState, setMenuState, mopidy}) => {
-    return (<Popover
-          anchorEl={anchorElRef.current}
-          keepMounted
-          open={menuState}
-          onClose={ () => setMenuState(false)}
-          onKeyPress={()=>{}}
-        >
-          <MenuItem>
-            <Input
-              label={"URI"}
-              icon={<AddIcon/>}
-              action={ (uri) => {
-                  mopidy.tracklist.add({uris: [uri]})
-                  setMenuState(false) } }
-            />
-          </MenuItem>
-        </Popover>)
+export const AddUriMenu = ({ mopidy, ...props}) => {
+    return (<Menu
+              keepMounted
+              {...props}
+              onKeyPress={()=>{}}
+            >
+              <MenuItem>
+                <Input
+                  label={"URI"}
+                  icon={<AddIcon/>}
+                  action={ (uri) => {
+                      mopidy.tracklist.add({uris: [uri]})
+                      props.onClose()
+                  } }
+                />
+              </MenuItem>
+            </Menu>)
 
 }
