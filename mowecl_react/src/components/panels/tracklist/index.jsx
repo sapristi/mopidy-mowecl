@@ -39,6 +39,7 @@ import styled from '@emotion/styled'
 import { TracklistItemMenu} from '@/components/panels/tracklist/track_menu'
 import { GIcon } from '@/components/molecules'
 import { useMenuAnchor } from '@/hooks'
+import { TrackWithDuration } from '@/components/molecules/track'
 
 const tracklistSwap = (e, mopidy) => {
     // console.log(e)
@@ -46,56 +47,6 @@ const tracklistSwap = (e, mopidy) => {
 }
 
 
-export const Track = ({item}) => {
-
-    // line-height: 0px needed to center item vertically
-    const sep = <span style={{lineHeight: "0px"}}> ⁕ </span>
-    const trackElem = <span>{item.track.name || item.track.uri} </span>
-    let artistElem = null
-    let albumElem = null
-
-    const duration = duration_to_human(item.track.length,'∞')
-
-    try {
-        const artistIcon = <GIcon name="artist" style={{paddingRight: "3px"}}/>
-        const artist = item.track.artists[0].name
-        artistElem = (<>
-                        {sep}
-                        {artistIcon}
-                        <span>{artist}</span>
-                      </>
-                     )
-    }
-    catch (e) {
-        console.warn("Failed formatting artist")
-    }
-    try {
-        const albumIcon = <GIcon name="album" style={{paddingRight: "3px"}}/>
-        const album = item.track.album.name
-        const date = item.track.album.date
-        albumElem = (<>
-                       {sep}
-                       {albumIcon}
-                       <span> {album} ({date})</span>
-                     </>)
-    }
-    catch (e) {
-        console.warn("Failed formatting album")
-    }
-
-    return (
-        <HFlex style={{justifyContent: "space-between"}}>
-          <HFlex style={{alignItems: "center"}}>
-            {trackElem}
-            {artistElem}
-            {albumElem}
-          </HFlex>
-          <div style={{textAlign: "right", paddingRight: '4px'}}>
-            {duration}
-          </div>
-        </HFlex>
-    )
-}
 
 
 const TracklistItemContainer = styled(ListItem)`
@@ -124,7 +75,7 @@ const TracklistItem = memo(({item, color, current_tlid, mopidy, sortable}) => {
                   : ''
           }
           <ListItemText>
-            <Track item={item} />
+            <TrackWithDuration track={item.track} />
           </ListItemText>
           <ListItemIcon>
             <ButtonGroup>
