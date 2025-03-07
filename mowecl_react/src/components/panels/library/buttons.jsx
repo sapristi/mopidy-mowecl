@@ -31,7 +31,7 @@ const PlayNowButton = ({node, ...props}) => {
     }
 
     return (
-        <Tooltip title="Play now !">
+        <Tooltip title="Play now !" followCursor>
           <Button {...props} onClick={action}>
             <PlaylistPlayIcon />
           </Button>
@@ -46,7 +46,7 @@ const AddToTLButton = ({node, ...props}) => {
         (uris) => mopidy.tracklist.add({uris})
     )
     return (
-        <Tooltip title="Add to tracklist">
+        <Tooltip title="Add to tracklist" followCursor>
           <Button {...props} onClick={action}>
             <PlaylistAddIcon/>
           </Button>
@@ -59,7 +59,7 @@ const ResumeBookmarkButton = ({node, ...props}) => {
     const bookmarksCli = useSelector(state => state.bookmarks.client)
     const action = () => bookmarksCli.resume({uri: node.uri})
     return (
-        <Tooltip title="Resume bookmark">
+        <Tooltip title="Resume bookmark" followCursor>
           <Button {...props} onClick={action}>
             <PlaylistPlayIcon />
           </Button>
@@ -85,7 +85,7 @@ const DeletePLButton = ({node, ...props}) => {
         })
     }
     return (
-        <Tooltip title={`Delete ${objectName} ` + node.name}>
+        <Tooltip title={`Delete ${objectName} ` + node.name} followCursor>
           <Button {...props} onClick={action}>
             <Icon path={mdiPlaylistRemove} size={1}/>
           </Button>
