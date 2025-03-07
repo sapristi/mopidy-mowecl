@@ -80,9 +80,9 @@ const ChildrenPanel = ({node, mopidy, depth, dispatch}) => {
 const NodeText = ({node, rootElem, dispatch, mopidy}) => {
 
     if (isLeaf(node)) {
-         const text = (node.length)
-               ? <Track text={node.name} duration={duration_to_human(node.length)}/>
-               : node.name
+        const text = (node.length)
+              ? <Track text={node.name} duration={duration_to_human(node.length)}/>
+              : node.name
         return (
             <Typography style={{wordBreak: "break-word", textAlign: "left"}}>
               {text}

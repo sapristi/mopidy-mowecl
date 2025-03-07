@@ -47,55 +47,55 @@ const SidePanel = (
 
     return (
         (<Paper elevation={5}
-                                                                                                                                                                                                                                                                                                                                           style={{display: 'flex', flexDirection: 'column',
-                                                                                                                                                                                                                                                                                                                                                   justifyContent: 'space-between', zIndex: "10"}}
-                                                                                                                                                                                                                                                                                                                                    >
-            <SidePanelUpper/>
-            <ButtonGroup orientation='vertical'>
+                style={{display: 'flex', flexDirection: 'column',
+                        justifyContent: 'space-between', zIndex: "10"}}
+         >
+           <SidePanelUpper/>
+           <ButtonGroup orientation='vertical'>
 
-              {
-                  small_screen &&
-                      <Tooltip title="Tracklist panel">
-                        <Button onClick={activatePanel('tracklist')}
-                                color={getButtonColor("tracklist")}>
-                          <QueueMusicIcon/>
-                        </Button></Tooltip>
-              }
+             {
+                 small_screen &&
+                     <Tooltip title="Tracklist panel">
+                       <Button onClick={activatePanel('tracklist')}
+                               color={getButtonColor("tracklist")}>
+                         <QueueMusicIcon/>
+                       </Button></Tooltip>
+             }
 
-              <Tooltip title="Library panel">
-                <Button onClick={activatePanel('library')}
-                        color={getButtonColor("library")}>
-                  <Icon path={mdiFileTreeOutline} size={1}/>
-                </Button></Tooltip>
+             <Tooltip title="Library panel">
+               <Button onClick={activatePanel('library')}
+                       color={getButtonColor("library")}>
+                 <Icon path={mdiFileTreeOutline} size={1}/>
+               </Button></Tooltip>
 
-              <Tooltip title="Settings panel">
-                <Button style={{height: 'auto'}}
-                        color={getButtonColor("control")}
-                        onClick={activatePanel('control')}>
-                  <SettingsIcon/>
-                </Button></Tooltip>
+             <Tooltip title="Settings panel">
+               <Button style={{height: 'auto'}}
+                       color={getButtonColor("control")}
+                       onClick={activatePanel('control')}>
+                 <SettingsIcon/>
+               </Button></Tooltip>
 
-            </ButtonGroup>
-            <ButtonGroup orientation="vertical">
-              {
-                  (window.mowecl_version !== availableVersion) && (availableVersion) &&
-                      <Tooltip title={`Version ${availableVersion} available on Pypi.`}>
-                        <Button
-                          href={"https://github.com/sapristi/mopidy-mowecl/tree/master#v" + availableVersion.replace(/\./g, '')}
-                          target="_blank"
-                           rel="noopener noreferrer"
-                        >
-                          <ErrorOutlineIcon/>
-                        </Button>
-                      </Tooltip>
-              }
-              <Button onClick={activatePanel('help')}
-                      color={getButtonColor("help")}
-              >
-                <HelpOutlineIcon/>
-              </Button>
-            </ButtonGroup>
-        </Paper>)
+           </ButtonGroup>
+           <ButtonGroup orientation="vertical">
+             {
+                 (window.mowecl_version !== availableVersion) && (availableVersion) &&
+                     <Tooltip title={`Version ${availableVersion} available on Pypi.`}>
+                       <Button
+                         href={"https://github.com/sapristi/mopidy-mowecl/tree/master#v" + availableVersion.replace(/\./g, '')}
+                         target="_blank"
+                         rel="noopener noreferrer"
+                       >
+                         <ErrorOutlineIcon/>
+                       </Button>
+                     </Tooltip>
+             }
+             <Button onClick={activatePanel('help')}
+                     color={getButtonColor("help")}
+             >
+               <HelpOutlineIcon/>
+             </Button>
+           </ButtonGroup>
+         </Paper>)
     );
 }
 
