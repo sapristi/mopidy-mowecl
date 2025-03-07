@@ -48,7 +48,7 @@ const fetchTracklistOptions = (mopidyCli, dispatch) => {
     )
 }
 
-export const initMopidyEventsDispatcher = (mopidyCli, dispatch) => {
+export const initMopidyEventsDispatcher = (mopidyCli, dispatch, setActivePanel) => {
 
     mopidyCli.on('event', console.log)
     mopidyCli.on("requests:count", (value) => {
@@ -64,10 +64,7 @@ export const initMopidyEventsDispatcher = (mopidyCli, dispatch) => {
             endpoint: 'mopidy'
         })
         dispatch({type: 'UPDATE_CLIENT', endpoint: "mopidy", client: mopidyCli})
-        dispatch({
-            type: "ACTIVE_PANEL",
-            target: "library"
-        })
+        setActivePanel("library")
         mopidyCli.tracklist.getTlTracks().then(
             async tltracks => {
                 dispatch({

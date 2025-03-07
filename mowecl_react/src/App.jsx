@@ -20,6 +20,8 @@ import {HotKeysProvider} from '@/components/molecules/HotKeysProvider'
 import {ConfirmDialog} from '@/components/molecules/confirmDialog'
 import {match, createCustomTheme} from '@/utils'
 import {useSelector } from 'react-redux'
+import { useAppState } from './hooks';
+
 
 let AppContainer = memo(({children}) => {
     const colors = useSelector(
@@ -80,16 +82,18 @@ const ErrorPanel = ({mopidy_ws_url, mopidy_error}) => (
 
 
 export const App = memo((
-    {active_panel_name,
-      mopidy_ws_url,
-     mopidy_connected,
-     mopidy_error, dispatch}
+    {
+        activePanelName,
+        mopidy_ws_url,
+        mopidy_connected,
+        mopidy_error
+    }
 ) => {
-    const activePanel = match(active_panel_name)
+    const activePanel = match(activePanelName)
           .on('control', <SettingsPanel/>)
           .on('help', <HelpPanel/>)
           .on('library', <LibraryPanel/>)
-          .otherwise(() => console.log("Bad active panel name", active_panel_name))
+          .otherwise(() => console.log("Bad active panel name", activePanelName))
 
     return (
             <AppContainer >
@@ -115,17 +119,18 @@ export const App = memo((
 
 
 export const  AppSmall = memo((
-    {active_panel_name,
+    {
+     activePanelName,
      mopidy_ws_url,
      mopidy_connected,
      mopidy_error, dispatch}
 ) => {
-    const activePanel = match(active_panel_name)
+    const activePanel = match(activePanelName)
           .on('control', <SettingsPanel/>)
           .on('help', <HelpPanel/>)
           .on('library', <LibraryPanel/>)
           .on('tracklist', <TracklistPanel/>)
-          .otherwise(() => console.log("Bad active panel name", active_panel_name))
+          .otherwise(() => console.log("Bad active panel name", activePanelName))
 
     return (
             <AppContainer>

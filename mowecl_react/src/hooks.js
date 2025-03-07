@@ -1,4 +1,5 @@
 import {memo, useEffect, useRef, useCallback, createContext, useState} from 'react'
+import { create } from 'zustand'
 
 export function useTraceUpdate(props) {
     const prev = useRef(props);
@@ -32,3 +33,11 @@ export const useMenuAnchor = () => {
     const open = Boolean(anchorEl);
     return { toggleMenu, menuProps: { onClose: closeMenu, anchorEl, open} }
 }
+
+
+export const useAppState = create((set) => ({
+    activePanelName: "library",
+    setState: set,
+    setActivePanel: (value) => set({activePanelName: value})
+}))
+

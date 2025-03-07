@@ -16,15 +16,17 @@ import {useWsClient, makeWsClientReducer} from "./mopidy-js"
 import {libraryReducer, playbackReducer, settingsReducer, tracklistReducer} from './reducers'
 import {initMopidyEventsDispatcher} from './client_setup/mopidy'
 import {initBookmarksEventsDispatcher, bookmarksStateReducer} from './client_setup/bookmarks'
+import { useAppState } from './hooks';
 
 const MopidyApp = () => {
-    const active_panel_name = useSelector(state => state.settings.active_panel)
     const mopidy_connected = useSelector(state => state.mopidy.connected)
     const mopidy_error = useSelector(state => state.mopidy.error)
+    const activePanelName = useAppState(state => state.activePanelName)
+
     const appProps = {
-        active_panel_name,
         mopidy_connected,
-        mopidy_error
+        mopidy_error,
+        activePanelName,
     }
     const small_screen = useSelector(state => state.settings.persistant.generic.small_screen)
     useWsClient(

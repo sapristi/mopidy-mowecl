@@ -5,6 +5,7 @@ import { getWsAddress, match } from '@/utils'
 import MopidyClient from "./mopidy-js.js"
 
 import {memo, useEffect, useRef, useCallback, createContext, useState} from 'react'
+import { useAppState } from '@/hooks.js'
 
 const stopClient = (client) => {
     client.removeAllListeners(); client.close(); client.off()
@@ -15,6 +16,7 @@ export const useWsClient = (endpoint, init_callback, selector) => {
     const mopidyHost = useSelector(store => store.settings.persistant.mopidy_host)
     const mopidyPort = useSelector(store => store.settings.persistant.mopidy_port)
     const dispatch = useDispatch()
+    const setActivePanel = useAppState(state => state.setActivePanel)
 
     useEffect(
         () => {
@@ -31,7 +33,7 @@ export const useWsClient = (endpoint, init_callback, selector) => {
                 stopClient(new_client)
                 dispatch({type: 'CONNECTION_ERROR', endpoint, error})
             }
-            init_callback(new_client, dispatch)
+            init_callback(new_client, dispatch, setActivePanel)
             window[endpoint] = new_client
             return () => stopClient(new_client)
         },

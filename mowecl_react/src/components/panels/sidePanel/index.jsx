@@ -14,15 +14,14 @@ import { mdiFileTreeOutline } from '@mdi/js'
 import Icon from '@mdi/react'
 
 import {SidePanelUpper} from './upper'
+import { useAppState } from '@/hooks'
 
 
 const SidePanel = (
     {
         uri_schemes,
-        dispatch,
         search_history_length,
         small_screen,
-        current_panel
     }
 ) => {
 
@@ -34,15 +33,14 @@ const SidePanel = (
                 data => setAvailableVersion(data.info.version)
             ))}
 
-    const activatePanel = function (name) {
-        return () => dispatch({type: 'ACTIVE_PANEL',
-                               target: name })}
 
+    const setActivePanel = useAppState(state => state.setActivePanel)
+    const currentPanel = useAppState(state => state.activePanelName)
     const getButtonColor = useCallback(
-        (panelName) => ((panelName === current_panel)
+        (panelName) => ((panelName === currentPanel)
                         ? "primary"
                         : "default"),
-        [current_panel]
+        [currentPanel]
     )
 
     return (
@@ -56,14 +54,14 @@ const SidePanel = (
              {
                  small_screen &&
                      <Tooltip title="Tracklist panel">
-                       <Button onClick={activatePanel('tracklist')}
+                       <Button onClick={() => setActivePanel('tracklist')}
                                color={getButtonColor("tracklist")}>
                          <QueueMusicIcon/>
                        </Button></Tooltip>
              }
 
              <Tooltip title="Library panel">
-               <Button onClick={activatePanel('library')}
+               <Button onClick={() => setActivePanel('library')}
                        color={getButtonColor("library")}>
                  <Icon path={mdiFileTreeOutline} size={1}/>
                </Button></Tooltip>
@@ -71,7 +69,7 @@ const SidePanel = (
              <Tooltip title="Settings panel">
                <Button style={{height: 'auto'}}
                        color={getButtonColor("control")}
-                       onClick={activatePanel('control')}>
+                       onClick={() => setActivePanel('control')}>
                  <SettingsIcon/>
                </Button></Tooltip>
 
@@ -89,7 +87,7 @@ const SidePanel = (
                        </Button>
                      </Tooltip>
              }
-             <Button onClick={activatePanel('help')}
+             <Button onClick={() => setActivePanel('help')}
                      color={getButtonColor("help")}
              >
                <HelpOutlineIcon/>
@@ -105,6 +103,5 @@ export default connect(
             search_history_length: state.settings.persistant.generic.search_history_length,
             uri_schemes: state.settings.uri_schemes,
             small_screen: state.settings.persistant.generic.small_screen,
-            current_panel: state.settings.active_panel,
         }
     ) )(SidePanel)
