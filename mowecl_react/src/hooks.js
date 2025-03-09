@@ -1,4 +1,5 @@
 import {memo, useEffect, useRef, useCallback, createContext, useState} from 'react'
+import { useSelector } from 'react-redux';
 import { create } from 'zustand'
 
 export function useTraceUpdate(props) {
@@ -37,7 +38,31 @@ export const useMenuAnchor = () => {
 
 export const useAppState = create((set) => ({
     activePanelName: "library",
+    explore: null,
     setState: set,
-    setActivePanel: (value) => set({activePanelName: value})
+    setActivePanel: (value) => set({activePanelName: value}),
+    setExplore: (item) => set({activePanelName: "explore", explore: item})
 }))
 
+
+export const useTidalImage = (tidalUri) => {
+    const mopidy = useSelector(state => state.mopidy.client)
+    const [imageUrl, setImageUrl] = useState(null)
+
+    useEffect(
+        () => {
+            if (! mopidy.library) {return}
+            if (! tidalUri) {return}
+            mopidy.library.getImages({uris: [tidalUri]}).then(
+                response => {
+                    // console.log("image URI", response[tidalUri][0])
+                    if (response) {
+                        setImageUrl(response[tidalUri][0].uri)
+                    }
+                }
+            )
+        },
+        [tidalUri]
+    )
+    return imageUrl
+}

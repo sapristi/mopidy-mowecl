@@ -6,6 +6,7 @@ import SettingsIcon from '@mui/icons-material/Settings'
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline'
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline'
 import QueueMusicIcon from '@mui/icons-material/QueueMusic'
+import ExploreIcon from '@mui/icons-material/Explore';
 
 import Paper from '@mui/material/Paper'
 import Tooltip from '@mui/material/Tooltip'
@@ -36,6 +37,7 @@ const SidePanel = (
 
     const setActivePanel = useAppState(state => state.setActivePanel)
     const currentPanel = useAppState(state => state.activePanelName)
+    const hasExplore = useAppState(state => Boolean(state.explore))
     const getButtonColor = useCallback(
         (panelName) => ((panelName === currentPanel)
                         ? "primary"
@@ -64,7 +66,16 @@ const SidePanel = (
                <Button onClick={() => setActivePanel('library')}
                        color={getButtonColor("library")}>
                  <Icon path={mdiFileTreeOutline} size={1}/>
-               </Button></Tooltip>
+               </Button>
+             </Tooltip>
+             <Tooltip title="Explore panel">
+               <Button onClick={() => setActivePanel('explore')}
+                       color={getButtonColor("explore")}
+                       disabled={!hasExplore}
+               >
+                 <ExploreIcon/>
+               </Button>
+             </Tooltip>
 
              <Tooltip title="Settings panel">
                <Button style={{height: 'auto'}}

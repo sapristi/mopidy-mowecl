@@ -11,7 +11,7 @@ import PlaylistAddIcon from '@mui/icons-material/PlaylistAdd';
 import MenuOpenIcon from '@mui/icons-material/MenuOpen';
 
 import {exploreItem} from '@/components/panels/library/functions.js'
-import { useMenuAnchor } from '@/hooks'
+import { useAppState, useMenuAnchor } from '@/hooks'
 import { ListItemIcon, ListItemText } from '@mui/material';
 
 
@@ -22,6 +22,8 @@ const AddToPlaylistMenu = ({item, mopidy, ...props}) => {
     const [playlists, setPlaylists] = useState(() => [])
     useEffect(
         () => {
+            //TODO: cache playlists (or re-use from lib)
+            console.log("Loading playlists")
             mopidy.playlists.asList().then(
                 playlists => {setPlaylists(playlists.filter(pl_item => pl_item.uri.startsWith("tidal:")))}
             )
@@ -36,8 +38,7 @@ const AddToPlaylistMenu = ({item, mopidy, ...props}) => {
         const playlist_uri = pl_item.uri
         fetch(
             url + new URLSearchParams({playlist_uri, track_uri}).toString()
-        ).then((resp) => {
-            console.log(resp)
+        ).then(() => {
             props.onClose()
         })
     }
@@ -53,19 +54,18 @@ const AddToPlaylistMenu = ({item, mopidy, ...props}) => {
               horizontal: 'right',
           }}
         >
-            {
-                playlists.map(
-                    pl_item =>{
-                        const playlist_provider = pl_item.uri.split(":")[0]
-                        console.log(pl_item)
-                        const onClick = () => handleAddToPlaylist(item, pl_item)
-                        return <MenuItem key={pl_item.uri} onClick={onClick}>
-                                 <ListItemIcon><PlaylistAddIcon/></ListItemIcon>
-                                 <ListItemText>Add to {pl_item.name} ({playlist_provider})</ListItemText>
-                               </MenuItem>
-                    }
-                )
-            }
+          {
+              playlists.map(
+                  pl_item =>{
+                      const playlist_provider = pl_item.uri.split(":")[0]
+                      const onClick = () => handleAddToPlaylist(item, pl_item)
+                      return <MenuItem key={pl_item.uri} onClick={onClick}>
+                               <ListItemIcon><PlaylistAddIcon/></ListItemIcon>
+                               <ListItemText>Add to {pl_item.name} ({playlist_provider})</ListItemText>
+                             </MenuItem>
+                  }
+              )
+          }
         </Menu>
     )
 }
@@ -73,9 +73,8 @@ const AddToPlaylistMenu = ({item, mopidy, ...props}) => {
 
 export const TracklistItemMenu = ({item, mopidy, ...props}) => {
 
-    const dispatch = useDispatch()
-
     const { toggleMenu, menuProps } = useMenuAnchor()
+    const setSpotlight = useAppState(state => state.setSpotlight)
 
     const handleRemoveClick = () => mopidy.tracklist.remove({
         criteria: {tlid: [item.tlid]}
@@ -84,10 +83,10 @@ export const TracklistItemMenu = ({item, mopidy, ...props}) => {
     let addToPlaylistMenuButton = null;
     if (item.track.uri.startsWith("tidal:")) {
         exploreArtistsMenuItems = item.track.artists.map(
-            (artist) => <MenuItem
-                          startIcon={<BlurLinearIcon fontSize="small"/>}
-                          onClick={() => exploreItem(artist, dispatch, mopidy)}
-                        >Explore {artist.name}</MenuItem>
+            (artist) => <MenuItem onClick={() => setSpotlight(artist)} >
+                          <ListItemIcon><BlurLinearIcon fontSize="small"/></ListItemIcon>
+                          <ListItemText>Explore {artist.name}</ListItemText>
+                        </MenuItem>
         )
         addToPlaylistMenuButton = (
             <MenuItem onClick={toggleMenu}>
@@ -101,7 +100,7 @@ export const TracklistItemMenu = ({item, mopidy, ...props}) => {
 
     return (
         <Menu {...props} >
-          <MenuItem onClick={handleRemoveClick} startIcon={<ClearIcon fontSize="small"/>}>
+          <MenuItem onClick={handleRemoveClick}>
             <ListItemIcon><RemoveIcon/></ListItemIcon>
             <ListItemText>Remove from tracklist</ListItemText>
           </MenuItem>

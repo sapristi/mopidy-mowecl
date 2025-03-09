@@ -22,6 +22,7 @@ const MopidyApp = () => {
     const mopidy_connected = useSelector(state => state.mopidy.connected)
     const mopidy_error = useSelector(state => state.mopidy.error)
     const activePanelName = useAppState(state => state.activePanelName)
+    console.log(activePanelName)
 
     const appProps = {
         mopidy_connected,

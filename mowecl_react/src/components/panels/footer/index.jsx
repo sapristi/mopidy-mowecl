@@ -7,12 +7,10 @@ import {PlaybackButtons, TracklistStateButtons} from './playbackButtons'
 import {PlaybackSlider} from './playbackSlider'
 import {VolumeSlider} from './volumeSlider'
 import {VFlex} from '@/components/atoms'
+import { useTidalImage } from '@/hooks';
 
 
 const TrackInfo = ({track}) => {
-
-    const mopidy = useSelector(state => state.mopidy.client)
-    const dispatch = useDispatch()
 
     if (!track) return '...'
 
@@ -41,45 +39,29 @@ const TrackInfo = ({track}) => {
 }
 
 const TrackImage = () => {
-    const mopidy = useSelector(state => state.mopidy.client)
     const tltrack = useSelector(state => state.playback_state.tltrack)
-    const [imageUrl, setImageUrl] = useState(null)
+    const imageUrl = useTidalImage(tltrack.track?.uri)
 
-    useEffect(
-        () => {
-            if (! mopidy.library) {return }
-            if (! tltrack.track) {return }
-            mopidy.library.getImages({uris: [tltrack.track.uri]}).then(
-                response => {
-                    console.log("URI??", response[tltrack.track.uri][0])
-                    if (response) {
-                        setImageUrl(response[tltrack.track.uri][0].uri)
-                    }
-                }
-            )
-        }
-    )
     return <img src={imageUrl} style={{maxHeight: "100px"}}/>
 }
 
-const footerStyle = {width: '70%', margin: 'auto',
-                     display: 'flex', flexDirection: 'row',
-                     padding: '5px', justifyContent: "space-between",
-                     gap: "5%", alignItems: "center"
-                    }
+const footerStyle = {
+    width: '70%', margin: 'auto',
+    display: 'flex', flexDirection: 'row',
+    padding: '5px', justifyContent: "space-between",
+    gap: "5%", alignItems: "center"
+}
 
 export const Footer = connect(
     state => ({
         tltrack: state.playback_state.tltrack,
         state: state.playback_state.state,
-        mopidy: state.mopidy.client
     })
 )(
     (
-        {tltrack, state, mopidy}
+        {tltrack, state}
     ) =>
     {
-        console.log(tltrack)
         return (
             <Paper
               elevation={3}

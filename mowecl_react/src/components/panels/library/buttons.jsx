@@ -23,7 +23,7 @@ import { useConfirmDialogStore } from '@/components/molecules/confirmDialog'
 import {expand_node, addToTracklist,  addToTracklistAndPlay} from './functions'
 
 
-const PlayNowButton = ({node, ...props}) => {
+export const PlayNowButton = ({node, ...props}) => {
     const mopidy = useSelector(state => state.mopidy.client)
     const action = () => {
         mopidy.tracklist.clear()
@@ -36,11 +36,10 @@ const PlayNowButton = ({node, ...props}) => {
             <PlaylistPlayIcon />
           </Button>
         </Tooltip>
-
     )
 }
 
-const AddToTLButton = ({node, ...props}) => {
+export const AddToTLButton = ({node, ...props}) => {
     const mopidy = useSelector(state => state.mopidy.client)
     const action = () => expand_node(node, mopidy).then(
         (uris) => mopidy.tracklist.add({uris})
