@@ -50,6 +50,7 @@ export const useAppState = create((set) => ({
 
 export const useTidalImage = (tidalUri) => {
   const mopidy = useSelector((state) => state.mopidy.client);
+  const baseURL = useMopidyURL();
   const [imageUrl, setImageUrl] = useState(null);
 
   useEffect(() => {
@@ -60,11 +61,25 @@ export const useTidalImage = (tidalUri) => {
       return;
     }
     mopidy.library.getImages({ uris: [tidalUri] }).then((response) => {
-      // console.log("image URI", response[tidalUri][0])
       if (response) {
-        setImageUrl(response[tidalUri][0].uri);
+        let url = response[tidalUri][0].uri;
+        // uri returned by mopidy local is relative, so we have to take mopidy url into account
+        url = new URL(url, baseURL).href;
+        setImageUrl(url);
       }
     });
   }, [tidalUri]);
   return imageUrl;
+};
+
+export const useMopidyURL = () => {
+  const protocol = window.location.protocol;
+  const mopidyHost = useSelector(
+    (store) => store.settings.persistant.mopidy_host,
+  );
+  const mopidyPort = useSelector(
+    (store) => store.settings.persistant.mopidy_port,
+  );
+
+  return `${protocol}//${mopidyHost}:${mopidyPort}`;
 };
