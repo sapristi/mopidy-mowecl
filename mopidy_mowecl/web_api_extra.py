@@ -16,7 +16,10 @@ class AddToPlaylistRequestHandler(tornado.web.RequestHandler):
         self.core = core
 
     def get_tidal_backend(self):
-        from .backend import TidalBackend
+        try:
+            from mopidy_tidal.backend import TidalBackend
+        except ImportError:
+            return None
 
         tidal_backend = None
         backends = self.core.backends.get()
