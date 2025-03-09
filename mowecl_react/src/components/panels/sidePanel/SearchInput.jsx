@@ -14,6 +14,7 @@ import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 
 import { getSearchUris } from "@/utils";
+import { handleSearchResults } from "./functions";
 
 export const SearchInput = connect((state) => ({
   mopidyCli: state.mopidy.client,
@@ -43,57 +44,13 @@ export const SearchInput = connect((state) => ({
       .search({ query: { any: [input] }, ...uri })
       .then((raw_search_results) => {
         console.log("search", raw_search_results);
-
-        const search_results = raw_search_results.map((item, i) => ({
-          ...item,
-          name: item.uri,
-          children: item.tracks,
-          type: "search_result",
-          expanded: true,
-          uri: `search_result_${input}_${i}`,
-        }));
-
-        console.log("search", search_results);
-        // const search_results = {
-        //     uri: "search_result_" + input,
-        //     name: `Search: ${input}`,
-        //     children: [
-        //         {
-        //             uri: "search_result_" + input + "_tracks",
-        //             name: `Tracks`,
-        //             children: raw_search_result.tracks
-        //         }
-        //     ]
-        // }
-        dispatch({
-          type: "LIBRARY_SET_CHILDREN",
-          fun: () => search_results,
-          target: ["search:"],
-        });
-        dispatch({
-          type: "LIBRARY_SET_EXPANDED",
-          target: ["search:"],
-          data: true,
-        });
-
-        if (search_history_length <= 0) return;
-
-        const search_history_name = input + "/" + selectedUri;
-        dispatch({
-          type: "LIBRARY_SET_CHILDREN",
-          fun: (c) =>
-            [
-              { name: search_history_name, uri: search_history_name },
-              ...c,
-            ].slice(0, search_history_length),
-          target: ["search_history:"],
-        });
-
-        dispatch({
-          type: "LIBRARY_SET_CHILDREN",
-          fun: () => search_results,
-          target: ["search_history:", search_history_name],
-        });
+        handleSearchResults(
+          dispatch,
+          raw_search_results,
+          search_history_length,
+          input,
+          selectedUri,
+        );
       });
     closePopover();
   };

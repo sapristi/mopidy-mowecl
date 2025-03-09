@@ -82,7 +82,7 @@ const AddToPlaylistMenu = ({ item, mopidy, ...props }) => {
 
 export const TracklistItemMenu = ({ item, mopidy, ...props }) => {
   const { toggleMenu, menuProps } = useMenuAnchor();
-  const setSpotlight = useAppState((state) => state.setSpotlight);
+  const setExplore = useAppState((state) => state.setExplore);
 
   const handleRemoveClick = () =>
     mopidy.tracklist.remove({
@@ -92,7 +92,7 @@ export const TracklistItemMenu = ({ item, mopidy, ...props }) => {
   let addToPlaylistMenuButton = null;
   if (item.track.uri.startsWith("tidal:")) {
     exploreArtistsMenuItems = item.track.artists.map((artist) => (
-      <MenuItem onClick={() => setSpotlight(artist)}>
+      <MenuItem onClick={() => setExplore(artist)}>
         <ListItemIcon>
           <BlurLinearIcon fontSize="small" />
         </ListItemIcon>

@@ -79,15 +79,13 @@ const ChildrenPanel = ({ node, mopidy, depth, dispatch }) => {
 const NodeText = ({ node, rootElem, dispatch, mopidy }) => {
   if (isLeaf(node)) {
     const text = node.length ? (
-      <TrackWithDuration text={node.name} duration={node.length} />
+      <TrackWithDuration track={node} />
     ) : (
-      node.name
-    );
-    return (
       <Typography style={{ wordBreak: "break-word", textAlign: "left" }}>
-        {text}
+        {node.name}
       </Typography>
     );
+    return text;
   } else {
     const icon = node.expanded ? (
       <ExpandLessIcon style={{ verticalAlign: "text-bottom" }} />
