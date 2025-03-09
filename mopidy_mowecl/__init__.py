@@ -8,6 +8,7 @@ from mopidy import config, ext
 
 from tornado.web import StaticFileHandler
 from .file_server import FileServer
+from .web_api_extra  import AddToPlaylistRequestHandler
 
 __version__ = pkg_resources.get_distribution("Mopidy-Mowecl").version
 
@@ -71,4 +72,5 @@ class Extension(ext.Extension):
             (r"/(index.html)", server_params),
             (r"/", FileServer, server_params),
             (r"/(.*)", StaticFileHandler, {"path": root}),
+            ('/add_to_playlist', AddToPlaylistRequestHandler, {'config': config, 'core': core}),
         ]

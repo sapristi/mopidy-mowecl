@@ -41,7 +41,7 @@ const AddToPlaylistMenu = ({ item, mopidy, ...props }) => {
 
   const handleAddToPlaylist = (item, pl_item) => {
     const protocol = window.location.protocol;
-    const url = `${protocol}//${mopidyHost}:${mopidyPort}/tidal/add_to_playlist?`;
+    const url = `${protocol}//${mopidyHost}:${mopidyPort}/mowecl/add_to_playlist?`;
     const track_uri = item.track.uri;
     const playlist_uri = pl_item.uri;
     fetch(
