@@ -69,8 +69,8 @@ class Extension(ext.Extension):
             "path": root, "config": config, "mowecl_version": self.version
         }
         return [
+            ('/add_to_playlist', AddToPlaylistRequestHandler, {'config': config, 'core': core}),
             (r"/(index.html)", server_params),
             (r"/", FileServer, server_params),
-            (r"/(.*)", StaticFileHandler, {"path": root}),
-            ('/add_to_playlist', AddToPlaylistRequestHandler, {'config': config, 'core': core}),
+            (r"/(.*)", StaticFileHandler, {"path": root}), # must be at the end, otherwise precedes other routes
         ]
