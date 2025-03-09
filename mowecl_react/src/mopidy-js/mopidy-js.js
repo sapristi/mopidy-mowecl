@@ -2,15 +2,14 @@
 Mopidy-js from https://github.com/mopidy/mopidy.js
 */
 
-
 // const EventEmitter = require("events");
-import { EventEmitter} from  "events";
-import WebSocket from "isomorphic-ws"
+import { EventEmitter } from "events";
+import WebSocket from "isomorphic-ws";
 // const WebSocket = require("isomorphic-ws");
 
 function snakeToCamel(name) {
-  return name.replace(/(_[a-z])/g, match =>
-    match.toUpperCase().replace("_", "")
+  return name.replace(/(_[a-z])/g, (match) =>
+    match.toUpperCase().replace("_", ""),
   );
 }
 
@@ -83,7 +82,7 @@ class Mopidy extends EventEmitter {
         this.removeAllListeners(arg);
       } else {
         throw Error(
-          "Expected no arguments, a string, or a string and a listener."
+          "Expected no arguments, a string, or a string and a listener.",
         );
       }
     } else {
@@ -103,23 +102,23 @@ class Mopidy extends EventEmitter {
       this._settings.webSocket ||
       new Mopidy.WebSocket(this._settings.webSocketUrl);
 
-    this._webSocket.onclose = close => {
+    this._webSocket.onclose = (close) => {
       this.emit("websocket:close", close);
     };
-    this._webSocket.onerror = error => {
+    this._webSocket.onerror = (error) => {
       this.emit("websocket:error", error);
     };
     this._webSocket.onopen = () => {
       this.emit("websocket:open");
     };
-    this._webSocket.onmessage = message => {
+    this._webSocket.onmessage = (message) => {
       this.emit("websocket:incomingMessage", message);
-        this.emit("requests:count", Object.keys(this._pendingRequests).length)
+      this.emit("requests:count", Object.keys(this._pendingRequests).length);
     };
   }
 
   _cleanup(closeEvent) {
-    Object.keys(this._pendingRequests).forEach(requestId => {
+    Object.keys(this._pendingRequests).forEach((requestId) => {
       const { reject } = this._pendingRequests[requestId];
       delete this._pendingRequests[requestId];
       const error = new Mopidy.ConnectionError("WebSocket closed");
@@ -167,15 +166,15 @@ class Mopidy extends EventEmitter {
     switch (this._webSocket.readyState) {
       case Mopidy.WebSocket.CONNECTING:
         return Promise.reject(
-          new Mopidy.ConnectionError("WebSocket is still connecting")
+          new Mopidy.ConnectionError("WebSocket is still connecting"),
         );
       case Mopidy.WebSocket.CLOSING:
         return Promise.reject(
-          new Mopidy.ConnectionError("WebSocket is closing")
+          new Mopidy.ConnectionError("WebSocket is closing"),
         );
       case Mopidy.WebSocket.CLOSED:
         return Promise.reject(
-          new Mopidy.ConnectionError("WebSocket is closed")
+          new Mopidy.ConnectionError("WebSocket is closed"),
         );
       default:
         return new Promise((resolve, reject) => {
@@ -186,8 +185,11 @@ class Mopidy extends EventEmitter {
           };
           this._pendingRequests[jsonRpcMessage.id] = { resolve, reject };
           this._webSocket.send(JSON.stringify(jsonRpcMessage));
-            this.emit("websocket:outgoingMessage", jsonRpcMessage);
-            this.emit("requests:count", Object.keys(this._pendingRequests).length)
+          this.emit("websocket:outgoingMessage", jsonRpcMessage);
+          this.emit(
+            "requests:count",
+            Object.keys(this._pendingRequests).length,
+          );
         });
     }
   }
@@ -201,13 +203,13 @@ class Mopidy extends EventEmitter {
         this._handleEvent(data);
       } else {
         this._console.warn(
-          `Unknown message type received. Message was: ${message.data}`
+          `Unknown message type received. Message was: ${message.data}`,
         );
       }
     } catch (error) {
       if (error instanceof SyntaxError) {
         this._console.warn(
-          `WebSocket message parsing failed. Message was: ${message.data}`
+          `WebSocket message parsing failed. Message was: ${message.data}`,
         );
       } else {
         throw error;
@@ -221,7 +223,7 @@ class Mopidy extends EventEmitter {
     ) {
       this._console.warn(
         "Unexpected response received. Message was:",
-        responseMessage
+        responseMessage,
       );
       return;
     }
@@ -241,7 +243,7 @@ class Mopidy extends EventEmitter {
       reject(error);
       this._console.warn(
         "Response without 'result' or 'error' received. Message was:",
-        responseMessage
+        responseMessage,
       );
     }
   }
@@ -261,26 +263,30 @@ class Mopidy extends EventEmitter {
   }
 
   _createApi(methods) {
-    const caller = method => (...args) => {
-      const message = { method };
-      if (args.length === 0) {
+    const caller =
+      (method) =>
+      (...args) => {
+        const message = { method };
+        if (args.length === 0) {
+          return this._send(message);
+        }
+        if (args.length > 1) {
+          return Promise.reject(
+            new Error(
+              "Expected zero arguments, a single array, or a single object.",
+            ),
+          );
+        }
+        if (!Array.isArray(args[0]) && args[0] !== Object(args[0])) {
+          return Promise.reject(
+            new TypeError("Expected an array or an object."),
+          );
+        }
+        [message.params] = args;
         return this._send(message);
-      }
-      if (args.length > 1) {
-        return Promise.reject(
-          new Error(
-            "Expected zero arguments, a single array, or a single object."
-          )
-        );
-      }
-      if (!Array.isArray(args[0]) && args[0] !== Object(args[0])) {
-        return Promise.reject(new TypeError("Expected an array or an object."));
-      }
-      [message.params] = args;
-      return this._send(message);
-    };
+      };
 
-    const getPath = fullName => {
+    const getPath = (fullName) => {
       let path = fullName.split(".");
       if (path.length >= 1 && path[0] === "core") {
         path = path.slice(1);
@@ -288,9 +294,9 @@ class Mopidy extends EventEmitter {
       return path;
     };
 
-    const createObjects = objPath => {
+    const createObjects = (objPath) => {
       let parentObj = this;
-      objPath.forEach(objName => {
+      objPath.forEach((objName) => {
         const camelObjName = snakeToCamel(objName);
         parentObj[camelObjName] = parentObj[camelObjName] || {};
         parentObj = parentObj[camelObjName];
@@ -298,7 +304,7 @@ class Mopidy extends EventEmitter {
       return parentObj;
     };
 
-    const createMethod = fullMethodName => {
+    const createMethod = (fullMethodName) => {
       const methodPath = getPath(fullMethodName);
       const methodName = snakeToCamel(methodPath.slice(-1)[0]);
       const object = createObjects(methodPath.slice(0, -1));
