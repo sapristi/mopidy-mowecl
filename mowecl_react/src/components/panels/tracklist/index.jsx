@@ -71,7 +71,10 @@ const TracklistItem = memo(
     return (
       <TracklistItemContainer color={color} key={item.tlid}>
         {sortable && (
-          <div className="tracklist-handle">
+          <div
+            className="tracklist-handle"
+            style={{ display: "flex", paddingRight: 2 }}
+          >
             <GIcon name="drag_handle" />
           </div>
         )}
@@ -200,18 +203,18 @@ const TracklistInfoPanel = () => {
         />
       )}
       <ButtonGroup>
-        <Tooltip title="Add uri to tracklist">
+        <Tooltip title="Add uri to tracklist" followCursor>
           <Button onClick={toggleMenu}>
             <AddIcon fontSize="small" />
           </Button>
         </Tooltip>
 
-        <Tooltip title="Clear tracklist">
+        <Tooltip title="Clear tracklist" followCursor>
           <Button onClick={() => mopidy.tracklist.clear()}>
             <ClearAllIcon fontSize="small" />
           </Button>
         </Tooltip>
-        <Tooltip title="Save as playlist">
+        <Tooltip title="Save as playlist" followCursor>
           <Button
             onClick={() =>
               setPlSaveMenuState({
@@ -227,7 +230,7 @@ const TracklistInfoPanel = () => {
             <BookmarkBorderIcon />
           </Button>
         </Tooltip>
-        <Tooltip title="Save as bookmark and start syncing">
+        <Tooltip title="Save as bookmark and start syncing" followCursor>
           <Button
             onClick={() =>
               setPlSaveMenuState({

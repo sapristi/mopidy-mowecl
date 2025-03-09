@@ -88,7 +88,7 @@ export const SidePanelUpper = memo(() => {
   return (
     <ButtonGroup orientation="vertical">
       <MopidyStatus />
-      <Tooltip title="Quick search">
+      <Tooltip title="Quick search" followCursor>
         <Button
           ref={anchorEl}
           id="popover-search-button"
@@ -98,7 +98,7 @@ export const SidePanelUpper = memo(() => {
         </Button>
       </Tooltip>
       <SearchPopover open={open} setOpen={setOpen} anchorEl={anchorEl} />
-      <Tooltip title="Refresh lib and playlists">
+      <Tooltip title="Refresh lib and playlists" followCursor>
         <Button onClick={() => refreshAll(mopidyCli, dispatch)}>
           <Cached />
         </Button>

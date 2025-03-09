@@ -54,7 +54,7 @@ const SidePanel = ({ uri_schemes, search_history_length, small_screen }) => {
       <SidePanelUpper />
       <ButtonGroup orientation="vertical">
         {small_screen && (
-          <Tooltip title="Tracklist panel">
+          <Tooltip title="Tracklist panel" followCursor>
             <Button
               onClick={() => setActivePanel("tracklist")}
               color={getButtonColor("tracklist")}
@@ -64,7 +64,7 @@ const SidePanel = ({ uri_schemes, search_history_length, small_screen }) => {
           </Tooltip>
         )}
 
-        <Tooltip title="Library panel">
+        <Tooltip title="Library panel" followCursor>
           <Button
             onClick={() => setActivePanel("library")}
             color={getButtonColor("library")}
@@ -72,7 +72,7 @@ const SidePanel = ({ uri_schemes, search_history_length, small_screen }) => {
             <Icon path={mdiFileTreeOutline} size={1} />
           </Button>
         </Tooltip>
-        <Tooltip title="Explore panel">
+        <Tooltip title="Explore panel" followCursor>
           <Button
             onClick={() => setActivePanel("explore")}
             color={getButtonColor("explore")}
@@ -82,7 +82,7 @@ const SidePanel = ({ uri_schemes, search_history_length, small_screen }) => {
           </Button>
         </Tooltip>
 
-        <Tooltip title="Settings panel">
+        <Tooltip title="Settings panel" followCursor>
           <Button
             style={{ height: "auto" }}
             color={getButtonColor("control")}
@@ -94,7 +94,10 @@ const SidePanel = ({ uri_schemes, search_history_length, small_screen }) => {
       </ButtonGroup>
       <ButtonGroup orientation="vertical">
         {window.mowecl_version !== availableVersion && availableVersion && (
-          <Tooltip title={`Version ${availableVersion} available on Pypi.`}>
+          <Tooltip
+            title={`Version ${availableVersion} available on Pypi.`}
+            followCursor
+          >
             <Button
               href={
                 "https://github.com/sapristi/mopidy-mowecl/tree/master#v" +
