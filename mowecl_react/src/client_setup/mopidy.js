@@ -1,4 +1,4 @@
-import { obj_reducer } from "@/utils";
+import { notify, obj_reducer } from "@/utils";
 import { updateOrInsert } from "@/reducers/library/aux_functions";
 
 const fetchPlaybackInfo = async (mopidyCli, dispatch) => {
@@ -192,6 +192,36 @@ export const initMopidyEventsDispatcher = (
       type: "PLAYBACK_INFO",
       target: "tltrack",
       data: data.tl_track,
+    });
+    console.log(data);
+
+    const track = data.tl_track.track;
+    mopidyCli.library.getImages({ uris: [track.uri] }).then((response) => {
+      if (response) {
+        console.log(response);
+        if (response[track.uri].length > 0) {
+          let url = response[track.uri][0].uri;
+          // uri returned by mopidy local is relative, so we have to take mopidy url into account
+          const mopidyURL = new URL(mopidyCli._settings.webSocketUrl);
+          const baseHost = mopidyURL.host;
+          const scheme = mopidyURL.protocol === "ws:" ? "http" : "https";
+          const baseURL = `${scheme}:${baseHost}`;
+          url = new URL(url, baseURL).href;
+
+          notify(
+            track.name,
+            `${track.artists[0].name} - ${track.album.name}`,
+            "track_change",
+            url,
+          );
+        } else {
+          notify(
+            track.name,
+            `${track.artists[0].name} - ${track.album.name}`,
+            "track_change",
+          );
+        }
+      }
     });
   });
 

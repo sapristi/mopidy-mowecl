@@ -156,3 +156,19 @@ export const createCustomTheme = (
     },
   });
 };
+
+export const notify = (text, body, tag, icon) => {
+  if (Notification.permission === "default") {
+    Notification.requestPermission().then(() => notify(text, body));
+    return;
+  }
+  if (Notification.permission === "denied") {
+    return;
+  }
+  const notif = new Notification(text, {
+    body,
+    icon,
+    tag,
+    silent: true,
+  });
+};

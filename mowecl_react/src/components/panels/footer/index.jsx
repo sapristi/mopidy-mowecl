@@ -13,7 +13,7 @@ import { PlaybackButtons, TracklistStateButtons } from "./playbackButtons";
 import { PlaybackSlider } from "./playbackSlider";
 import { VolumeSlider } from "./volumeSlider";
 import { VFlex } from "@/components/atoms";
-import { useTidalImage } from "@/hooks";
+import { useMopidyImage } from "@/hooks";
 
 const TrackInfo = ({ track }) => {
   if (!track) return "...";
@@ -34,7 +34,7 @@ const TrackInfo = ({ track }) => {
 
 const TrackImage = () => {
   const tltrack = useSelector((state) => state.playback_state.tltrack);
-  const imageUrl = useTidalImage(tltrack.track?.uri);
+  const imageUrl = useMopidyImage(tltrack.track?.uri);
 
   return <img src={imageUrl} style={{ maxHeight: "100px" }} />;
 };

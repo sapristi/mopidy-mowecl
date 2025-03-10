@@ -48,7 +48,7 @@ export const useAppState = create((set) => ({
   setExplore: (item) => set({ activePanelName: "explore", explore: item }),
 }));
 
-export const useTidalImage = (tidalUri) => {
+export const useMopidyImage = (uri) => {
   const mopidy = useSelector((state) => state.mopidy.client);
   const baseURL = useMopidyURL();
   const [imageUrl, setImageUrl] = useState(null);
@@ -57,18 +57,20 @@ export const useTidalImage = (tidalUri) => {
     if (!mopidy.library) {
       return;
     }
-    if (!tidalUri) {
+    if (!uri) {
       return;
     }
-    mopidy.library.getImages({ uris: [tidalUri] }).then((response) => {
+    mopidy.library.getImages({ uris: [uri] }).then((response) => {
       if (response) {
-        let url = response[tidalUri][0].uri;
-        // uri returned by mopidy local is relative, so we have to take mopidy url into account
-        url = new URL(url, baseURL).href;
-        setImageUrl(url);
+        if (response[uri].length > 0) {
+          let url = response[uri][0].uri;
+          // uri returned by mopidy local is relative, so we have to take mopidy url into account
+          url = new URL(url, baseURL).href;
+          setImageUrl(url);
+        }
       }
     });
-  }, [tidalUri]);
+  }, [uri]);
   return imageUrl;
 };
 

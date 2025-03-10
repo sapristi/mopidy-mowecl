@@ -1,4 +1,4 @@
-import { useAppState, useTidalImage } from "@/hooks";
+import { useAppState, useMopidyImage } from "@/hooks";
 import {
   Card,
   CardMedia,
@@ -20,7 +20,7 @@ import { useShallow } from "zustand/react/shallow";
 import { AddToTLButton, PlayNowButton } from "../library/buttons";
 
 const AlbumItem = ({ name, uri }) => {
-  const imageUrl = useTidalImage(uri);
+  const imageUrl = useMopidyImage(uri);
   return (
     <Card sx={{ width: 200 }}>
       <CardMedia component="img" image={imageUrl} />
@@ -38,7 +38,7 @@ const AlbumItem = ({ name, uri }) => {
 };
 
 const TrackItem = ({ name, uri }) => {
-  const imageUrl = useTidalImage(uri);
+  const imageUrl = useMopidyImage(uri);
   return (
     <Card
       sx={{
@@ -73,7 +73,7 @@ export const ExplorePanel = () => {
     mopidy.library.browse({ uri: explore.uri }).then(setItems);
   }, [explore?.uri]);
   // Not fetching artist image : too often missing anyway
-  // const imageUrl = useTidalImage(exploreUri)
+  // const imageUrl = useMopidyImage(exploreUri)
   console.log("Explore", explore, items);
   if (!explore) {
     return <Paper>Nothing here</Paper>;
