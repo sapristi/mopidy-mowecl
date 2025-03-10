@@ -14,6 +14,7 @@ import { PlaybackSlider } from "./playbackSlider";
 import { VolumeSlider } from "./volumeSlider";
 import { VFlex } from "@/components/atoms";
 import { useMopidyImage } from "@/hooks";
+import { Album, Artist } from "@/components/molecules/track";
 
 const TrackInfo = ({ track }) => {
   if (!track) return "...";
@@ -24,10 +25,19 @@ const TrackInfo = ({ track }) => {
   if (track.album) {
   }
   return (
-    <div style={{ display: "flex", flexDirection: "column" }}>
-      {name}
-      {album}
-      {artist}
+    <div>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          gap: 5,
+          alignItems: "center",
+        }}
+      >
+        {name}
+        <Album album={track.album} />
+        <Artist artists={track.artists} />
+      </div>
     </div>
   );
 };

@@ -1,24 +1,14 @@
-import {
-  memo,
-  useEffect,
-  useRef,
-  useCallback,
-  createContext,
-  useState,
-} from "react";
-import { useSelector, useDispatch } from "react-redux";
+import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 
-import ClearIcon from "@mui/icons-material/Clear";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 
-import BlurLinearIcon from "@mui/icons-material/BlurLinear";
 import RemoveIcon from "@mui/icons-material/Remove";
 import PlaylistAddIcon from "@mui/icons-material/PlaylistAdd";
 import MenuOpenIcon from "@mui/icons-material/MenuOpen";
 
-import { exploreItem } from "@/components/panels/library/functions.js";
-import { useAppState, useMenuAnchor } from "@/hooks";
+import { useMenuAnchor } from "@/hooks";
 import { ListItemIcon, ListItemText } from "@mui/material";
 
 const AddToPlaylistMenu = ({ item, mopidy, ...props }) => {
@@ -82,23 +72,13 @@ const AddToPlaylistMenu = ({ item, mopidy, ...props }) => {
 
 export const TracklistItemMenu = ({ item, mopidy, ...props }) => {
   const { toggleMenu, menuProps } = useMenuAnchor();
-  const setExplore = useAppState((state) => state.setExplore);
 
   const handleRemoveClick = () =>
     mopidy.tracklist.remove({
       criteria: { tlid: [item.tlid] },
     });
-  let exploreArtistsMenuItems = [];
   let addToPlaylistMenuButton = null;
   if (item.track.uri.startsWith("tidal:")) {
-    exploreArtistsMenuItems = item.track.artists.map((artist) => (
-      <MenuItem onClick={() => setExplore(artist)}>
-        <ListItemIcon>
-          <BlurLinearIcon fontSize="small" />
-        </ListItemIcon>
-        <ListItemText>Explore {artist.name}</ListItemText>
-      </MenuItem>
-    ));
     addToPlaylistMenuButton = (
       <MenuItem onClick={toggleMenu}>
         <ListItemIcon>
@@ -118,7 +98,6 @@ export const TracklistItemMenu = ({ item, mopidy, ...props }) => {
         </ListItemIcon>
         <ListItemText>Remove from tracklist</ListItemText>
       </MenuItem>
-      {...exploreArtistsMenuItems}
       {addToPlaylistMenuButton}
     </Menu>
   );
