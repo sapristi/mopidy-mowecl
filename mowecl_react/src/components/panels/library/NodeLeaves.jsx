@@ -30,7 +30,7 @@ const getButtons = (node) => {
       () => <BMButtons node={node} />,
     )
     .on(
-      (node) => node.type === "playlist",
+      (node) => node.type === "playlist" && node.path[0] === "playlist:",
       () => <PLButtons node={node} />,
     )
     .otherwise(() => <DefaultButtons node={node} />);
