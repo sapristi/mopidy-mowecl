@@ -22,7 +22,7 @@ export const Track = ({ track }) => {
       </>
     );
   } catch (e) {
-    console.warn("Failed formatting artist");
+    // console.warn("Failed formatting artist");
   }
   try {
     const albumIcon = <GIcon name="album" style={{ paddingRight: "3px" }} />;
@@ -39,7 +39,7 @@ export const Track = ({ track }) => {
       </>
     );
   } catch (e) {
-    console.warn("Failed formatting album");
+    // console.warn("Failed formatting album");
   }
 
   return (

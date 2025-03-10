@@ -210,14 +210,15 @@ export const initMopidyEventsDispatcher = (
 
           notify(
             track.name,
-            `${track.artists[0].name} - ${track.album.name}`,
+            `${track?.artists[0]?.name} - ${track?.album?.name}`,
             "track_change",
             url,
           );
         } else {
+          console.log("NOTIF", track);
           notify(
             track.name,
-            `${track.artists[0].name} - ${track.album.name}`,
+            `${(track?.artists || [])[0]?.name} - ${track?.album?.name}`,
             "track_change",
           );
         }

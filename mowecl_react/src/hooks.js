@@ -55,9 +55,11 @@ export const useMopidyImage = (uri) => {
 
   useEffect(() => {
     if (!mopidy.library) {
+      setImageUrl(null);
       return;
     }
-    if (!uri) {
+    if (!uri || uri == null) {
+      setImageUrl(null);
       return;
     }
     mopidy.library.getImages({ uris: [uri] }).then((response) => {
@@ -67,6 +69,8 @@ export const useMopidyImage = (uri) => {
           // uri returned by mopidy local is relative, so we have to take mopidy url into account
           url = new URL(url, baseURL).href;
           setImageUrl(url);
+        } else {
+          setImageUrl(null);
         }
       }
     });
