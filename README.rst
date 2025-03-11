@@ -147,6 +147,20 @@ To run Mowecl in develop mode, do the following:
 Changelog
 =======================================
 
+v0.5.1
+........................................
+
+Features:
+- display album image
+- playback notifications
+- Tidal integration:
+    - explore artist
+    - add_to_playlist feature
+
+Fixes:
+- fix search
+- misc ui fixes and improvements
+
 v0.5.0
 ........................................
 
