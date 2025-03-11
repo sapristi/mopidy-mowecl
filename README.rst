@@ -151,13 +151,15 @@ v0.5.1
 ........................................
 
 Features:
+
 - display album image
 - playback notifications
 - Tidal integration:
-  - explore artist
-  - add_to_playlist feature
+   - explore artist
+   - add_to_playlist feature
 
 Fixes:
+
 - fix search
 - misc ui fixes and improvements
 
