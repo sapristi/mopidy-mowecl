@@ -15,6 +15,7 @@ import Select from "@mui/material/Select";
 
 import { getSearchUris } from "@/utils";
 import { handleSearchResults } from "./functions";
+import { useAppState } from "@/hooks";
 
 export const SearchInput = connect((state) => ({
   mopidyCli: state.mopidy.client,
@@ -28,6 +29,7 @@ export const SearchInput = connect((state) => ({
   closePopover,
   search_history_length,
 }) => {
+  const setActivePanel = useAppState((state) => state.setActivePanel);
   const searchUris = useMemo(() => getSearchUris(uri_schemes), [uri_schemes]);
   const initialSelecterUri = localStorage.getItem("searchSelectedURI") || "all";
 
@@ -39,7 +41,7 @@ export const SearchInput = connect((state) => ({
     if (input.length === 0) return;
 
     const uri = selectedUri === "all" ? {} : { uris: [selectedUri + ":"] };
-    console.log("Search:", { query: { any: [input] }, ...uri });
+    // console.log("Search:", { query: { any: [input] }, ...uri });
     mopidyCli.library
       .search({ query: { any: [input] }, ...uri })
       .then((raw_search_results) => {
@@ -50,6 +52,7 @@ export const SearchInput = connect((state) => ({
           search_history_length,
           input,
           selectedUri,
+          setActivePanel,
         );
       });
     closePopover();

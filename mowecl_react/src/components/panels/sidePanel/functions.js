@@ -17,10 +17,12 @@ export const handleSearchResults = (
   search_history_length,
   input,
   selectedUri,
+  setActivePanel,
 ) => {
   // rawSearchResults is a list of SearchResult (one item by backend)
   // Each SearchResult contains artist, album and tracks results
   // See https://docs.mopidy.com/stable/api/core/#mopidy.core.LibraryController.search
+  rawSearchResults = rawSearchResults.filter((item) => Boolean(item.tracks));
   const search_results = rawSearchResults.map((item, i) => ({
     ...item,
     name: `${input} Search result (${item.uri})`,
@@ -30,7 +32,8 @@ export const handleSearchResults = (
     uri: `search_result_${input}_${i}`, // TODO: use item.uri once mopidy-tidal is fixed
   }));
 
-  console.log("search", search_results);
+  // console.log("search", search_results);
+
   // const search_results = {
   //     uri: "search_result_" + input,
   //     name: `Search: ${input}`,
@@ -52,7 +55,7 @@ export const handleSearchResults = (
     target: ["search:"],
     data: true,
   });
-
+  setActivePanel("library");
   if (search_history_length <= 0) return;
 
   const search_history_name = input + "/" + selectedUri;
