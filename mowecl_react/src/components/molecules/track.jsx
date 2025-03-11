@@ -15,7 +15,7 @@ export const Artist = ({ artists, addSep }) => {
   const artist = artists[0];
   const artistIcon = <GIcon name="artist" style={{ paddingRight: "3px" }} />;
   const artistName = artist.name;
-  if (artist.uri.startsWith("tidal:")) {
+  if (artist.uri && artist.uri.startsWith("tidal:")) {
     return (
       <>
         {addSep ? sep : null}
