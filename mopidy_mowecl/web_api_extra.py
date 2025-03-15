@@ -1,8 +1,9 @@
 import logging
-import json
+
 import tornado.web
 
 logger = logging.getLogger(__name__)
+
 
 class AddToPlaylistRequestHandler(tornado.web.RequestHandler):
     def set_default_headers(self):
@@ -39,7 +40,7 @@ class AddToPlaylistRequestHandler(tornado.web.RequestHandler):
         playlist_uri = playlist_uri[0]
 
         playlist_id = playlist_uri.split(":")[-1]
-        track_ids = [uri.split(":")[-1] for uri in  track_uri]
+        track_ids = [uri.split(":")[-1] for uri in track_uri]
 
         upstream_playlist = backend.session.playlist(playlist_id)
         res = upstream_playlist.add(track_ids)
@@ -50,4 +51,3 @@ class AddToPlaylistRequestHandler(tornado.web.RequestHandler):
         self.finish(
             f'Added {res} to playlist {playlist_id}'
         )
-
