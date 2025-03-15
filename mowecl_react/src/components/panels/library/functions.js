@@ -25,13 +25,35 @@ export const toggleNode = (node, dispatch, mopidy) => {
 
     case "playlist":
       // console.log("toggle", node)
-      mopidy.playlists.getItems({ uri: node.uri }).then((items) =>
-        dispatch({
-          type: "LIBRARY_SET_CHILDREN",
-          target: node.path,
-          fun: () => items || [],
-        }),
-      );
+      mopidy.playlists.getItems({ uri: node.uri }).then((items) => {
+        // dispatch({
+        //   type: "LIBRARY_SET_CHILDREN",
+        //   target: node.path,
+        //   fun: () => items || [],
+        // });
+        if (!items) {
+          dispatch({
+            type: "LIBRARY_SET_CHILDREN",
+            target: node.path,
+            fun: () => items || [],
+          });
+          return;
+        }
+        const uris_list = items.map((item) => item.uri);
+
+        mopidy.library.lookup({ uris: uris_list }).then((tracks_by_uri) => {
+          // some uris do not resolve to any track, e.g. some items in tidal playlists
+          // that are no longer available
+          const fullItems = uris_list.map(
+            (uri, i) => tracks_by_uri[uri][0] || items[i],
+          );
+          dispatch({
+            type: "LIBRARY_SET_CHILDREN",
+            target: node.path,
+            fun: () => fullItems || [],
+          });
+        });
+      });
       break;
 
     case "search_results_root":
@@ -124,7 +146,6 @@ export const addToTracklistAndPlay = async (node, mopidy) => {
 };
 
 export const exploreItem = async (item, dispatch, mopidy) => {
-  console.log(item);
   const addToItems = (newItem, prevItems) => {
     for (const item of prevItems) {
       if (item.uri == newItem.uri) {
