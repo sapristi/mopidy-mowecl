@@ -69,8 +69,14 @@ text-align: left,
 const ChildrenPanel = ({ node, mopidy, depth, dispatch }) => {
   return (
     <List style={{ width: "100%" }}>
-      {node.children.map((child) => (
-        <NodeLeaves key={child.uri} node={child} depth={depth + 1} />
+      {node.children.map((child, i) => (
+        // some tracks may appear multiple times in playlists, so key
+        // must take that into account
+        <NodeLeaves
+          key={`${child.uri} - ${i}`}
+          node={child}
+          depth={depth + 1}
+        />
       ))}
     </List>
   );
