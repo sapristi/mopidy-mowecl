@@ -36,8 +36,7 @@ jobs:
       - name: Setup and build
         run: |
           python -m pip install pdm
-          version=$(echo $GITHUB_REF | cut -d / -f 3)
-          sed -i "s/version = .*/version = \"$version\"/g" pyproject.toml
+          export PDM_BUILD_SCM_VERSION=${GITHUB_REF}
           pdm build
 
       - name: Publish distribution to PyPI
