@@ -1,6 +1,26 @@
 export const isLeaf = (node) =>
   node.type === "track" || node.__model__ === "Track";
 
+const lookupAndSet = (mopidy, dispatch, path, items) => {
+  mopidy.library
+    .lookup({ uris: items.map((item) => item.uri) })
+    .then((tracksByUri) => {
+      // some uris do not resolve to any track, e.g. some items in tidal playlists
+      // that are no longer available
+      const fullItems = items.map((item) => ({
+        ...item,
+        ...(tracksByUri[item.uri][0] || {}),
+      }));
+
+      console.log("LOOKUP", items, tracksByUri, fullItems);
+      dispatch({
+        type: "LIBRARY_SET_CHILDREN",
+        target: path,
+        fun: () => fullItems,
+      });
+    });
+};
+
 export const toggleNode = (node, dispatch, mopidy) => {
   // node does not toggle
   if (isLeaf(node)) return;
@@ -26,33 +46,15 @@ export const toggleNode = (node, dispatch, mopidy) => {
     case "playlist":
       // console.log("toggle", node)
       mopidy.playlists.getItems({ uri: node.uri }).then((items) => {
-        // dispatch({
-        //   type: "LIBRARY_SET_CHILDREN",
-        //   target: node.path,
-        //   fun: () => items || [],
-        // });
         if (!items) {
           dispatch({
             type: "LIBRARY_SET_CHILDREN",
             target: node.path,
-            fun: () => items || [],
+            fun: () => [],
           });
           return;
         }
-        const uris_list = items.map((item) => item.uri);
-
-        mopidy.library.lookup({ uris: uris_list }).then((tracks_by_uri) => {
-          // some uris do not resolve to any track, e.g. some items in tidal playlists
-          // that are no longer available
-          const fullItems = uris_list.map(
-            (uri, i) => tracks_by_uri[uri][0] || items[i],
-          );
-          dispatch({
-            type: "LIBRARY_SET_CHILDREN",
-            target: node.path,
-            fun: () => fullItems || [],
-          });
-        });
+        lookupAndSet(mopidy, dispatch, node.path, items);
       });
       break;
 
@@ -63,14 +65,9 @@ export const toggleNode = (node, dispatch, mopidy) => {
       break;
 
     default:
-      mopidy.library.browse({ uri: node.uri }).then((children) =>
-        dispatch({
-          type: "LIBRARY_UPDATE_CHILDREN",
-          target: node.path,
-          fun: () => children,
-          data: children,
-        }),
-      );
+      mopidy.library.browse({ uri: node.uri }).then((items) => {
+        lookupAndSet(mopidy, dispatch, node.path, items);
+      });
   }
 };
 
