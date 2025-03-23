@@ -61,7 +61,15 @@ const TrackItem = ({ name, uri }) => {
 export const ExplorePanel = () => {
   const explore = useAppState(useShallow((state) => state.explore));
   const mopidy = useSelector((state) => state.mopidy.client);
+  const mopidyHost = useSelector(
+    (store) => store.settings.persistant.mopidy_host,
+  );
+  const mopidyPort = useSelector(
+    (store) => store.settings.persistant.mopidy_port,
+  );
+
   const [items, setItems] = useState([]);
+  const [artistData, setArtistData] = useState(null);
 
   useEffect(() => {
     if (!mopidy.library) {
@@ -71,6 +79,16 @@ export const ExplorePanel = () => {
       return;
     }
     mopidy.library.browse({ uri: explore.uri }).then(setItems);
+    const protocol = window.location.protocol;
+    const url = `${protocol}//${mopidyHost}:${mopidyPort}/mowecl/get_artist_data?`;
+    fetch(
+      url + new URLSearchParams({ artist_name: explore.name }).toString(),
+    ).then((response) => {
+      response.json().then((data) => {
+        console.log("RECEIVED", data);
+        setArtistData(data);
+      });
+    });
   }, [explore?.uri]);
   // Not fetching artist image : too often missing anyway
   // const imageUrl = useMopidyImage(exploreUri)
@@ -94,6 +112,15 @@ export const ExplorePanel = () => {
     <Paper sx={{ padding: "30px" }}>
       {/* <img src={imageUrl} style={{maxHeight: "100px"}}/> */}
       <Typography variant="h2">{explore.name}</Typography>
+      {artistData && (
+        <>
+          <Typography variant="h5">
+            {artistData.listener_count} listeners
+          </Typography>
+          <Typography variant="h4">Biography</Typography>
+          <div style={{ whiteSpace: "pre-wrap" }}>{artistData.bio}</div>
+        </>
+      )}
 
       <Typography variant="h4">Albums</Typography>
       <div style={{ display: "flex", flexWrap: "wrap", gap: 10 }}>

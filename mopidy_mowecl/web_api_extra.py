@@ -1,4 +1,6 @@
 import logging
+import json
+import pylast
 
 import tornado.web
 
@@ -51,3 +53,34 @@ class AddToPlaylistRequestHandler(tornado.web.RequestHandler):
         self.finish(
             f'Added {res} to playlist {playlist_id}'
         )
+
+
+class GetLastFMData(tornado.web.RequestHandler):
+    def set_default_headers(self):
+        # TODO: reuse settings from mopidy HTTP ?
+        self.set_header("Access-Control-Allow-Origin", "*")
+        self.set_header("Access-Control-Allow-Headers", "x-requested-with")
+        self.set_header('Access-Control-Allow-Methods', 'POST, GET, OPTIONS')
+
+    def initialize(self, config, core):
+        self.config = config
+        self.core = core
+        self.lastfm_client = pylast.LastFMNetwork(
+            api_key=config["mowecl"]["lastfm_api_key"],
+            api_secret=config["mowecl"]["lastfm_api_secret"]
+        )
+
+    def get(self):
+        artist_name = self.get_arguments("artist_name")
+        resp = self.lastfm_client.search_for_artist(artist_name)
+        page = resp.get_next_page()
+        first_result = page[0]
+        bio = first_result.get_bio_content()
+        name = first_result.get_name()
+        listener_count = first_result.get_listener_count()
+        result = {
+            "bio": bio,
+            "name": name,
+            "listener_count": listener_count
+        }
+        self.finish(json.dumps(result))

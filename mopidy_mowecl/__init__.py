@@ -8,7 +8,7 @@ from mopidy import config, ext
 
 from tornado.web import StaticFileHandler
 from .file_server import FileServer
-from .web_api_extra  import AddToPlaylistRequestHandler
+from .web_api_extra  import AddToPlaylistRequestHandler, GetLastFMData
 
 __version__ = pkg_resources.get_distribution("Mopidy-Mowecl").version
 
@@ -50,6 +50,9 @@ class Extension(ext.Extension):
         schema["key_rewind_track"] = config.String(optional=True)
         schema["key_volume_up"] = config.String(optional=True)
         schema["key_volume_down"] = config.String(optional=True)
+
+        schema["lastfm_api_key"] = config.String(optional=True)
+        schema["lastfm_api_secret"] = config.String(optional=True)
         return schema
 
     def setup(self, registry):
@@ -70,6 +73,7 @@ class Extension(ext.Extension):
         }
         return [
             ('/add_to_playlist', AddToPlaylistRequestHandler, {'config': config, 'core': core}),
+            ('/get_artist_data', GetLastFMData, {'config': config, 'core': core}),
             (r"/(index.html)", server_params),
             (r"/", FileServer, server_params),
             (r"/(.*)", StaticFileHandler, {"path": root}), # must be at the end, otherwise precedes other routes
