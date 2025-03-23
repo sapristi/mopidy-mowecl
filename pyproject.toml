@@ -1,3 +1,32 @@
+[project]
+name = "Mopidy-Mowecl"
+description = "Web client for Mopidy"
+authors = [
+    {name = "Mathias Millet", email = "mathias@mmill.eu"},
+]
+requires-python = ">= 3.9"
+readme = "README.rst"
+license = { text = "Apache-2.0" }
+classifiers = [
+    "Environment :: No Input/Output (Daemon)",
+    "Intended Audience :: End Users/Desktop",
+    "License :: OSI Approved :: Apache Software License",
+    "Operating System :: OS Independent",
+    "Topic :: Multimedia :: Sound/Audio :: Players",
+]
+dynamic = ["version"]
+dependencies = [
+    "Mopidy >= 3.0",
+    "Mopidy-Bookmarks >= 0.1.4",
+    "Pykka >= 2.0.1",
+]
+
+[tool.pdm.version]
+source = "scm"
+
+[project.urls]
+Homepage = "https://github.com/sapristi/mopidy-mowecl"
+
 [build-system]
 requires = ["pdm-backend"]
 build-backend = "pdm.backend"
@@ -12,32 +41,6 @@ source-includes = ["mopidy_mowecl/static"]
 [tool.pdm.build.wheel-data]
 data = [{path = "mopidy_mowecl/static/**/*", relative-to = "."}]
 
-[project]
-name = "Mopidy-Mowecl"
-version = "dev"
-description = "Web client for Mopidy"
-authors = [
-    {name = "Mathias Millet", email = "mathias@mmill.eu"},
-]
-dependencies = [
-    "Mopidy >= 3.0",
-    "Mopidy-Bookmarks >= 0.1.4",
-    "Pykka >= 2.0.1",
-]
-requires-python = ">= 3.9"
-readme = "README.rst"
-license = {text = "Apache License, Version 2.0"}
-classifiers = [
-    "Environment :: No Input/Output (Daemon)",
-    "Intended Audience :: End Users/Desktop",
-    "License :: OSI Approved :: Apache Software License",
-    "Operating System :: OS Independent",
-    "Programming Language :: Python :: 3",
-    "Topic :: Multimedia :: Sound/Audio :: Players",
-]
-
-[project.urls]
-Homepage = "https://github.com/sapristi/mopidy-mowecl"
 
 [project.optional-dependencies]
 lint = [

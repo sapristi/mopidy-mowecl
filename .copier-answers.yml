@@ -1,0 +1,8 @@
+_commit: v2.1.1
+_src_path: gh:mopidy/cookiecutter-mopidy-ext
+author_email: mathias@mmill.eu
+author_full_name: Mathias Millet
+dist_name: mopidy-mowecl
+ext_name: mowecl
+github_username: sapristi
+short_description: Web client for Mopidy
