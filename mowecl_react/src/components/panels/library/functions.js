@@ -12,7 +12,6 @@ const lookupAndSet = (mopidy, dispatch, path, items) => {
         ...(tracksByUri[item.uri][0] || {}),
       }));
 
-      console.log("LOOKUP", items, tracksByUri, fullItems);
       dispatch({
         type: "LIBRARY_SET_CHILDREN",
         target: path,
@@ -131,15 +130,24 @@ export const addToTracklist = async (node, at_position, mopidy) => {
   return tltracks;
 };
 
-export const addToTracklistAndPlay = async (node, mopidy) => {
+export const addToTracklistAndPlay = async (node, mopidy, shuffled) => {
   mopidy.tracklist.clear();
   const uris = await expand_node(node, mopidy);
   if (!uris.length) {
     return;
   }
-  mopidy.tracklist.add({ uris: [uris[0]], at_position: 0 });
+
+  let startIndex = shuffled ? Math.floor(Math.random() * (uris.length - 1)) : 0;
+
+  mopidy.tracklist.add({ uris: [uris[startIndex]], at_position: 0 });
   mopidy.playback.play();
-  await mopidy.tracklist.add({ uris: uris.slice(1), at_position: 1 });
+  mopidy.tracklist.add({
+    uris: uris.slice(0, startIndex).concat(uris.slice(startIndex + 1)),
+    at_position: 1,
+  });
+  if (shuffled) {
+    mopidy.tracklist.setRandom({ value: true });
+  }
 };
 
 export const exploreItem = async (item, dispatch, mopidy) => {

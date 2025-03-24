@@ -66,7 +66,7 @@ margin-right: auto,
 text-align: left,
 `;
 
-const ChildrenPanel = ({ node, mopidy, depth, dispatch }) => {
+const ChildrenPanel = ({ node, depth }) => {
   return (
     <List style={{ width: "100%" }}>
       {node.children.map((child, i) => (

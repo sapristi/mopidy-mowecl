@@ -77,19 +77,6 @@ export const TracklistItemMenu = ({ item, mopidy, ...props }) => {
     mopidy.tracklist.remove({
       criteria: { tlid: [item.tlid] },
     });
-  let addToPlaylistMenuButton = null;
-  if (item.track.uri.startsWith("tidal:")) {
-    addToPlaylistMenuButton = (
-      <MenuItem onClick={toggleMenu}>
-        <ListItemIcon>
-          <MenuOpenIcon />
-        </ListItemIcon>
-        <ListItemText>Add to playlist</ListItemText>
-        <AddToPlaylistMenu item={item} mopidy={mopidy} {...menuProps} />
-      </MenuItem>
-    );
-  }
-
   return (
     <Menu {...props}>
       <MenuItem onClick={handleRemoveClick}>
@@ -98,7 +85,15 @@ export const TracklistItemMenu = ({ item, mopidy, ...props }) => {
         </ListItemIcon>
         <ListItemText>Remove from tracklist</ListItemText>
       </MenuItem>
-      {addToPlaylistMenuButton}
+      {item.track.uri.startsWith("tidal:") && (
+        <MenuItem onClick={toggleMenu}>
+          <ListItemIcon>
+            <MenuOpenIcon />
+          </ListItemIcon>
+          <ListItemText>Add to playlist</ListItemText>
+          <AddToPlaylistMenu item={item} mopidy={mopidy} {...menuProps} />
+        </MenuItem>
+      )}
     </Menu>
   );
 };

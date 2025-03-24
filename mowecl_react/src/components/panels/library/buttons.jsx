@@ -15,13 +15,13 @@ import Tooltip from "@mui/material/Tooltip";
 
 import PlaylistAddIcon from "@mui/icons-material/PlaylistAdd";
 import PlaylistPlayIcon from "@mui/icons-material/PlaylistPlay";
-// import AddIcon from '@mui/icons-material/Add'
 import ListItemIcon from "@mui/material/ListItemIcon";
 // import ClearIcon from '@mui/icons-material/Clear'
 // import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline'
 // import MoreVertIcon from '@mui/icons-material/MoreVert'
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
 
 import Icon from "@mdi/react";
 import { mdiPlaylistRemove } from "@mdi/js";
@@ -32,6 +32,8 @@ import {
   addToTracklist,
   addToTracklistAndPlay,
 } from "./functions";
+import { useMenuAnchor } from "@/hooks";
+import { Menu } from "@mui/material";
 
 export const PlayNowButton = ({ node, ...props }) => {
   const mopidy = useSelector((state) => state.mopidy.client);
@@ -100,6 +102,21 @@ const DeletePLButton = ({ node, ...props }) => {
   );
 };
 
+const PlayShuffledButton = ({ node, ...props }) => {
+  const mopidy = useSelector((state) => state.mopidy.client);
+
+  const action = () => {
+    mopidy.tracklist.clear();
+    addToTracklistAndPlay(node, mopidy, true);
+  };
+
+  return (
+    <Button {...props} onClick={action}>
+      Play shuffled
+    </Button>
+  );
+};
+
 export const FavButton = ({ node, ...props }) => {
   const favorites = useSelector((state) => state.library.favorites.children);
   const bookmarksCli = useSelector((state) => state.bookmarks.client);
@@ -149,13 +166,24 @@ export const DefaultButtons = ({ node }) => {
 };
 
 export const PLButtons = ({ node }) => {
+  const { toggleMenu, menuProps } = useMenuAnchor();
   return (
     <ListItemIcon>
       <FavButton node={node} />
       <ButtonGroup size="small">
         <PlayNowButton node={node} />
         <AddToTLButton node={node} />
-        <DeletePLButton node={node} />
+        <Button
+          type="button"
+          onClick={toggleMenu}
+          color={menuProps.open ? "info" : "default"}
+        >
+          <MoreVertIcon />
+        </Button>
+        <Menu {...menuProps}>
+          <DeletePLButton node={node} />
+          <PlayShuffledButton node={node} />
+        </Menu>
       </ButtonGroup>
     </ListItemIcon>
   );

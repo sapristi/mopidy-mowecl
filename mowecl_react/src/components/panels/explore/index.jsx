@@ -51,8 +51,8 @@ const TrackItem = ({ name, uri }) => {
       <CardMedia component="img" image={imageUrl} sx={{ width: 30 }} />
       <Typography>{name}</Typography>
       <ButtonGroup sx={{ display: "flex", justifyContent: "center" }}>
-        <PlayNowButton node={{ name, uri }} size="large" />
-        <AddToTLButton node={{ name, uri }} size="large" />
+        <PlayNowButton node={{ name, uri, type: "track" }} size="large" />
+        <AddToTLButton node={{ name, uri, type: "track" }} size="large" />
       </ButtonGroup>
     </Card>
   );
@@ -70,6 +70,8 @@ export const ExplorePanel = () => {
 
   const [items, setItems] = useState([]);
   const [artistData, setArtistData] = useState(null);
+
+  const [bioOpen, setBioOpen] = useState(false);
 
   useEffect(() => {
     if (!mopidy.library) {
