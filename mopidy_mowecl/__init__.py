@@ -9,6 +9,7 @@ from mopidy import config, ext
 from tornado.web import StaticFileHandler
 from .file_server import FileServer
 from .web_api_extra  import AddToPlaylistRequestHandler, GetLastFMData
+from .misc_utils import LastFMWrapper
 
 __version__ = pkg_resources.get_distribution("Mopidy-Mowecl").version
 
@@ -58,8 +59,7 @@ class Extension(ext.Extension):
         return schema
 
     def setup(self, registry):
-
-        logger.info("VERSION %s", self.version)
+        logger.info(f"Mowecl Version: {self.version}")
         registry.add(
             "http:app",
             {
@@ -73,12 +73,18 @@ class Extension(ext.Extension):
             root = pathlib.Path(config["mowecl"]["dev_static_path"])
         else:
             root = pathlib.Path(sysconfig.get_path("data")) / "mopidy_mowecl" / "static"
+
+        logger.info(f"Serving files from '{root}'")
         server_params = {
             "path": root, "config": config, "mowecl_version": self.version
         }
+        last_fm_wrapper = LastFMWrapper(
+            api_key=config["mowecl"]["lastfm_api_key"],
+            api_secret=config["mowecl"]["lastfm_api_secret"]
+        )
         return [
             ('/add_to_playlist', AddToPlaylistRequestHandler, {'config': config, 'core': core}),
-            ('/get_artist_data', GetLastFMData, {'config': config, 'core': core}),
+            ('/get_artist_data', GetLastFMData, {'last_fm_wrapper': last_fm_wrapper}),
             (r"/(index.html)", server_params),
             (r"/", FileServer, server_params),
             (r"/(.*)", StaticFileHandler, {"path": root}), # must be at the end, otherwise precedes other routes

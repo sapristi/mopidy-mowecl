@@ -1,7 +1,5 @@
 import logging
 import json
-import pylast
-
 import tornado.web
 
 logger = logging.getLogger(__name__)
@@ -62,25 +60,10 @@ class GetLastFMData(tornado.web.RequestHandler):
         self.set_header("Access-Control-Allow-Headers", "x-requested-with")
         self.set_header('Access-Control-Allow-Methods', 'POST, GET, OPTIONS')
 
-    def initialize(self, config, core):
-        self.config = config
-        self.core = core
-        self.lastfm_client = pylast.LastFMNetwork(
-            api_key=config["mowecl"]["lastfm_api_key"],
-            api_secret=config["mowecl"]["lastfm_api_secret"]
-        )
+    def initialize(self, last_fm_wrapper):
+        self.last_fm_wrapper = last_fm_wrapper
 
     def get(self):
-        artist_name = self.get_arguments("artist_name")
-        resp = self.lastfm_client.search_for_artist(artist_name)
-        page = resp.get_next_page()
-        first_result = page[0]
-        bio = first_result.get_bio_content()
-        name = first_result.get_name()
-        listener_count = first_result.get_listener_count()
-        result = {
-            "bio": bio,
-            "name": name,
-            "listener_count": listener_count
-        }
+        artist_name = self.get_arguments("artist_name")[0]
+        result = self.last_fm_wrapper.get_artist_data(artist_name)
         self.finish(json.dumps(result))
