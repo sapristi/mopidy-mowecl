@@ -53,6 +53,8 @@ class Extension(ext.Extension):
 
         schema["lastfm_api_key"] = config.String(optional=True)
         schema["lastfm_api_secret"] = config.String(optional=True)
+
+        schema["dev_static_path"] = config.String(optional=True)
         return schema
 
     def setup(self, registry):
@@ -67,7 +69,10 @@ class Extension(ext.Extension):
         )
 
     def factory(self, config, core):
-        root = pathlib.Path(sysconfig.get_path("data")) / "mopidy_mowecl" / "static"
+        if config["mowecl"]["dev_static_path"]:
+            root = pathlib.Path(config["mowecl"]["dev_static_path"])
+        else:
+            root = pathlib.Path(sysconfig.get_path("data")) / "mopidy_mowecl" / "static"
         server_params = {
             "path": root, "config": config, "mowecl_version": self.version
         }
