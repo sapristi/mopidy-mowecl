@@ -6,7 +6,11 @@ import {
   Typography,
   CardContent,
   ButtonGroup,
+  Button,
 } from "@mui/material";
+
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import {
   memo,
   useEffect,
@@ -71,7 +75,7 @@ export const ExplorePanel = () => {
   const [items, setItems] = useState([]);
   const [artistData, setArtistData] = useState(null);
 
-  const [bioOpen, setBioOpen] = useState(false);
+  const [bioOpen, setBioOpen] = useState(true);
 
   useEffect(() => {
     if (!mopidy.library) {
@@ -80,6 +84,7 @@ export const ExplorePanel = () => {
     if (!explore) {
       return;
     }
+    setArtistData(null);
     mopidy.library.browse({ uri: explore.uri }).then(setItems);
     const protocol = window.location.protocol;
     const url = `${protocol}//${mopidyHost}:${mopidyPort}/mowecl/get_artist_data?`;
@@ -110,6 +115,12 @@ export const ExplorePanel = () => {
     }
   }
 
+  const bioIcon = bioOpen ? (
+    <ExpandLessIcon style={{ verticalAlign: "text-bottom" }} />
+  ) : (
+    <ExpandMoreIcon style={{ verticalAlign: "text-bottom" }} />
+  );
+
   return (
     <Paper sx={{ padding: "30px" }}>
       {/* <img src={imageUrl} style={{maxHeight: "100px"}}/> */}
@@ -117,10 +128,24 @@ export const ExplorePanel = () => {
       {artistData && (
         <>
           <Typography variant="h5">
-            {artistData.listener_count} listeners
+            {artistData.listener_count} listeners on{" "}
+            <a href={artistData.url} target="_blank">
+              Last.FM
+            </a>
           </Typography>
-          <Typography variant="h4">Biography</Typography>
-          <div style={{ whiteSpace: "pre-wrap" }}>{artistData.bio}</div>
+          {artistData.bio && (
+            <>
+              <Typography variant="h4">
+                Biography{" "}
+                <Button onClick={() => setBioOpen(!bioOpen)}>
+                  {bioIcon}
+                </Button>{" "}
+              </Typography>
+              {bioOpen && (
+                <div style={{ whiteSpace: "pre-wrap" }}>{artistData.bio}</div>
+              )}
+            </>
+          )}
         </>
       )}
 
