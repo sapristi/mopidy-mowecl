@@ -20,10 +20,6 @@ const TrackInfo = ({ track }) => {
   if (!track) return "...";
 
   const name = track.name ? <div>{track.name}</div> : null;
-  const album = track.album ? <div>{track.album.name}</div> : null;
-  const artist = track.artists ? <div>{track.artists[0].name}</div> : null;
-  if (track.album) {
-  }
   return (
     <div>
       <div
