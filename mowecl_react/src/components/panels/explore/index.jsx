@@ -62,34 +62,22 @@ const TrackItem = ({ name, uri }) => {
   );
 };
 
-const MusicBrainzInfoSection = ({
+let makeDescriptionFromMBData = (
   name,
   type,
   begin_area,
   current_area,
-  wikipedia_url,
-  wikipedia_extract,
   life_span,
-}) => {
-  let vocab = null;
-  if (type == "Person") {
-    vocab = {
-      begin: "born",
-    };
-  } else {
-    vocab = {
-      begin: "formed",
-    };
-  }
+) => {
   let result = `${name}, `;
 
-  if (life_span.begin || begin_area) {
+  if ((life_span && life_span.begin) || begin_area) {
     if (type == "Person") {
       result += "born";
     } else {
       result += "formed";
     }
-    if (life_span.begin) {
+    if (life_span && life_span.begin) {
       result += ` in ${life_span.begin}`;
     }
     if (begin_area) {
@@ -99,9 +87,29 @@ const MusicBrainzInfoSection = ({
   if (current_area) {
     result += `, based in ${current_area}.`;
   }
+  return result;
+};
+const MusicBrainzInfoSection = ({
+  name,
+  type,
+  begin_area,
+  current_area,
+  wikipedia_url,
+  wikipedia_extract,
+  life_span,
+}) => {
+  if (!wikipedia_url) {
+    let result = makeDescriptionFromMBData(
+      name,
+      type,
+      begin_area,
+      current_area,
+      life_span,
+    );
+    return <div>{result}</div>;
+  }
   return (
     <div>
-      {result}
       {wikipedia_url && (
         <>
           <div style={{ whiteSpace: "pre-wrap" }}>
