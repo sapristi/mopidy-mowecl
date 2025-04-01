@@ -1,6 +1,7 @@
 import logging
 import json
 import tornado.web
+import musicbrainzngs
 
 logger = logging.getLogger(__name__)
 
@@ -66,4 +67,20 @@ class GetLastFMData(tornado.web.RequestHandler):
     def get(self):
         artist_name = self.get_arguments("artist_name")[0]
         result = self.last_fm_wrapper.get_artist_data(artist_name)
+        self.finish(json.dumps(result))
+
+
+class GetMusicBrainzData(tornado.web.RequestHandler):
+    def set_default_headers(self):
+        # TODO: reuse settings from mopidy HTTP ?
+        self.set_header("Access-Control-Allow-Origin", "*")
+        self.set_header("Access-Control-Allow-Headers", "x-requested-with")
+        self.set_header('Access-Control-Allow-Methods', 'POST, GET, OPTIONS')
+
+    def initialize(self, musicbrainz_wrapper):
+        self.musicbrainz_wrapper = musicbrainz_wrapper
+
+    def get(self):
+        artist_name = self.get_arguments("artist_name")[0]
+        result = self.musicbrainz_wrapper.get_artist_data(artist_name)
         self.finish(json.dumps(result))

@@ -19,6 +19,7 @@ dependencies = [
     "Mopidy >= 3.0",
     "Mopidy-Bookmarks >= 0.1.4",
     "Pykka >= 2.0.1",
+    "musicbrainzngs>=0.7.1",
 ]
 
 [tool.pdm.version]

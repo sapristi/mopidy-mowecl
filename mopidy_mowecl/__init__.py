@@ -8,8 +8,8 @@ from mopidy import config, ext
 
 from tornado.web import StaticFileHandler
 from .file_server import FileServer
-from .web_api_extra  import AddToPlaylistRequestHandler, GetLastFMData
-from .misc_utils import LastFMWrapper
+from .web_api_extra  import AddToPlaylistRequestHandler, GetLastFMData, GetMusicBrainzData
+from .misc_utils import LastFMWrapper, MusicBrainzWrapper
 
 __version__ = pkg_resources.get_distribution("Mopidy-Mowecl").version
 
@@ -82,9 +82,11 @@ class Extension(ext.Extension):
             api_key=config["mowecl"]["lastfm_api_key"],
             api_secret=config["mowecl"]["lastfm_api_secret"]
         )
+        musicbrainz_wrapper = MusicBrainzWrapper()
         return [
             ('/add_to_playlist', AddToPlaylistRequestHandler, {'config': config, 'core': core}),
-            ('/get_artist_data', GetLastFMData, {'last_fm_wrapper': last_fm_wrapper}),
+            ('/get_lastfm_artist_data', GetLastFMData, {'last_fm_wrapper': last_fm_wrapper}),
+            ('/get_musicbrainz_artist_data', GetMusicBrainzData, {'musicbrainz_wrapper': musicbrainz_wrapper}),
             (r"/(index.html)", server_params),
             (r"/", FileServer, server_params),
             (r"/(.*)", StaticFileHandler, {"path": root}), # must be at the end, otherwise precedes other routes
