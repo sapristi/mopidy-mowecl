@@ -62,6 +62,58 @@ const TrackItem = ({ name, uri }) => {
   );
 };
 
+const MusicBrainzInfoSection = ({
+  name,
+  type,
+  begin_area,
+  current_area,
+  wikipedia_url,
+  wikipedia_extract,
+  life_span,
+}) => {
+  let vocab = null;
+  if (type == "Person") {
+    vocab = {
+      begin: "born",
+    };
+  } else {
+    vocab = {
+      begin: "formed",
+    };
+  }
+  let result = `${name}, `;
+
+  if (life_span.begin || begin_area) {
+    if (type == "Person") {
+      result += "born";
+    } else {
+      result += "formed";
+    }
+    if (life_span.begin) {
+      result += ` in ${life_span.begin}`;
+    }
+    if (begin_area) {
+      result += ` in ${begin_area}`;
+    }
+  }
+  if (current_area) {
+    result += `, based in ${current_area}.`;
+  }
+  return (
+    <div>
+      {result}
+      {wikipedia_url && (
+        <>
+          <div style={{ whiteSpace: "pre-wrap" }}>
+            {wikipedia_extract}
+            <a href={wikipedia_url}>See more on wikipedia</a>
+          </div>
+        </>
+      )}
+    </div>
+  );
+};
+
 export const ExplorePanel = () => {
   const explore = useAppState(useShallow((state) => state.explore));
   const mopidy = useSelector((state) => state.mopidy.client);
@@ -73,9 +125,11 @@ export const ExplorePanel = () => {
   );
 
   const [items, setItems] = useState([]);
-  const [artistData, setArtistData] = useState(null);
+  const [lastFMArtistData, setLastFMArtistData] = useState(null);
+  const [MBArtistData, setMBArtistData] = useState(null);
 
   const [bioOpen, setBioOpen] = useState(true);
+  const [mbOpen, setMbOpen] = useState(true);
 
   useEffect(() => {
     if (!mopidy.library) {
@@ -84,16 +138,26 @@ export const ExplorePanel = () => {
     if (!explore) {
       return;
     }
-    setArtistData(null);
+    setLastFMArtistData(null);
+    setMBArtistData(null);
     mopidy.library.browse({ uri: explore.uri }).then(setItems);
     const protocol = window.location.protocol;
-    const url = `${protocol}//${mopidyHost}:${mopidyPort}/mowecl/get_artist_data?`;
+    const url_lastfm = `${protocol}//${mopidyHost}:${mopidyPort}/mowecl/get_lastfm_artist_data?`;
     fetch(
-      url + new URLSearchParams({ artist_name: explore.name }).toString(),
+      url_lastfm +
+        new URLSearchParams({ artist_name: explore.name }).toString(),
     ).then((response) => {
       response.json().then((data) => {
-        console.log("RECEIVED", data);
-        setArtistData(data);
+        setLastFMArtistData(data);
+      });
+    });
+
+    const url_mb = `${protocol}//${mopidyHost}:${mopidyPort}/mowecl/get_musicbrainz_artist_data?`;
+    fetch(
+      url_mb + new URLSearchParams({ artist_name: explore.name }).toString(),
+    ).then((response) => {
+      response.json().then((data) => {
+        setMBArtistData(data);
       });
     });
   }, [explore?.uri]);
@@ -125,27 +189,36 @@ export const ExplorePanel = () => {
     <Paper sx={{ padding: "30px" }}>
       {/* <img src={imageUrl} style={{maxHeight: "100px"}}/> */}
       <Typography variant="h2">{explore.name}</Typography>
-      {artistData && (
+      {lastFMArtistData && (
         <>
-          <Typography variant="h5">
-            {artistData.listener_count} listeners on{" "}
-            <a href={artistData.url} target="_blank">
-              Last.FM
-            </a>
+          <Typography variant="h4">
+            LastFM data
+            <Button onClick={() => setBioOpen(!bioOpen)}>{bioIcon}</Button>{" "}
           </Typography>
-          {artistData.bio && (
+
+          {bioOpen && (
             <>
-              <Typography variant="h4">
-                Biography{" "}
-                <Button onClick={() => setBioOpen(!bioOpen)}>
-                  {bioIcon}
-                </Button>{" "}
+              <Typography variant="h5">
+                {lastFMArtistData.listener_count} listeners on{" "}
+                <a href={lastFMArtistData.url} target="_blank">
+                  Last.FM
+                </a>
               </Typography>
-              {bioOpen && (
-                <div style={{ whiteSpace: "pre-wrap" }}>{artistData.bio}</div>
-              )}
+              <div style={{ whiteSpace: "pre-wrap" }}>
+                {lastFMArtistData.bio}
+              </div>
             </>
           )}
+        </>
+      )}
+      {MBArtistData && (
+        <>
+          <Typography variant="h4">
+            MusicBrainz data
+            <Button onClick={() => setMbOpen(!mbOpen)}>{bioIcon}</Button>{" "}
+          </Typography>
+
+          {mbOpen && <MusicBrainzInfoSection {...MBArtistData} />}
         </>
       )}
 
