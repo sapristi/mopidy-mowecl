@@ -1,23 +1,25 @@
-export const isLeaf = (node) =>
-  node.type === "track" || node.__model__ === "Track";
+export const isLeaf = (node) => node.type === "track";
+
+const shouldLookup = (uri) => uri.startsWith("tidal:track:");
 
 const lookupAndSet = (mopidy, dispatch, path, items) => {
-  mopidy.library
-    .lookup({ uris: items.map((item) => item.uri) })
-    .then((tracksByUri) => {
-      // some uris do not resolve to any track, e.g. some items in tidal playlists
-      // that are no longer available
-      const fullItems = items.map((item) => ({
-        ...item,
-        ...(tracksByUri[item.uri][0] || {}),
-      }));
+  const urisToLookUp = items.map((item) => item.uri).filter(shouldLookup);
 
-      dispatch({
-        type: "LIBRARY_SET_CHILDREN",
-        target: path,
-        fun: () => fullItems,
-      });
+  mopidy.library.lookup({ uris: urisToLookUp }).then((tracksByUri) => {
+    // some uris do not resolve to any track, e.g. some items in tidal playlists
+    // that are no longer available
+    console.log(items, urisToLookUp, tracksByUri);
+    const fullItems = items.map((item) => ({
+      ...item,
+      ...(shouldLookup(item.uri) ? tracksByUri[item.uri][0] || {} : {}),
+    }));
+
+    dispatch({
+      type: "LIBRARY_SET_CHILDREN",
+      target: path,
+      fun: () => fullItems,
     });
+  });
 };
 
 export const toggleNode = (node, dispatch, mopidy) => {
