@@ -1,4 +1,5 @@
-export const isLeaf = (node) => node.type === "track";
+export const isLeaf = (node) =>
+  node.type === "track" || node.__model__ == "Track";
 
 const shouldLookup = (uri) => uri.startsWith("tidal:track:");
 

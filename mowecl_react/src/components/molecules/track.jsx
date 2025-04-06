@@ -7,12 +7,8 @@ import { Button } from "@mui/material";
 
 const sep = <span style={{ lineHeight: "0px" }}> ⁕ </span>;
 
-export const Artist = ({ artists, addSep }) => {
+export const Artist = ({ artist, addSep }) => {
   const setExplore = useAppState((state) => state.setExplore);
-  if (!artists || artists.length === 0) {
-    return null;
-  }
-  const artist = artists[0];
   const artistIcon = <GIcon name="artist" style={{ paddingRight: "3px" }} />;
   const artistName = artist.name;
   if (artist.uri && artist.uri.startsWith("tidal:")) {
@@ -45,6 +41,24 @@ export const Artist = ({ artists, addSep }) => {
   }
 };
 
+export const Artists = ({ artists, addSep, onlyFirst }) => {
+  if (!artists || artists.length === 0) {
+    return null;
+  }
+
+  if (onlyFirst) {
+    return <Artist artist={artists[0]} addSep={addSep} />;
+  } else {
+    return (
+      <>
+        {artists.map((artist) => (
+          <Artist artist={artist} addSep={addSep} key={artist.uri} />
+        ))}
+      </>
+    );
+  }
+};
+
 export const Album = ({ album, addSep }) => {
   if (!album) {
     return null;
@@ -67,7 +81,7 @@ export const Track = ({ track }) => {
   return (
     <HFlex style={{ alignItems: "center" }}>
       {trackElem}
-      <Artist artists={track.artists} addSep />
+      <Artists artists={track.artists} addSep />
       <Album album={track.album} addSep />
     </HFlex>
   );

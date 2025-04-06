@@ -14,7 +14,7 @@ import { PlaybackSlider } from "./playbackSlider";
 import { VolumeSlider } from "./volumeSlider";
 import { VFlex } from "@/components/atoms";
 import { useMopidyImage } from "@/hooks";
-import { Album, Artist } from "@/components/molecules/track";
+import { Album, Artists } from "@/components/molecules/track";
 
 const TrackInfo = ({ track }) => {
   if (!track) return "...";
@@ -32,7 +32,7 @@ const TrackInfo = ({ track }) => {
       >
         {name}
         <Album album={track.album} />
-        <Artist artists={track.artists} />
+        <Artists artists={track.artists} />
       </div>
     </div>
   );
