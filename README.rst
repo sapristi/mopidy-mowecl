@@ -147,6 +147,13 @@ To run Mowecl in develop mode, do the following:
 Changelog
 =======================================
 
+v0.6.1
+........................................
+Features:
+- better tidal integration ( artist page, lastfm & musicbrainz data)
+- add "play shuffled" option for playlists
+
+
 v0.5.1
 ........................................
 
