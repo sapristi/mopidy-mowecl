@@ -21,7 +21,13 @@ export const Artist = ({ artist, addSep }) => {
     favoriteArtistIds.has(artist.uri.split(":").pop());
   const favIcon = isTidalFavorite ? (
     <FavoriteIcon
-      sx={{ fontSize: 14, color: "error.main", ml: "2px" }}
+      sx={{
+        fontSize: 14,
+        color: "error.main",
+        ml: "2px",
+        stroke: "black",
+        strokeWidth: 2,
+      }}
     />
   ) : null;
   if (artist.uri && artist.uri.startsWith("tidal:")) {
