@@ -56,6 +56,14 @@ export const useAppState = create((set) => ({
       })
       .catch(() => {});
   },
+  tracklistHistory: { can_undo: false, can_redo: false },
+  setTracklistHistory: (info) => set({ tracklistHistory: info }),
+  fetchTracklistHistory: (baseURL) => {
+    fetch(`${baseURL}/mowecl/tracklist_history`)
+      .then((r) => r.json())
+      .then((data) => set({ tracklistHistory: data }))
+      .catch(() => {});
+  },
 }));
 
 export const useMopidyImage = (uri) => {
