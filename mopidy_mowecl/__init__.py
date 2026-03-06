@@ -8,7 +8,7 @@ from mopidy import config, ext
 
 from tornado.web import StaticFileHandler
 from .file_server import FileServer
-from .web_api_extra  import AddToPlaylistRequestHandler, GetLastFMData, GetMusicBrainzData, TidalFavoriteArtistHandler
+from .web_api_extra  import AddToPlaylistRequestHandler, GetLastFMData, GetMusicBrainzData, TidalFavoriteArtistHandler, TidalFavoriteArtistsHandler
 from .misc_utils import LastFMWrapper, MusicBrainzWrapper
 
 __version__ = pkg_resources.get_distribution("Mopidy-Mowecl").version
@@ -86,6 +86,7 @@ class Extension(ext.Extension):
         return [
             ('/add_to_playlist', AddToPlaylistRequestHandler, {'config': config, 'core': core}),
             ('/tidal_favorite_artist', TidalFavoriteArtistHandler, {'config': config, 'core': core}),
+            ('/tidal_favorite_artists', TidalFavoriteArtistsHandler, {'config': config, 'core': core}),
             ('/get_lastfm_artist_data', GetLastFMData, {'last_fm_wrapper': last_fm_wrapper}),
             ('/get_musicbrainz_artist_data', GetMusicBrainzData, {'musicbrainz_wrapper': musicbrainz_wrapper}),
             (r"/(index.html)", server_params),
