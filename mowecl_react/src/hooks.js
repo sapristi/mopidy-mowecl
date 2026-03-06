@@ -43,9 +43,19 @@ export const useMenuAnchor = () => {
 export const useAppState = create((set) => ({
   activePanelName: "library",
   explore: null,
+  favoriteArtistIds: new Set(),
   setState: set,
   setActivePanel: (value) => set({ activePanelName: value }),
   setExplore: (item) => set({ activePanelName: "explore", explore: item }),
+  setFavoriteArtistIds: (ids) => set({ favoriteArtistIds: new Set(ids) }),
+  fetchFavoriteArtists: (baseURL) => {
+    fetch(`${baseURL}/mowecl/tidal_favorite_artists`)
+      .then((r) => r.json())
+      .then((data) => {
+        set({ favoriteArtistIds: new Set(data.favorite_artist_ids) });
+      })
+      .catch(() => {});
+  },
 }));
 
 export const useMopidyImage = (uri) => {
