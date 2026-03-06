@@ -3,12 +3,19 @@ import pathlib
 import pkg_resources
 import sysconfig
 import re
-
 from mopidy import config, ext
 
 from tornado.web import StaticFileHandler
 from .file_server import FileServer
-from .web_api_extra  import AddToPlaylistRequestHandler, GetLastFMData, GetMusicBrainzData, TidalFavoriteArtistHandler, TidalFavoriteArtistsHandler
+from .web_api_extra import (
+    AddToPlaylistRequestHandler,
+    GetLastFMData,
+    GetMusicBrainzData,
+    TidalFavoriteArtistHandler,
+    TidalFavoriteArtistsHandler,
+    TracklistHistoryHandler,
+    TracklistHistoryRestoreHandler,
+)
 from .misc_utils import LastFMWrapper, MusicBrainzWrapper
 
 __version__ = pkg_resources.get_distribution("Mopidy-Mowecl").version
@@ -44,6 +51,7 @@ class Extension(ext.Extension):
         schema["search_history_length"] = config.Integer()
         schema["disable_dnd"] = config.Boolean()
         schema["small_screen"] = config.Boolean()
+        schema["tracklist_history_size"] = config.Integer()
 
         schema["key_play_pause"] = config.String(optional=True)
         schema["key_next_track"] = config.String(optional=True)
@@ -60,6 +68,8 @@ class Extension(ext.Extension):
 
     def setup(self, registry):
         logger.info(f"Mowecl Version: {self.version}")
+        from .tracklist_history import TracklistHistoryFrontend
+        registry.add("frontend", TracklistHistoryFrontend)
         registry.add(
             "http:app",
             {
@@ -83,13 +93,16 @@ class Extension(ext.Extension):
             api_secret=config["mowecl"]["lastfm_api_secret"]
         )
         musicbrainz_wrapper = MusicBrainzWrapper()
+
         return [
             ('/add_to_playlist', AddToPlaylistRequestHandler, {'config': config, 'core': core}),
             ('/tidal_favorite_artist', TidalFavoriteArtistHandler, {'config': config, 'core': core}),
             ('/tidal_favorite_artists', TidalFavoriteArtistsHandler, {'config': config, 'core': core}),
             ('/get_lastfm_artist_data', GetLastFMData, {'last_fm_wrapper': last_fm_wrapper}),
             ('/get_musicbrainz_artist_data', GetMusicBrainzData, {'musicbrainz_wrapper': musicbrainz_wrapper}),
+            ('/tracklist_history', TracklistHistoryHandler, {}),
+            ('/tracklist_history_restore', TracklistHistoryRestoreHandler, {}),
             (r"/(index.html)", server_params),
             (r"/", FileServer, server_params),
-            (r"/(.*)", StaticFileHandler, {"path": root}), # must be at the end, otherwise precedes other routes
+            (r"/(.*)", StaticFileHandler, {"path": root}),
         ]

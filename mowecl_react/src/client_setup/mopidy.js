@@ -69,6 +69,7 @@ export const initMopidyEventsDispatcher = (
     const scheme = mopidyURL.protocol === "ws:" ? "http:" : "https:";
     const baseURL = `${scheme}//${mopidyURL.host}`;
     useAppState.getState().fetchFavoriteArtists(baseURL);
+    useAppState.getState().fetchTracklistHistory(baseURL);
     setActivePanel("library");
     mopidyCli.tracklist.getTlTracks().then(async (tltracks) => {
       dispatch({
@@ -239,6 +240,10 @@ export const initMopidyEventsDispatcher = (
       }),
     );
     fetchPlaybackInfo(mopidyCli, dispatch);
+    const mopidyURL = new URL(mopidyCli._settings.webSocketUrl);
+    const scheme = mopidyURL.protocol === "ws:" ? "http:" : "https:";
+    const tlhBaseURL = `${scheme}//${mopidyURL.host}`;
+    useAppState.getState().fetchTracklistHistory(tlhBaseURL);
   });
 
   mopidyCli.on("event:optionsChanged", () =>

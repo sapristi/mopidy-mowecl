@@ -1,5 +1,6 @@
 import logging
 import json
+import pykka
 import tornado.web
 import musicbrainzngs
 
@@ -204,6 +205,68 @@ class TidalFavoriteArtistsHandler(tornado.web.RequestHandler):
                 {"favorite_artist_ids": fav_artist_ids}
             )
         )
+
+    def options(self):
+        self.set_status(204)
+        self.finish()
+
+
+class TracklistHistoryHandler(tornado.web.RequestHandler):
+    def set_default_headers(self):
+        self.set_header("Access-Control-Allow-Origin", "*")
+        self.set_header(
+            "Access-Control-Allow-Headers", "x-requested-with"
+        )
+        self.set_header(
+            "Access-Control-Allow-Methods", "GET, OPTIONS"
+        )
+
+    def _get_history_actor(self):
+        from .tracklist_history import TracklistHistoryFrontend
+        return pykka.ActorRegistry.get_by_class(
+            TracklistHistoryFrontend
+        )[0].proxy()
+
+    def get(self):
+        info = self._get_history_actor().get_info().get()
+        self.finish(json.dumps(info))
+
+    def options(self):
+        self.set_status(204)
+        self.finish()
+
+
+class TracklistHistoryRestoreHandler(tornado.web.RequestHandler):
+    def set_default_headers(self):
+        self.set_header("Access-Control-Allow-Origin", "*")
+        self.set_header(
+            "Access-Control-Allow-Headers", "x-requested-with"
+        )
+        self.set_header(
+            "Access-Control-Allow-Methods", "POST, OPTIONS"
+        )
+
+    def _get_history_actor(self):
+        from .tracklist_history import TracklistHistoryFrontend
+        return pykka.ActorRegistry.get_by_class(
+            TracklistHistoryFrontend
+        )[0].proxy()
+
+    def post(self):
+        direction = self.get_argument("direction")
+        if direction not in ("back", "forward"):
+            self.set_status(400)
+            self.finish(
+                json.dumps(
+                    {
+                        "error": "direction must be"
+                        " 'back' or 'forward'"
+                    }
+                )
+            )
+            return
+        info = self._get_history_actor().restore(direction).get()
+        self.finish(json.dumps(info))
 
     def options(self):
         self.set_status(204)

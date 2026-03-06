@@ -21,6 +21,8 @@ import { mdiBookmarkMusicOutline } from "@mdi/js";
 import BookmarkBorderIcon from "@mui/icons-material/BookmarkBorder";
 import AddIcon from "@mui/icons-material/Add";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
+import UndoIcon from "@mui/icons-material/Undo";
+import RedoIcon from "@mui/icons-material/Redo";
 
 import Tooltip from "@mui/material/Tooltip";
 import Chip from "@mui/material/Chip";
@@ -42,7 +44,7 @@ import styled from "@emotion/styled";
 
 import { TracklistItemMenu } from "@/components/panels/tracklist/track_menu";
 import { GIcon } from "@/components/molecules";
-import { useMenuAnchor } from "@/hooks";
+import { useMenuAnchor, useAppState, useMopidyURL } from "@/hooks";
 import { TrackWithDuration } from "@/components/molecules/track";
 
 const tracklistSwap = (e, mopidy) => {
@@ -179,6 +181,17 @@ const TracklistInfoPanel = () => {
     (state) => state.setState,
   );
   const { toggleMenu, menuProps } = useMenuAnchor();
+  const { tracklistHistory } = useAppState();
+  const baseURL = useMopidyURL();
+
+  const handleRestore = (direction) => {
+    fetch(`${baseURL}/mowecl/tracklist_history_restore?direction=${direction}`, {
+      method: "POST",
+    })
+      .then((r) => r.json())
+      .then((data) => useAppState.setState({ tracklistHistory: data }))
+      .catch(() => {});
+  };
 
   return (
     <Paper
@@ -191,6 +204,28 @@ const TracklistInfoPanel = () => {
       }}
     >
       <TracklistLength />
+      <ButtonGroup size="small">
+        <Tooltip title="Undo tracklist change" followCursor>
+          <span>
+            <Button
+              disabled={!tracklistHistory.can_undo}
+              onClick={() => handleRestore("back")}
+            >
+              <UndoIcon fontSize="small" />
+            </Button>
+          </span>
+        </Tooltip>
+        <Tooltip title="Redo tracklist change" followCursor>
+          <span>
+            <Button
+              disabled={!tracklistHistory.can_redo}
+              onClick={() => handleRestore("forward")}
+            >
+              <RedoIcon fontSize="small" />
+            </Button>
+          </span>
+        </Tooltip>
+      </ButtonGroup>
       {currentBookmark && (
         <Chip
           icon={<SyncIcon />}
