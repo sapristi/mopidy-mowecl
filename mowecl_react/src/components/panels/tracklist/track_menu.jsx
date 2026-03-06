@@ -11,7 +11,7 @@ import MenuOpenIcon from "@mui/icons-material/MenuOpen";
 import { useMenuAnchor } from "@/hooks";
 import { ListItemIcon, ListItemText } from "@mui/material";
 
-const AddToPlaylistMenu = ({ item, mopidy, ...props }) => {
+const AddToPlaylistMenu = ({ item, mopidy, onParentClose, ...props }) => {
   const mopidyHost = useSelector(
     (store) => store.settings.persistant.mopidy_host,
   );
@@ -38,6 +38,7 @@ const AddToPlaylistMenu = ({ item, mopidy, ...props }) => {
       url + new URLSearchParams({ playlist_uri, track_uri }).toString(),
     ).then(() => {
       props.onClose();
+      onParentClose();
     });
   };
   return (
@@ -91,7 +92,7 @@ export const TracklistItemMenu = ({ item, mopidy, ...props }) => {
             <MenuOpenIcon />
           </ListItemIcon>
           <ListItemText>Add to playlist</ListItemText>
-          <AddToPlaylistMenu item={item} mopidy={mopidy} {...menuProps} />
+          <AddToPlaylistMenu item={item} mopidy={mopidy} onParentClose={props.onClose} {...menuProps} />
         </MenuItem>
       )}
     </Menu>
