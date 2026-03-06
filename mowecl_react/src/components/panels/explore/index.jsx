@@ -7,10 +7,13 @@ import {
   CardContent,
   ButtonGroup,
   Button,
+  IconButton,
 } from "@mui/material";
 
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
+import FavoriteIcon from "@mui/icons-material/Favorite";
+import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import {
   memo,
   useEffect,
@@ -138,6 +141,7 @@ export const ExplorePanel = () => {
 
   const [bioOpen, setBioOpen] = useState(true);
   const [mbOpen, setMbOpen] = useState(true);
+  const [isFavorite, setIsFavorite] = useState(null);
 
   useEffect(() => {
     if (!mopidy.library) {
@@ -168,6 +172,18 @@ export const ExplorePanel = () => {
         setMBArtistData(data);
       });
     });
+    setIsFavorite(null);
+    if (explore.uri.startsWith("tidal:")) {
+      const url_fav = `${protocol}//${mopidyHost}:${mopidyPort}/mowecl/tidal_favorite_artist?`;
+      fetch(
+        url_fav +
+          new URLSearchParams({ artist_uri: explore.uri }).toString(),
+      ).then((response) => {
+        response.json().then((data) => {
+          setIsFavorite(data.is_favorite);
+        });
+      });
+    }
   }, [explore?.uri]);
   // Not fetching artist image : too often missing anyway
   // const imageUrl = useMopidyImage(exploreUri)
@@ -193,10 +209,31 @@ export const ExplorePanel = () => {
     <ExpandMoreIcon style={{ verticalAlign: "text-bottom" }} />
   );
 
+  const isTidal = explore.uri.startsWith("tidal:");
+
+  const toggleFavorite = () => {
+    const protocol = window.location.protocol;
+    const url_fav = `${protocol}//${mopidyHost}:${mopidyPort}/mowecl/tidal_favorite_artist?`;
+    const method = isFavorite ? "DELETE" : "POST";
+    setIsFavorite(!isFavorite);
+    fetch(
+      url_fav +
+        new URLSearchParams({ artist_uri: explore.uri }).toString(),
+      { method },
+    );
+  };
+
   return (
     <Paper sx={{ padding: "30px" }}>
       {/* <img src={imageUrl} style={{maxHeight: "100px"}}/> */}
-      <Typography variant="h2">{explore.name}</Typography>
+      <Typography variant="h2">
+        {explore.name}
+        {isTidal && isFavorite !== null && (
+          <IconButton onClick={toggleFavorite} color="primary" sx={{ ml: 1 }}>
+            {isFavorite ? <FavoriteIcon /> : <FavoriteBorderIcon />}
+          </IconButton>
+        )}
+      </Typography>
       {lastFMArtistData && (
         <>
           <Typography variant="h4">
