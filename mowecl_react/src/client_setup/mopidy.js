@@ -1,5 +1,6 @@
 import { notify, obj_reducer } from "@/utils";
 import { updateOrInsert } from "@/reducers/library/aux_functions";
+import { useAppState } from "@/hooks";
 
 const fetchPlaybackInfo = async (mopidyCli, dispatch) => {
   const to_dispatch = [
@@ -64,6 +65,10 @@ export const initMopidyEventsDispatcher = (
       endpoint: "mopidy",
     });
     dispatch({ type: "UPDATE_CLIENT", endpoint: "mopidy", client: mopidyCli });
+    const mopidyURL = new URL(mopidyCli._settings.webSocketUrl);
+    const scheme = mopidyURL.protocol === "ws:" ? "http:" : "https:";
+    const baseURL = `${scheme}//${mopidyURL.host}`;
+    useAppState.getState().fetchFavoriteArtists(baseURL);
     setActivePanel("library");
     mopidyCli.tracklist.getTlTracks().then(async (tltracks) => {
       dispatch({

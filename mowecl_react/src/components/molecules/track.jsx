@@ -4,13 +4,32 @@ import { useAppState } from "@/hooks";
 
 import { duration_to_human } from "@/utils";
 import { Button } from "@mui/material";
+import FavoriteIcon from "@mui/icons-material/Favorite";
 
 const sep = <span style={{ lineHeight: "0px" }}> ⁕ </span>;
 
 export const Artist = ({ artist, addSep }) => {
   const setExplore = useAppState((state) => state.setExplore);
+  const favoriteArtistIds = useAppState(
+    (state) => state.favoriteArtistIds,
+  );
   const artistIcon = <GIcon name="artist" style={{ paddingRight: "3px" }} />;
   const artistName = artist.name;
+  const isTidalFavorite =
+    artist.uri &&
+    artist.uri.startsWith("tidal:") &&
+    favoriteArtistIds.has(artist.uri.split(":").pop());
+  const favIcon = isTidalFavorite ? (
+    <FavoriteIcon
+      sx={{
+        fontSize: 14,
+        color: "error.main",
+        ml: "2px",
+        stroke: "black",
+        strokeWidth: 2,
+      }}
+    />
+  ) : null;
   if (artist.uri && artist.uri.startsWith("tidal:")) {
     return (
       <>
@@ -27,6 +46,7 @@ export const Artist = ({ artist, addSep }) => {
         >
           {artistIcon}
           {artistName}
+          {favIcon}
         </Button>
       </>
     );

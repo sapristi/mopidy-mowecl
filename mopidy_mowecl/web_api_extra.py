@@ -160,3 +160,51 @@ class TidalFavoriteArtistHandler(tornado.web.RequestHandler):
     def options(self):
         self.set_status(204)
         self.finish()
+
+
+class TidalFavoriteArtistsHandler(tornado.web.RequestHandler):
+    def set_default_headers(self):
+        self.set_header("Access-Control-Allow-Origin", "*")
+        self.set_header("Access-Control-Allow-Headers", "x-requested-with")
+        self.set_header("Access-Control-Allow-Methods", "GET, OPTIONS")
+
+    def initialize(self, config, core):
+        self.config = config
+        self.core = core
+
+    def get_tidal_backend(self):
+        try:
+            from mopidy_tidal.backend import TidalBackend
+        except ImportError:
+            return None
+
+        tidal_backend = None
+        backends = self.core.backends.get()
+        for backend in backends:
+            if backend.actor_ref.actor_class == TidalBackend:
+                tidal_backend = backend
+        return tidal_backend.actor_ref._actor
+
+    def get(self):
+        backend = self.get_tidal_backend()
+        if backend is None:
+            self.set_status(503)
+            self.finish(
+                json.dumps(
+                    {"error": "Tidal backend not available"}
+                )
+            )
+            return
+        favorites = backend.session.user.favorites
+        fav_artist_ids = [
+            str(a.id) for a in favorites.artists()
+        ]
+        self.finish(
+            json.dumps(
+                {"favorite_artist_ids": fav_artist_ids}
+            )
+        )
+
+    def options(self):
+        self.set_status(204)
+        self.finish()

@@ -141,7 +141,12 @@ export const ExplorePanel = () => {
 
   const [bioOpen, setBioOpen] = useState(true);
   const [mbOpen, setMbOpen] = useState(true);
-  const [isFavorite, setIsFavorite] = useState(null);
+  const favoriteArtistIds = useAppState(
+    (state) => state.favoriteArtistIds,
+  );
+  const fetchFavoriteArtists = useAppState(
+    (state) => state.fetchFavoriteArtists,
+  );
 
   useEffect(() => {
     if (!mopidy.library) {
@@ -172,19 +177,13 @@ export const ExplorePanel = () => {
         setMBArtistData(data);
       });
     });
-    setIsFavorite(null);
-    if (explore.uri.startsWith("tidal:")) {
-      const url_fav = `${protocol}//${mopidyHost}:${mopidyPort}/mowecl/tidal_favorite_artist?`;
-      fetch(
-        url_fav +
-          new URLSearchParams({ artist_uri: explore.uri }).toString(),
-      ).then((response) => {
-        response.json().then((data) => {
-          setIsFavorite(data.is_favorite);
-        });
-      });
-    }
   }, [explore?.uri]);
+
+  const isFavorite =
+    explore &&
+    explore.uri.startsWith("tidal:") &&
+    favoriteArtistIds.has(explore.uri.split(":").pop());
+
   // Not fetching artist image : too often missing anyway
   // const imageUrl = useMopidyImage(exploreUri)
   console.log("Explore", explore, items);
@@ -215,12 +214,22 @@ export const ExplorePanel = () => {
     const protocol = window.location.protocol;
     const url_fav = `${protocol}//${mopidyHost}:${mopidyPort}/mowecl/tidal_favorite_artist?`;
     const method = isFavorite ? "DELETE" : "POST";
-    setIsFavorite(!isFavorite);
+    const artistId = explore.uri.split(":").pop();
+    const newIds = new Set(favoriteArtistIds);
+    if (isFavorite) {
+      newIds.delete(artistId);
+    } else {
+      newIds.add(artistId);
+    }
+    useAppState.getState().setFavoriteArtistIds(newIds);
     fetch(
       url_fav +
         new URLSearchParams({ artist_uri: explore.uri }).toString(),
       { method },
-    );
+    ).then(() => {
+      const baseURL = `${protocol}//${mopidyHost}:${mopidyPort}`;
+      fetchFavoriteArtists(baseURL);
+    });
   };
 
   return (
@@ -228,7 +237,7 @@ export const ExplorePanel = () => {
       {/* <img src={imageUrl} style={{maxHeight: "100px"}}/> */}
       <Typography variant="h2">
         {explore.name}
-        {isTidal && isFavorite !== null && (
+        {isTidal && (
           <IconButton onClick={toggleFavorite} color="primary" sx={{ ml: 1 }}>
             {isFavorite ? <FavoriteIcon /> : <FavoriteBorderIcon />}
           </IconButton>
