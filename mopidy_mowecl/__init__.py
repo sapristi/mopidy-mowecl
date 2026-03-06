@@ -44,6 +44,7 @@ class Extension(ext.Extension):
         schema["search_history_length"] = config.Integer()
         schema["disable_dnd"] = config.Boolean()
         schema["small_screen"] = config.Boolean()
+        schema["tracklist_history_size"] = config.Integer()
 
         schema["key_play_pause"] = config.String(optional=True)
         schema["key_next_track"] = config.String(optional=True)
@@ -60,6 +61,8 @@ class Extension(ext.Extension):
 
     def setup(self, registry):
         logger.info(f"Mowecl Version: {self.version}")
+        from .tracklist_history import TracklistHistoryFrontend
+        registry.add("frontend", TracklistHistoryFrontend)
         registry.add(
             "http:app",
             {
