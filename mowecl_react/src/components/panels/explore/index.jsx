@@ -8,6 +8,7 @@ import {
   ButtonGroup,
   Button,
   IconButton,
+  Tooltip,
 } from "@mui/material";
 
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
@@ -258,8 +259,34 @@ export const ExplorePanel = () => {
                   Last.FM
                 </a>
               </Typography>
-              <div style={{ whiteSpace: "pre-wrap" }}>
-                {lastFMArtistData.bio}
+              <div
+                style={{ whiteSpace: "pre-wrap" }}
+                dangerouslySetInnerHTML={{
+                  __html: (lastFMArtistData.bio || "")
+                    .replace(
+                      " User-contributed text is available under the Creative Commons By-SA License; additional terms may apply.",
+                      "",
+                    )
+                    .replace(
+                      /\s*<a href="https:\/\/www\.last\.fm\/[^"]*"[^>]*>.*?<\/a>/,
+                      "",
+                    ),
+                }}
+              />
+              <div>
+                <a href={lastFMArtistData.url} target="_blank">
+                  Read more on Last.fm
+                </a>
+                {" "}
+                <Tooltip title="User-contributed text is available under the Creative Commons By-SA License; additional terms may apply.">
+                  <Typography
+                    component="span"
+                    variant="caption"
+                    sx={{ cursor: "help", fontStyle: "italic", ml: 1 }}
+                  >
+                    Creative Commons By-SA License
+                  </Typography>
+                </Tooltip>
               </div>
             </>
           )}
