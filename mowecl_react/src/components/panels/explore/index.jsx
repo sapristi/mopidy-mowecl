@@ -258,9 +258,10 @@ export const ExplorePanel = () => {
                   Last.FM
                 </a>
               </Typography>
-              <div style={{ whiteSpace: "pre-wrap" }}>
-                {lastFMArtistData.bio}
-              </div>
+              <div
+                style={{ whiteSpace: "pre-wrap" }}
+                dangerouslySetInnerHTML={{ __html: lastFMArtistData.bio }}
+              />
             </>
           )}
         </>
