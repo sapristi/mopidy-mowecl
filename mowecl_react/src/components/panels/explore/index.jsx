@@ -8,6 +8,7 @@ import {
   ButtonGroup,
   Button,
   IconButton,
+  Tooltip,
 } from "@mui/material";
 
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
@@ -260,8 +261,21 @@ export const ExplorePanel = () => {
               </Typography>
               <div
                 style={{ whiteSpace: "pre-wrap" }}
-                dangerouslySetInnerHTML={{ __html: lastFMArtistData.bio }}
+                dangerouslySetInnerHTML={{
+                  __html: lastFMArtistData.bio.replace(
+                    " User-contributed text is available under the Creative Commons By-SA License; additional terms may apply.",
+                    "",
+                  ),
+                }}
               />
+              <Tooltip title="User-contributed text is available under the Creative Commons By-SA License; additional terms may apply.">
+                <Typography
+                  variant="caption"
+                  sx={{ cursor: "help", fontStyle: "italic" }}
+                >
+                  Creative Commons By-SA License
+                </Typography>
+              </Tooltip>
             </>
           )}
         </>
