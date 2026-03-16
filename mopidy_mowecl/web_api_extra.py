@@ -1,5 +1,6 @@
 import logging
 import json
+import pykka
 import tornado.web
 import musicbrainzngs
 
@@ -220,11 +221,14 @@ class TracklistHistoryHandler(tornado.web.RequestHandler):
             "Access-Control-Allow-Methods", "GET, OPTIONS"
         )
 
-    def initialize(self, history_actor):
-        self.history_actor = history_actor
+    def _get_history_actor(self):
+        from .tracklist_history import TracklistHistoryFrontend
+        return pykka.ActorRegistry.get_by_class(
+            TracklistHistoryFrontend
+        )[0].proxy()
 
     def get(self):
-        info = self.history_actor.get_info().get()
+        info = self._get_history_actor().get_info().get()
         self.finish(json.dumps(info))
 
     def options(self):
@@ -242,8 +246,11 @@ class TracklistHistoryRestoreHandler(tornado.web.RequestHandler):
             "Access-Control-Allow-Methods", "POST, OPTIONS"
         )
 
-    def initialize(self, history_actor):
-        self.history_actor = history_actor
+    def _get_history_actor(self):
+        from .tracklist_history import TracklistHistoryFrontend
+        return pykka.ActorRegistry.get_by_class(
+            TracklistHistoryFrontend
+        )[0].proxy()
 
     def post(self):
         direction = self.get_argument("direction")
@@ -258,7 +265,7 @@ class TracklistHistoryRestoreHandler(tornado.web.RequestHandler):
                 )
             )
             return
-        info = self.history_actor.restore(direction).get()
+        info = self._get_history_actor().restore(direction).get()
         self.finish(json.dumps(info))
 
     def options(self):

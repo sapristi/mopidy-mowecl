@@ -3,8 +3,6 @@ import pathlib
 import pkg_resources
 import sysconfig
 import re
-import pykka
-
 from mopidy import config, ext
 
 from tornado.web import StaticFileHandler
@@ -96,19 +94,14 @@ class Extension(ext.Extension):
         )
         musicbrainz_wrapper = MusicBrainzWrapper()
 
-        from .tracklist_history import TracklistHistoryFrontend
-        history_actor = pykka.ActorRegistry.get_by_class(
-            TracklistHistoryFrontend
-        )[0].proxy()
-
         return [
             ('/add_to_playlist', AddToPlaylistRequestHandler, {'config': config, 'core': core}),
             ('/tidal_favorite_artist', TidalFavoriteArtistHandler, {'config': config, 'core': core}),
             ('/tidal_favorite_artists', TidalFavoriteArtistsHandler, {'config': config, 'core': core}),
             ('/get_lastfm_artist_data', GetLastFMData, {'last_fm_wrapper': last_fm_wrapper}),
             ('/get_musicbrainz_artist_data', GetMusicBrainzData, {'musicbrainz_wrapper': musicbrainz_wrapper}),
-            ('/tracklist_history', TracklistHistoryHandler, {'history_actor': history_actor}),
-            ('/tracklist_history_restore', TracklistHistoryRestoreHandler, {'history_actor': history_actor}),
+            ('/tracklist_history', TracklistHistoryHandler, {}),
+            ('/tracklist_history_restore', TracklistHistoryRestoreHandler, {}),
             (r"/(index.html)", server_params),
             (r"/", FileServer, server_params),
             (r"/(.*)", StaticFileHandler, {"path": root}),
