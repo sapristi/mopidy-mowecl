@@ -262,7 +262,7 @@ export const ExplorePanel = () => {
               <div
                 style={{ whiteSpace: "pre-wrap" }}
                 dangerouslySetInnerHTML={{
-                  __html: lastFMArtistData.bio
+                  __html: (lastFMArtistData.bio || "")
                     .replace(
                       " User-contributed text is available under the Creative Commons By-SA License; additional terms may apply.",
                       "",
