@@ -19,3 +19,5 @@ echo "Built: $WHEEL"
 # Install into mopidy pipx environment
 pipx inject mopidy "./$WHEEL" --force
 systemctl --user restart mopidy
+echo "Mopidy restarted."
+systemctl --user status mopidy
