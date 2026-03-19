@@ -59,6 +59,7 @@ python -m pytest --cov=mopidy_mowecl --cov-report=term-missing
 
 ## Conventions
 
+- Git commits: Do not include "Co-Authored-By: Claude" lines in commit messages
 - Python: black formatting (line length 80), isort, flake8
 - Frontend: ESLint config in `eslint.config.mjs`, uses JSX (not TypeScript)
 - The frontend communicates with Mopidy via WebSocket (mopidy-js protocol), not REST
