@@ -1,11 +1,4 @@
-import {
-  memo,
-  useEffect,
-  useRef,
-  useCallback,
-  createContext,
-  useState,
-} from "react";
+import { useEffect, useState } from "react";
 
 import ListItemIcon from "@mui/material/ListItemIcon";
 import HTMLTooltip from "@mui/material/Tooltip";
@@ -26,8 +19,6 @@ import { HFlex } from "@/components/atoms";
 
 import { match } from "@/utils";
 import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
-import { recordKeyCombination } from "react-hotkeys";
-import { getApplicationKeyMap } from "react-hotkeys";
 
 const SettingHelp = ({ schema }) => (
   <ListItemIcon>
@@ -71,43 +62,35 @@ const SelectSettingInput = ({ schema, value, handleChange }) => (
 );
 
 const KeyInputDialog = ({ open, onClose, name }) => {
-  const nullFunc = () => {};
-  const [cancel, setCancel] = useState(() => nullFunc);
-
   useEffect(() => {
-    if (open) {
-      const cancelListening = recordKeyCombination(({ id, keys }) => {
-        console.log("FOUND", id, keys);
-        const keyMap = getApplicationKeyMap();
-        console.log(keyMap);
+    if (!open) return;
 
-        id = id.replace(/ /g, "space");
-        onClose({ action: "save", keys: id });
-      });
+    const handleKeyDown = (event) => {
+      event.preventDefault();
+      const parts = [];
+      if (event.ctrlKey) parts.push("ctrl");
+      if (event.altKey) parts.push("alt");
+      if (event.shiftKey) parts.push("shift");
+      if (event.metaKey) parts.push("meta");
 
-      setCancel(() => cancelListening);
-    } else {
-      setCancel(() => nullFunc);
-    }
+      const key = event.key.toLowerCase();
+      if (!["control", "alt", "shift", "meta"].includes(key)) {
+        parts.push(key === " " ? "space" : key);
+      }
+
+      if (parts.length > 0 && parts.some((p) => !["ctrl", "alt", "shift", "meta"].includes(p))) {
+        onClose({ action: "save", keys: parts.join("+") });
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
   }, [open, onClose]);
 
   return (
-    <Dialog
-      open={open}
-      onClose={() => {
-        cancel();
-        onClose();
-      }}
-    >
+    <Dialog open={open} onClose={() => onClose()}>
       <DialogTitle>Type in your shortcut for {name}</DialogTitle>
-      <Button
-        onClick={() => {
-          cancel();
-          onClose();
-        }}
-      >
-        Cancel
-      </Button>
+      <Button onClick={() => onClose()}>Cancel</Button>
     </Dialog>
   );
 };
