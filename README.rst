@@ -147,6 +147,19 @@ To run Mowecl in develop mode, do the following:
 Changelog
 =======================================
 
+v0.7.0
+........................................
+
+Features:
+
+- tracklist history with undo/redo
+- tidal favorite artist markers
+
+Fixes:
+
+- fix explore panel display issues
+- fix popup closing in tracklist
+
 v0.6.1
 ........................................
 Features:

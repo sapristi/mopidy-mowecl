@@ -64,6 +64,17 @@ python -m pytest --cov=mopidy_mowecl --cov-report=term-missing
 - The frontend communicates with Mopidy via WebSocket (mopidy-js protocol), not REST
 - Config flows from Mopidy config file -> server-side template injection -> Redux settings reducer -> localStorage for client overrides
 
+## Release Process
+
+- Version is derived from git tags via `pdm-backend` SCM versioning
+- Tag format: `0.x.y` (no `v` prefix), alphas: `0.x.y-aN`
+- Pushing a tag triggers `.github/workflows/publish.yaml` which builds frontend + wheel and publishes to PyPI
+- Steps:
+  1. Update changelog in `README.rst`
+  2. Commit changes
+  3. Create tag: `git tag 0.x.y`
+  4. Push: `git push origin master && git push origin 0.x.y`
+
 # Next steps
 
 - Keep a history of the state of the tracklist
