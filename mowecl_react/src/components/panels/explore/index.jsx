@@ -1,4 +1,4 @@
-import { useAppState, useMopidyImage } from "@/hooks";
+import { useAppState, useMopidyImage, useMopidyURL } from "@/hooks";
 import {
   Card,
   CardMedia,
@@ -129,12 +129,7 @@ const MusicBrainzInfoSection = ({
 export const ExplorePanel = () => {
   const explore = useAppState(useShallow((state) => state.explore));
   const mopidy = useSelector((state) => state.mopidy.client);
-  const mopidyHost = useSelector(
-    (store) => store.settings.persistant.mopidy_host,
-  );
-  const mopidyPort = useSelector(
-    (store) => store.settings.persistant.mopidy_port,
-  );
+  const baseURL = useMopidyURL();
 
   const [items, setItems] = useState([]);
   const [lastFMArtistData, setLastFMArtistData] = useState(null);
@@ -159,8 +154,7 @@ export const ExplorePanel = () => {
     setLastFMArtistData(null);
     setMBArtistData(null);
     mopidy.library.browse({ uri: explore.uri }).then(setItems);
-    const protocol = window.location.protocol;
-    const url_lastfm = `${protocol}//${mopidyHost}:${mopidyPort}/mowecl/get_lastfm_artist_data?`;
+    const url_lastfm = `${baseURL}/mowecl/get_lastfm_artist_data?`;
     fetch(
       url_lastfm +
         new URLSearchParams({ artist_name: explore.name }).toString(),
@@ -170,7 +164,7 @@ export const ExplorePanel = () => {
       });
     });
 
-    const url_mb = `${protocol}//${mopidyHost}:${mopidyPort}/mowecl/get_musicbrainz_artist_data?`;
+    const url_mb = `${baseURL}/mowecl/get_musicbrainz_artist_data?`;
     fetch(
       url_mb + new URLSearchParams({ artist_name: explore.name }).toString(),
     ).then((response) => {
@@ -212,8 +206,7 @@ export const ExplorePanel = () => {
   const isTidal = explore.uri.startsWith("tidal:");
 
   const toggleFavorite = () => {
-    const protocol = window.location.protocol;
-    const url_fav = `${protocol}//${mopidyHost}:${mopidyPort}/mowecl/tidal_favorite_artist?`;
+    const url_fav = `${baseURL}/mowecl/tidal_favorite_artist?`;
     const method = isFavorite ? "DELETE" : "POST";
     const artistId = explore.uri.split(":").pop();
     const newIds = new Set(favoriteArtistIds);
@@ -228,7 +221,6 @@ export const ExplorePanel = () => {
         new URLSearchParams({ artist_uri: explore.uri }).toString(),
       { method },
     ).then(() => {
-      const baseURL = `${protocol}//${mopidyHost}:${mopidyPort}`;
       fetchFavoriteArtists(baseURL);
     });
   };

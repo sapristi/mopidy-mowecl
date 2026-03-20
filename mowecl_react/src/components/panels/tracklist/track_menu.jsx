@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
 
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
@@ -8,16 +7,11 @@ import RemoveIcon from "@mui/icons-material/Remove";
 import PlaylistAddIcon from "@mui/icons-material/PlaylistAdd";
 import MenuOpenIcon from "@mui/icons-material/MenuOpen";
 
-import { useMenuAnchor } from "@/hooks";
+import { useMenuAnchor, useMopidyURL } from "@/hooks";
 import { ListItemIcon, ListItemText } from "@mui/material";
 
 const AddToPlaylistMenu = ({ item, mopidy, onParentClose, ...props }) => {
-  const mopidyHost = useSelector(
-    (store) => store.settings.persistant.mopidy_host,
-  );
-  const mopidyPort = useSelector(
-    (store) => store.settings.persistant.mopidy_port,
-  );
+  const baseURL = useMopidyURL();
   const [playlists, setPlaylists] = useState(() => []);
   useEffect(() => {
     //TODO: cache playlists (or re-use from lib)
@@ -30,8 +24,7 @@ const AddToPlaylistMenu = ({ item, mopidy, onParentClose, ...props }) => {
   }, [mopidy]);
 
   const handleAddToPlaylist = (item, pl_item) => {
-    const protocol = window.location.protocol;
-    const url = `${protocol}//${mopidyHost}:${mopidyPort}/mowecl/add_to_playlist?`;
+    const url = `${baseURL}/mowecl/add_to_playlist?`;
     const track_uri = item.track.uri;
     const playlist_uri = pl_item.uri;
     fetch(

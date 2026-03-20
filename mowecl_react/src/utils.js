@@ -57,13 +57,25 @@ export const getDefaultMopidyHost = () => {
   return `${host}:${port}`;
 };
 
-export const getWsAddress = (host, port, endpoint) => {
-  const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
-  return `${protocol}//${host}:${port}/${endpoint}/ws`;
+export const buildMopidyUrl = (host, port, path, protocol) => {
+  if (!protocol) {
+    protocol = window.location.protocol;
+  }
+  const url = new URL(`${protocol}//${host}`);
+  if (port) {
+    url.port = port;
+  }
+  if (path) {
+    url.pathname = url.pathname.replace(/\/$/, "") + "/" + path.replace(/^\//, "");
+  }
+  return url;
 };
 
-export const getWsProtocol = () =>
-  window.location.protocol === "https:" ? "wss:" : "ws:";
+export const getWsAddress = (host, port, endpoint) => {
+  const wsProtocol = window.location.protocol === "https:" ? "wss:" : "ws:";
+  const url = buildMopidyUrl(host, port, `${endpoint}/ws`, wsProtocol);
+  return url.href;
+};
 
 export const listEquals = (l1, l2) => {
   return l1.map((e, i) => [e, l2[i]]).every(([e1, e2]) => e1 === e2);

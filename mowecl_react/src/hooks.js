@@ -8,6 +8,7 @@ import {
 } from "react";
 import { useSelector } from "react-redux";
 import { create } from "zustand";
+import { buildMopidyUrl } from "@/utils";
 
 export function useTraceUpdate(props) {
   const prev = useRef(props);
@@ -97,7 +98,6 @@ export const useMopidyImage = (uri) => {
 };
 
 export const useMopidyURL = () => {
-  const protocol = window.location.protocol;
   const mopidyHost = useSelector(
     (store) => store.settings.persistant.mopidy_host,
   );
@@ -105,5 +105,5 @@ export const useMopidyURL = () => {
     (store) => store.settings.persistant.mopidy_port,
   );
 
-  return `${protocol}//${mopidyHost}:${mopidyPort}`;
+  return buildMopidyUrl(mopidyHost, mopidyPort).href.replace(/\/$/, "");
 };
