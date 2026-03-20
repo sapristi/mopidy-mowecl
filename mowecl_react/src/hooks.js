@@ -105,5 +105,5 @@ export const useMopidyURL = () => {
     (store) => store.settings.persistant.mopidy_port,
   );
 
-  return buildMopidyUrl(mopidyHost, mopidyPort).href.replace(/\/$/, "");
+  return buildMopidyUrl(mopidyHost, mopidyPort);
 };

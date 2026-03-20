@@ -61,20 +61,24 @@ export const buildMopidyUrl = (host, port, path, protocol) => {
   if (!protocol) {
     protocol = window.location.protocol;
   }
-  const url = new URL(`${protocol}//${host}`);
-  if (port) {
-    url.port = port;
+  // Split host into hostname and path parts (e.g. "gidouille.local/mopidy" -> "gidouille.local" + "/mopidy")
+  const slashIndex = host.indexOf("/");
+  let hostname, hostPath;
+  if (slashIndex !== -1) {
+    hostname = host.substring(0, slashIndex);
+    hostPath = host.substring(slashIndex);
+  } else {
+    hostname = host;
+    hostPath = "";
   }
-  if (path) {
-    url.pathname = url.pathname.replace(/\/$/, "") + "/" + path.replace(/^\//, "");
-  }
-  return url;
+  const portPart = port ? `:${port}` : "";
+  const fullPath = hostPath + (path ? "/" + path.replace(/^\//, "") : "");
+  return `${protocol}//${hostname}${portPart}${fullPath}`;
 };
 
 export const getWsAddress = (host, port, endpoint) => {
   const wsProtocol = window.location.protocol === "https:" ? "wss:" : "ws:";
-  const url = buildMopidyUrl(host, port, `${endpoint}/ws`, wsProtocol);
-  return url.href;
+  return buildMopidyUrl(host, port, `${endpoint}/ws`, wsProtocol);
 };
 
 export const listEquals = (l1, l2) => {
