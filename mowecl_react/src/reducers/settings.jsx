@@ -45,12 +45,30 @@ const nonNull = (values) => {
   return res;
 };
 
+// Detect reverse proxy prefix from the page URL.
+// If served at /mopidy/mowecl/, the prefix is /mopidy and should be
+// included in mopidy_host so that WebSocket URLs are built correctly.
+const getDefaultMopidyConnection = () => {
+  const pathname = window.location.pathname;
+  const moweclIndex = pathname.indexOf("/mowecl");
+  const prefix = moweclIndex > 0 ? pathname.substring(0, moweclIndex) : "";
+  const host = prefix
+    ? window.location.hostname + prefix
+    : window.location.hostname;
+  // Behind a reverse proxy, use the proxy's port (empty for standard 80/443).
+  // Otherwise default to Mopidy's standard port.
+  const port = prefix ? (parseInt(window.location.port) || null) : 6680;
+  return { host, port };
+};
+
+const defaultConnection = getDefaultMopidyConnection();
+
 const staticSettings =
   window.static_settings_enabled === "true"
     ? {
         ...window.static_settings,
-        mopidy_host: window.location.hostname,
-        mopidy_port: 6680,
+        mopidy_host: defaultConnection.host,
+        mopidy_port: defaultConnection.port,
         generic: {
           ...window.static_settings.generic,
           disable_dnd: parseBoolean(window.static_settings.generic.disable_dnd),
@@ -61,8 +79,8 @@ const staticSettings =
       }
     : // default settings when the app is not served by mopidy
       {
-        mopidy_host: window.location.hostname,
-        mopidy_port: 6680,
+        mopidy_host: defaultConnection.host,
+        mopidy_port: defaultConnection.port,
         generic: {
           seek_update_interval: 500,
           search_history_length: 10,
@@ -89,15 +107,16 @@ export const settingsSchema = {
     "Commit after making your changes. In case of incorrect setting, the default value will be used instead of your input",
   mopidy_host: {
     type: "param",
-    name: "Modidy host",
-    help: "Modidy host. Do not modify unless you know what you are doing.",
+    name: "Mopidy host",
+    help: "Mopidy host. When behind a reverse proxy, include the path prefix (e.g. gidouille.local/mopidy). Do not modify unless you know what you are doing.",
     validate: (v) => v || staticSettings.mopidy_host,
   },
   mopidy_port: {
     type: "param",
-    name: "Modidy port",
-    help: "Modidy port. Do not modify unless you know what you are doing.",
-    validate: (v) => parseInt(v) || staticSettings.mopidy_port,
+    name: "Mopidy port",
+    help: "Mopidy port. Leave empty to use the standard port for the protocol. Do not modify unless you know what you are doing.",
+    validate: (v) =>
+      v === "" || v === null ? null : parseInt(v) || staticSettings.mopidy_port,
   },
   generic: {
     name: "Generic",
