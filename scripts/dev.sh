@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+# Local development helper: builds the frontend, sets up a dev venv
+# with system site-packages (for GStreamer/PyGObject), installs the
+# package in editable mode, and runs Mopidy in the foreground.
 set -euo pipefail
 
 cd "$(dirname "$0")/.."

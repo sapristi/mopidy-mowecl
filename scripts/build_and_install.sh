@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
+# Build the frontend and Python wheel, then install into the local
+# Mopidy pipx environment and restart the Mopidy service.
+# Intended to run on the target server (called by deploy_to_server.sh
+# or manually).
 set -euo pipefail
-
-# cd "$(dirname "$0")"
 
 # Build frontend
 cd mowecl_react
