@@ -25,6 +25,7 @@ import {
   bookmarksStateReducer,
 } from "./client_setup/bookmarks";
 import { useAppState } from "./hooks";
+import { getWsAddress } from "./utils";
 
 const MopidyApp = () => {
   const mopidy_connected = useSelector((state) => state.mopidy.connected);
@@ -32,9 +33,18 @@ const MopidyApp = () => {
   const activePanelName = useAppState((state) => state.activePanelName);
   console.log(activePanelName);
 
+  const mopidyHost = useSelector(
+    (store) => store.settings.persistant.mopidy_host,
+  );
+  const mopidyPort = useSelector(
+    (store) => store.settings.persistant.mopidy_port,
+  );
+  const mopidy_ws_url = getWsAddress(mopidyHost, mopidyPort, "mopidy");
+
   const appProps = {
     mopidy_connected,
     mopidy_error,
+    mopidy_ws_url,
     activePanelName,
   };
   const small_screen = useSelector(
