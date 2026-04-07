@@ -132,6 +132,7 @@ export const ExplorePanel = () => {
   const baseURL = useMopidyURL();
 
   const [items, setItems] = useState([]);
+  const [epItems, setEpItems] = useState([]);
   const [lastFMArtistData, setLastFMArtistData] = useState(null);
   const [MBArtistData, setMBArtistData] = useState(null);
 
@@ -153,7 +154,19 @@ export const ExplorePanel = () => {
     }
     setLastFMArtistData(null);
     setMBArtistData(null);
-    mopidy.library.browse({ uri: explore.uri }).then(setItems);
+    setEpItems([]);
+    mopidy.library.browse({ uri: explore.uri }).then((browseItems) => {
+      setItems(browseItems);
+      // Browse EP/Singles subdirectories to get EP items
+      for (let item of browseItems) {
+        if (
+          item.type === "directory" &&
+          /ep|single/i.test(item.name)
+        ) {
+          mopidy.library.browse({ uri: item.uri }).then(setEpItems);
+        }
+      }
+    });
     const url_lastfm = `${baseURL}/mowecl/get_lastfm_artist_data?`;
     fetch(
       url_lastfm +
@@ -301,6 +314,16 @@ export const ExplorePanel = () => {
           <AlbumItem name={album.name} uri={album.uri} key={album.uri} />
         ))}
       </div>
+      {epItems.length > 0 && (
+        <>
+          <Typography variant="h4">EPs & Singles</Typography>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 10 }}>
+            {epItems.map((ep) => (
+              <AlbumItem name={ep.name} uri={ep.uri} key={ep.uri} />
+            ))}
+          </div>
+        </>
+      )}
       <Typography variant="h4">Top tracks</Typography>
       <div style={{ display: "flex", gap: 5, flexDirection: "column" }}>
         {tracks.map((track) => (
