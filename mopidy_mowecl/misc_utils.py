@@ -73,13 +73,29 @@ class MusicBrainzWrapper:
         wikipedia_extract = None
         if wikidata_entry:
             wikidata_id = wikidata_entry.split("/")[-1]
-            wikidata_data = requests.get(f"https://wikidata.org/w/rest.php/wikibase/v1/entities/items/{wikidata_id}").json()
-            wikipedia_url = wikidata_data["sitelinks"].get("enwiki", {}).get("url")
+            try:
+                wikidata_resp = requests.get(
+                    f"https://www.wikidata.org/w/rest.php/wikibase/v1/entities/items/{wikidata_id}"
+                )
+                wikidata_resp.raise_for_status()
+                wikidata_data = wikidata_resp.json()
+                wikipedia_url = wikidata_data["sitelinks"].get("enwiki", {}).get("url")
+            except (requests.RequestException, ValueError, KeyError) as e:
+                logger.warning(f"Failed to fetch Wikidata for {wikidata_id}: {e}")
+                wikipedia_url = None
 
             if wikipedia_url:
                 wikipedia_title = wikipedia_url.split("/")[-1]
-                wikipedia_extract_data = requests.get(f"https://en.wikipedia.org/w/api.php?action=query&prop=extracts&format=json&exintro=&titles={wikipedia_title}&explaintext=1&exsectionformat=plain").json()
-                wikipedia_extract = list(wikipedia_extract_data["query"]["pages"].values())[0]["extract"]
+                try:
+                    wp_resp = requests.get(
+                        f"https://en.wikipedia.org/w/api.php?action=query&prop=extracts&format=json&exintro=&titles={wikipedia_title}&explaintext=1&exsectionformat=plain"
+                    )
+                    wp_resp.raise_for_status()
+                    wikipedia_extract_data = wp_resp.json()
+                    wikipedia_extract = list(wikipedia_extract_data["query"]["pages"].values())[0]["extract"]
+                except (requests.RequestException, ValueError, KeyError) as e:
+                    logger.warning(f"Failed to fetch Wikipedia extract for {wikipedia_title}: {e}")
+                    wikipedia_extract = None
 
         return {
             "name": artist_data["name"],
