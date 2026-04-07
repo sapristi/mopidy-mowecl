@@ -13,6 +13,7 @@ from .web_api_extra import (
     GetMusicBrainzData,
     TidalFavoriteArtistHandler,
     TidalFavoriteArtistsHandler,
+    TidalArtistEpSinglesHandler,
     TracklistHistoryHandler,
     TracklistHistoryRestoreHandler,
 )
@@ -98,6 +99,7 @@ class Extension(ext.Extension):
             ('/add_to_playlist', AddToPlaylistRequestHandler, {'config': config, 'core': core}),
             ('/tidal_favorite_artist', TidalFavoriteArtistHandler, {'config': config, 'core': core}),
             ('/tidal_favorite_artists', TidalFavoriteArtistsHandler, {'config': config, 'core': core}),
+            ('/tidal_artist_ep_singles', TidalArtistEpSinglesHandler, {'config': config, 'core': core}),
             ('/get_lastfm_artist_data', GetLastFMData, {'last_fm_wrapper': last_fm_wrapper}),
             ('/get_musicbrainz_artist_data', GetMusicBrainzData, {'musicbrainz_wrapper': musicbrainz_wrapper}),
             ('/tracklist_history', TracklistHistoryHandler, {}),

@@ -155,18 +155,18 @@ export const ExplorePanel = () => {
     setLastFMArtistData(null);
     setMBArtistData(null);
     setEpItems([]);
-    mopidy.library.browse({ uri: explore.uri }).then((browseItems) => {
-      setItems(browseItems);
-      // Browse EP/Singles subdirectories to get EP items
-      for (let item of browseItems) {
-        if (
-          item.type === "directory" &&
-          /ep|single/i.test(item.name)
-        ) {
-          mopidy.library.browse({ uri: item.uri }).then(setEpItems);
-        }
-      }
-    });
+    mopidy.library.browse({ uri: explore.uri }).then(setItems);
+    if (explore.uri.startsWith("tidal:")) {
+      const url_ep = `${baseURL}/mowecl/tidal_artist_ep_singles?`;
+      fetch(
+        url_ep +
+          new URLSearchParams({ artist_uri: explore.uri }).toString(),
+      ).then((response) => {
+        response.json().then((data) => {
+          setEpItems(data);
+        });
+      });
+    }
     const url_lastfm = `${baseURL}/mowecl/get_lastfm_artist_data?`;
     fetch(
       url_lastfm +

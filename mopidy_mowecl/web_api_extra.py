@@ -211,6 +211,72 @@ class TidalFavoriteArtistsHandler(tornado.web.RequestHandler):
         self.finish()
 
 
+class TidalArtistEpSinglesHandler(tornado.web.RequestHandler):
+    def set_default_headers(self):
+        self.set_header("Access-Control-Allow-Origin", "*")
+        self.set_header(
+            "Access-Control-Allow-Headers", "x-requested-with"
+        )
+        self.set_header(
+            "Access-Control-Allow-Methods", "GET, OPTIONS"
+        )
+
+    def initialize(self, config, core):
+        self.config = config
+        self.core = core
+
+    def get_tidal_backend(self):
+        try:
+            from mopidy_tidal.backend import TidalBackend
+        except ImportError:
+            return None
+
+        tidal_backend = None
+        backends = self.core.backends.get()
+        for backend in backends:
+            if backend.actor_ref.actor_class == TidalBackend:
+                tidal_backend = backend
+        return tidal_backend.actor_ref._actor
+
+    def get(self):
+        backend = self.get_tidal_backend()
+        if backend is None:
+            self.set_status(503)
+            self.finish(
+                json.dumps(
+                    {"error": "Tidal backend not available"}
+                )
+            )
+            return
+        artist_uri = self.get_arguments("artist_uri")
+        if len(artist_uri) == 0:
+            self.set_status(400)
+            self.finish("Error: needs artist_uri parameter")
+            return
+        artist_id = artist_uri[0].split(":")[-1]
+        try:
+            artist = backend.session.artist(artist_id)
+            ep_singles = artist.get_ep_singles()
+            result = [
+                {
+                    "name": album.name,
+                    "uri": f"tidal:album:{album.id}",
+                }
+                for album in ep_singles
+            ]
+        except Exception as e:
+            logger.warning(
+                f"Failed to get EP/Singles for artist"
+                f" {artist_id}: {e}"
+            )
+            result = []
+        self.finish(json.dumps(result))
+
+    def options(self):
+        self.set_status(204)
+        self.finish()
+
+
 class TracklistHistoryHandler(tornado.web.RequestHandler):
     def set_default_headers(self):
         self.set_header("Access-Control-Allow-Origin", "*")
