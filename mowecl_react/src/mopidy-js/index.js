@@ -1,7 +1,7 @@
 import { useSelector, useDispatch } from "react-redux";
 
 import equal from "fast-deep-equal";
-import { getWsAddress, match } from "@/utils";
+import { buildMopidyUrl, getWsAddress, match } from "@/utils";
 import MopidyClient from "./mopidy-js.js";
 
 import {
@@ -48,7 +48,8 @@ export const useWsClient = (endpoint, init_callback, selector) => {
       stopClient(new_client);
       dispatch({ type: "CONNECTION_ERROR", endpoint, error });
     }
-    init_callback(new_client, dispatch, setActivePanel);
+    const baseURL = buildMopidyUrl(mopidyHost, mopidyPort);
+    init_callback(new_client, dispatch, setActivePanel, baseURL);
     window[endpoint] = new_client;
     return () => stopClient(new_client);
   }, [mopidyHost, mopidyPort, dispatch, endpoint, init_callback]);

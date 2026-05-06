@@ -50,6 +50,7 @@ export const initMopidyEventsDispatcher = (
   mopidyCli,
   dispatch,
   setActivePanel,
+  baseURL,
 ) => {
   mopidyCli.on("event", console.log);
   mopidyCli.on("requests:count", (value) => {
@@ -65,9 +66,6 @@ export const initMopidyEventsDispatcher = (
       endpoint: "mopidy",
     });
     dispatch({ type: "UPDATE_CLIENT", endpoint: "mopidy", client: mopidyCli });
-    const mopidyURL = new URL(mopidyCli._settings.webSocketUrl);
-    const scheme = mopidyURL.protocol === "ws:" ? "http:" : "https:";
-    const baseURL = `${scheme}//${mopidyURL.host}`;
     useAppState.getState().fetchFavoriteArtists(baseURL);
     useAppState.getState().fetchTracklistHistory(baseURL);
     setActivePanel("library");
@@ -208,10 +206,6 @@ export const initMopidyEventsDispatcher = (
         if (response[track.uri].length > 0) {
           let url = response[track.uri][0].uri;
           // uri returned by mopidy local is relative, so we have to take mopidy url into account
-          const mopidyURL = new URL(mopidyCli._settings.webSocketUrl);
-          const baseHost = mopidyURL.host;
-          const scheme = mopidyURL.protocol === "ws:" ? "http" : "https";
-          const baseURL = `${scheme}:${baseHost}`;
           url = new URL(url, baseURL).href;
 
           notify(
@@ -240,10 +234,7 @@ export const initMopidyEventsDispatcher = (
       }),
     );
     fetchPlaybackInfo(mopidyCli, dispatch);
-    const mopidyURL = new URL(mopidyCli._settings.webSocketUrl);
-    const scheme = mopidyURL.protocol === "ws:" ? "http:" : "https:";
-    const tlhBaseURL = `${scheme}//${mopidyURL.host}`;
-    useAppState.getState().fetchTracklistHistory(tlhBaseURL);
+    useAppState.getState().fetchTracklistHistory(baseURL);
   });
 
   mopidyCli.on("event:optionsChanged", () =>

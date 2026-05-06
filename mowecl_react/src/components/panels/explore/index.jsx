@@ -138,6 +138,9 @@ export const ExplorePanel = () => {
 
   const [bioOpen, setBioOpen] = useState(true);
   const [mbOpen, setMbOpen] = useState(true);
+  const [albumsOpen, setAlbumsOpen] = useState(true);
+  const [epOpen, setEpOpen] = useState(false);
+  const [tracksOpen, setTracksOpen] = useState(true);
   const favoriteArtistIds = useAppState(
     (state) => state.favoriteArtistIds,
   );
@@ -210,11 +213,12 @@ export const ExplorePanel = () => {
     }
   }
 
-  const bioIcon = bioOpen ? (
-    <ExpandLessIcon style={{ verticalAlign: "text-bottom" }} />
-  ) : (
-    <ExpandMoreIcon style={{ verticalAlign: "text-bottom" }} />
-  );
+  const collapseIcon = (open) =>
+    open ? (
+      <ExpandLessIcon style={{ verticalAlign: "text-bottom" }} />
+    ) : (
+      <ExpandMoreIcon style={{ verticalAlign: "text-bottom" }} />
+    );
 
   const isTidal = explore.uri.startsWith("tidal:");
 
@@ -253,7 +257,7 @@ export const ExplorePanel = () => {
         <>
           <Typography variant="h4">
             LastFM data
-            <Button onClick={() => setBioOpen(!bioOpen)}>{bioIcon}</Button>{" "}
+            <Button onClick={() => setBioOpen(!bioOpen)}>{collapseIcon(bioOpen)}</Button>{" "}
           </Typography>
 
           {bioOpen && (
@@ -301,35 +305,50 @@ export const ExplorePanel = () => {
         <>
           <Typography variant="h4">
             MusicBrainz data
-            <Button onClick={() => setMbOpen(!mbOpen)}>{bioIcon}</Button>{" "}
+            <Button onClick={() => setMbOpen(!mbOpen)}>{collapseIcon(mbOpen)}</Button>{" "}
           </Typography>
 
           {mbOpen && <MusicBrainzInfoSection {...MBArtistData} />}
         </>
       )}
 
-      <Typography variant="h4">Albums</Typography>
-      <div style={{ display: "flex", flexWrap: "wrap", gap: 10 }}>
-        {albums.map((album) => (
-          <AlbumItem name={album.name} uri={album.uri} key={album.uri} />
-        ))}
-      </div>
+      <Typography variant="h4">
+        Albums
+        <Button onClick={() => setAlbumsOpen(!albumsOpen)}>{collapseIcon(albumsOpen)}</Button>
+      </Typography>
+      {albumsOpen && (
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 10 }}>
+          {albums.map((album) => (
+            <AlbumItem name={album.name} uri={album.uri} key={album.uri} />
+          ))}
+        </div>
+      )}
       {epItems.length > 0 && (
         <>
-          <Typography variant="h4">EPs & Singles</Typography>
-          <div style={{ display: "flex", flexWrap: "wrap", gap: 10 }}>
-            {epItems.map((ep) => (
-              <AlbumItem name={ep.name} uri={ep.uri} key={ep.uri} />
-            ))}
-          </div>
+          <Typography variant="h4">
+            EPs & Singles
+            <Button onClick={() => setEpOpen(!epOpen)}>{collapseIcon(epOpen)}</Button>
+          </Typography>
+          {epOpen && (
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 10 }}>
+              {epItems.map((ep) => (
+                <AlbumItem name={ep.name} uri={ep.uri} key={ep.uri} />
+              ))}
+            </div>
+          )}
         </>
       )}
-      <Typography variant="h4">Top tracks</Typography>
-      <div style={{ display: "flex", gap: 5, flexDirection: "column" }}>
-        {tracks.map((track) => (
-          <TrackItem name={track.name} uri={track.uri} key={track.uri} />
-        ))}
-      </div>
+      <Typography variant="h4">
+        Top tracks
+        <Button onClick={() => setTracksOpen(!tracksOpen)}>{collapseIcon(tracksOpen)}</Button>
+      </Typography>
+      {tracksOpen && (
+        <div style={{ display: "flex", gap: 5, flexDirection: "column" }}>
+          {tracks.map((track) => (
+            <TrackItem name={track.name} uri={track.uri} key={track.uri} />
+          ))}
+        </div>
+      )}
     </Paper>
   );
 };
