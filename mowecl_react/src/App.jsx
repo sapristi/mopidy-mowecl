@@ -87,7 +87,12 @@ const ErrorPanel = ({ mopidy_ws_url, mopidy_error }) => (
 );
 
 export const App = memo(
-  ({ activePanelName, mopidy_ws_url, mopidy_connected, mopidy_error }) => {
+  ({
+    activePanelName,
+    mopidy_ws_url,
+    mopidy_has_ever_connected,
+    mopidy_error,
+  }) => {
     const activePanel = match(activePanelName)
       .on("control", <SettingsPanel />)
       .on("help", <HelpPanel />)
@@ -99,10 +104,10 @@ export const App = memo(
       <AppContainer>
         <HFlex style={{ height: "100%", width: "100%" }}>
           <div style={{ width: "50%", height: "100%", overflow: "auto" }}>
-            {mopidy_connected ? activePanel : <SettingsPanel />}
+            {mopidy_has_ever_connected ? activePanel : <SettingsPanel />}
           </div>
           <div style={{ height: "100%", width: "50%" }}>
-            {mopidy_connected ? (
+            {mopidy_has_ever_connected ? (
               <TracklistPanel />
             ) : (
               <ErrorPanel
@@ -118,7 +123,12 @@ export const App = memo(
 );
 
 export const AppSmall = memo(
-  ({ activePanelName, mopidy_ws_url, mopidy_connected, mopidy_error }) => {
+  ({
+    activePanelName,
+    mopidy_ws_url,
+    mopidy_has_ever_connected,
+    mopidy_error,
+  }) => {
     const activePanel = match(activePanelName)
       .on("control", <SettingsPanel />)
       .on("help", <HelpPanel />)
@@ -129,7 +139,7 @@ export const AppSmall = memo(
 
     return (
       <AppContainer>
-        {mopidy_connected ? activePanel : <SettingsPanel />}
+        {mopidy_has_ever_connected ? activePanel : <SettingsPanel />}
       </AppContainer>
     );
   },

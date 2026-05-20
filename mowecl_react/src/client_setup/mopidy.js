@@ -52,6 +52,7 @@ export const initMopidyEventsDispatcher = (
   setActivePanel,
   baseURL,
 ) => {
+  let isFirstConnect = true;
   mopidyCli.on("event", console.log);
   mopidyCli.on("requests:count", (value) => {
     dispatch({
@@ -68,7 +69,10 @@ export const initMopidyEventsDispatcher = (
     dispatch({ type: "UPDATE_CLIENT", endpoint: "mopidy", client: mopidyCli });
     useAppState.getState().fetchFavoriteArtists(baseURL);
     useAppState.getState().fetchTracklistHistory(baseURL);
-    setActivePanel("library");
+    if (isFirstConnect) {
+      setActivePanel("library");
+      isFirstConnect = false;
+    }
     mopidyCli.tracklist.getTlTracks().then(async (tltracks) => {
       dispatch({
         type: "TRACKLIST_INITIALISE",

@@ -60,6 +60,7 @@ export const makeWsClientReducer =
   (
     state = {
       connected: false,
+      hasEverConnected: false,
       pendingRequestsNb: 0,
       error: null,
       client: new MopidyClient({ autoConnect: false }),
@@ -71,7 +72,11 @@ export const makeWsClientReducer =
         ...state,
         client: action.client,
       }))
-      .on(["CLIENT_CONNECTED", endpoint], () => ({ ...state, connected: true }))
+      .on(["CLIENT_CONNECTED", endpoint], () => ({
+        ...state,
+        connected: true,
+        hasEverConnected: true,
+      }))
       .on(["CLIENT_DISCONNECTED", endpoint], () => ({
         ...state,
         connected: false,

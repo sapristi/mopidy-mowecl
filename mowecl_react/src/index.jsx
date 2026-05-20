@@ -29,6 +29,9 @@ import { getWsAddress } from "./utils";
 
 const MopidyApp = () => {
   const mopidy_connected = useSelector((state) => state.mopidy.connected);
+  const mopidy_has_ever_connected = useSelector(
+    (state) => state.mopidy.hasEverConnected,
+  );
   const mopidy_error = useSelector((state) => state.mopidy.error);
   const activePanelName = useAppState((state) => state.activePanelName);
   console.log(activePanelName);
@@ -43,6 +46,7 @@ const MopidyApp = () => {
 
   const appProps = {
     mopidy_connected,
+    mopidy_has_ever_connected,
     mopidy_error,
     mopidy_ws_url,
     activePanelName,
