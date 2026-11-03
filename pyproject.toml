@@ -48,52 +48,32 @@ source-includes = ["mopidy_mowecl/static"]
 data = [{path = "mopidy_mowecl/static/**/*", relative-to = "."}]
 
 
-[project.optional-dependencies]
-lint = [
-    "black",
-    "check-manifest",
-    "flake8",
-    "flake8-bugbear",
-    "flake8-import-order",
-    "isort[pyproject]",
-]
-release = [
-    "twine",
-    "wheel",
-]
+[dependency-groups]
 test = [
     "pytest",
     "pytest-cov",
 ]
 dev = [
-    "black",
-    "check-manifest",
-    "flake8",
-    "flake8-bugbear",
-    "flake8-import-order",
-    "isort[pyproject]",
-    "pytest",
-    "pytest-cov",
-    "twine",
-    "wheel",
-    "setuptools>=75.8.0",
+    {include-group = "test"},
     "pre-commit>=4.1.0",
+    "ruff",
 ]
 
 [project.entry-points."mopidy.ext"]
 mowecl = "mopidy_mowecl:Extension"
 
 
-[tool.black]
-target-version = ["py39", "py310"]
+[tool.ruff]
 line-length = 80
+target-version = "py39"
+extend-exclude = ["mowecl_react", "mopidy_mowecl/static"]
 
-
-[tool.isort]
-multi_line_output = 3
-include_trailing_comma = true
-force_grid_wrap = 0
-use_parentheses = true
-line_length = 88
-known_tests = "tests"
-sections = "FUTURE,STDLIB,THIRDPARTY,FIRSTPARTY,TESTS,LOCALFOLDER"
+[tool.ruff.lint]
+select = [
+    "E", "W", "F",  # pycodestyle + pyflakes
+    "I",            # isort
+    "B",            # flake8-bugbear
+    "UP",           # pyupgrade
+    "SIM",          # flake8-simplify
+    "RUF",          # ruff-specific rules
+]
