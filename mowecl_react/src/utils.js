@@ -173,15 +173,25 @@ export const createCustomTheme = (
   });
 };
 
+// Browsers (e.g. Firefox) only allow requesting notification permission from
+// a user gesture, so we ask on the first click / key press.
+export const requestNotificationPermissionOnFirstInteraction = () => {
+  if (typeof Notification === "undefined") return;
+  if (Notification.permission !== "default") return;
+  const events = ["click", "keydown"];
+  const handler = () => {
+    events.forEach((e) => document.removeEventListener(e, handler, true));
+    if (Notification.permission === "default") {
+      Notification.requestPermission();
+    }
+  };
+  events.forEach((e) => document.addEventListener(e, handler, true));
+};
+
 export const notify = (text, body, tag, icon) => {
-  if (Notification.permission === "default") {
-    Notification.requestPermission().then(() => notify(text, body));
-    return;
-  }
-  if (Notification.permission === "denied") {
-    return;
-  }
-  const notif = new Notification(text, {
+  if (typeof Notification === "undefined") return;
+  if (Notification.permission !== "granted") return;
+  new Notification(text, {
     body,
     icon,
     tag,

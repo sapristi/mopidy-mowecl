@@ -25,7 +25,10 @@ import {
   bookmarksStateReducer,
 } from "./client_setup/bookmarks";
 import { useAppState } from "./hooks";
-import { getWsAddress } from "./utils";
+import {
+  getWsAddress,
+  requestNotificationPermissionOnFirstInteraction,
+} from "./utils";
 
 const MopidyApp = () => {
   const mopidy_connected = useSelector((state) => state.mopidy.connected);
@@ -78,6 +81,8 @@ const store = createStore(
 );
 
 window.$store = store;
+
+requestNotificationPermissionOnFirstInteraction();
 
 const rootElement = document.getElementById("root");
 const root = createRoot(rootElement);
