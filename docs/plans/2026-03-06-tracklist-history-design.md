@@ -126,13 +126,11 @@ In `__init__.py`, modify `setup()` to also register the frontend:
 def setup(self, registry):
     logger.info(f"Mowecl Version: {self.version}")
     from .tracklist_history import TracklistHistoryFrontend
+
     registry.add("frontend", TracklistHistoryFrontend)
     registry.add(
         "http:app",
-        {
-            "name": self.ext_name,
-            "factory": self.factory
-        },
+        {"name": self.ext_name, "factory": self.factory},
     )
 ```
 
@@ -182,9 +180,7 @@ class TracklistHistoryRestoreHandler(tornado.web.RequestHandler):
     def set_default_headers(self):
         self.set_header("Access-Control-Allow-Origin", "*")
         self.set_header("Access-Control-Allow-Headers", "x-requested-with")
-        self.set_header(
-            "Access-Control-Allow-Methods", "POST, OPTIONS"
-        )
+        self.set_header("Access-Control-Allow-Methods", "POST, OPTIONS")
 
     def initialize(self, history_actor):
         self.history_actor = history_actor
@@ -193,9 +189,9 @@ class TracklistHistoryRestoreHandler(tornado.web.RequestHandler):
         direction = self.get_argument("direction")
         if direction not in ("back", "forward"):
             self.set_status(400)
-            self.finish(json.dumps(
-                {"error": "direction must be 'back' or 'forward'"}
-            ))
+            self.finish(
+                json.dumps({"error": "direction must be 'back' or 'forward'"})
+            )
             return
         info = self.history_actor.restore(direction).get()
         self.finish(json.dumps(info))
@@ -225,17 +221,30 @@ from .web_api_extra import (
 In `factory()`, before the `return` statement, look up the actor and add routes:
 ```python
 from .tracklist_history import TracklistHistoryFrontend
-history_actor = pykka.ActorRegistry.get_by_class(
-    TracklistHistoryFrontend
-)[0].proxy()
+
+history_actor = pykka.ActorRegistry.get_by_class(TracklistHistoryFrontend)[
+    0
+].proxy()
 ```
 
 Add `import pykka` at top of `__init__.py`.
 
 Add routes to the returned list (before the catch-all):
 ```python
-('/tracklist_history', TracklistHistoryHandler, {'history_actor': history_actor}),
-('/tracklist_history_restore', TracklistHistoryRestoreHandler, {'history_actor': history_actor}),
+(
+    (
+        "/tracklist_history",
+        TracklistHistoryHandler,
+        {"history_actor": history_actor},
+    ),
+)
+(
+    (
+        "/tracklist_history_restore",
+        TracklistHistoryRestoreHandler,
+        {"history_actor": history_actor},
+    ),
+)
 ```
 
 **Step 4: Verify syntax**

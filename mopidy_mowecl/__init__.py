@@ -1,28 +1,28 @@
 import logging
 import pathlib
-import sysconfig
 import re
+import sysconfig
 
 try:
-    from importlib.metadata import version, PackageNotFoundError
+    from importlib.metadata import PackageNotFoundError, version
 except ImportError:
-    from importlib_metadata import version, PackageNotFoundError  # type: ignore
+    from importlib_metadata import PackageNotFoundError, version  # type: ignore
 
 from mopidy import config, ext
-
 from tornado.web import StaticFileHandler
+
 from .file_server import FileServer
+from .misc_utils import LastFMWrapper, MusicBrainzWrapper
 from .web_api_extra import (
     AddToPlaylistRequestHandler,
     GetLastFMData,
     GetMusicBrainzData,
+    TidalArtistEpSinglesHandler,
     TidalFavoriteArtistHandler,
     TidalFavoriteArtistsHandler,
-    TidalArtistEpSinglesHandler,
     TracklistHistoryHandler,
     TracklistHistoryRestoreHandler,
 )
-from .misc_utils import LastFMWrapper, MusicBrainzWrapper
 
 try:
     __version__ = version("Mopidy-Mowecl")
@@ -34,16 +34,16 @@ logger = logging.getLogger(__name__)
 
 
 class ConfigColor(config.String):
-
     def deserialize(self, value):
         value = super().deserialize(value)
         if not re.fullmatch("#[0-9A-Fa-f]{6}", value):
-            raise ValueError(f"Colors must be in the #AAAAAA format; {value} is not")
+            raise ValueError(
+                f"Colors must be in the #AAAAAA format; {value} is not"
+            )
         return value
 
 
 class Extension(ext.Extension):
-
     dist_name = "Mopidy-Mowecl"
     ext_name = "mowecl"
     version = __version__
@@ -53,7 +53,9 @@ class Extension(ext.Extension):
 
     def get_config_schema(self):
         schema = super().get_config_schema()
-        schema["theme_type"] = config.String(optional=True, choices=["light", "dark"])
+        schema["theme_type"] = config.String(
+            optional=True, choices=["light", "dark"]
+        )
         schema["background_color"] = ConfigColor(optional=True)
         schema["text_color"] = ConfigColor(optional=True)
         schema["primary_color"] = ConfigColor(optional=True)
@@ -79,40 +81,68 @@ class Extension(ext.Extension):
     def setup(self, registry):
         logger.info(f"Mowecl Version: {self.version}")
         from .tracklist_history import TracklistHistoryFrontend
+
         registry.add("frontend", TracklistHistoryFrontend)
         registry.add(
             "http:app",
-            {
-                "name": self.ext_name,
-                "factory": self.factory
-            },
+            {"name": self.ext_name, "factory": self.factory},
         )
 
     def factory(self, config, core):
         if config["mowecl"]["dev_static_path"]:
             root = pathlib.Path(config["mowecl"]["dev_static_path"])
         else:
-            root = pathlib.Path(sysconfig.get_path("data")) / "mopidy_mowecl" / "static"
+            root = (
+                pathlib.Path(sysconfig.get_path("data"))
+                / "mopidy_mowecl"
+                / "static"
+            )
 
         logger.info(f"Serving files from '{root}'")
         server_params = {
-            "path": root, "config": config, "mowecl_version": self.version
+            "path": root,
+            "config": config,
+            "mowecl_version": self.version,
         }
         last_fm_wrapper = LastFMWrapper(
             api_key=config["mowecl"]["lastfm_api_key"],
-            api_secret=config["mowecl"]["lastfm_api_secret"]
+            api_secret=config["mowecl"]["lastfm_api_secret"],
         )
         musicbrainz_wrapper = MusicBrainzWrapper()
 
         return [
-            ('/add_to_playlist', AddToPlaylistRequestHandler, {'config': config, 'core': core}),
-            ('/tidal_favorite_artist', TidalFavoriteArtistHandler, {'config': config, 'core': core}),
-            ('/tidal_favorite_artists', TidalFavoriteArtistsHandler, {'config': config, 'core': core}),
-            ('/tidal_artist_ep_singles', TidalArtistEpSinglesHandler, {'config': config, 'core': core}),
-            ('/get_lastfm_artist_data', GetLastFMData, {'last_fm_wrapper': last_fm_wrapper}),
-            ('/get_musicbrainz_artist_data', GetMusicBrainzData, {'musicbrainz_wrapper': musicbrainz_wrapper}),
-            ('/tracklist_history', TracklistHistoryHandler, {}),
-            ('/tracklist_history_restore', TracklistHistoryRestoreHandler, {}),
+            (
+                "/add_to_playlist",
+                AddToPlaylistRequestHandler,
+                {"config": config, "core": core},
+            ),
+            (
+                "/tidal_favorite_artist",
+                TidalFavoriteArtistHandler,
+                {"config": config, "core": core},
+            ),
+            (
+                "/tidal_favorite_artists",
+                TidalFavoriteArtistsHandler,
+                {"config": config, "core": core},
+            ),
+            (
+                "/tidal_artist_ep_singles",
+                TidalArtistEpSinglesHandler,
+                {"config": config, "core": core},
+            ),
+            (
+                "/get_lastfm_artist_data",
+                GetLastFMData,
+                {"last_fm_wrapper": last_fm_wrapper},
+            ),
+            (
+                "/get_musicbrainz_artist_data",
+                GetMusicBrainzData,
+                {"musicbrainz_wrapper": musicbrainz_wrapper},
+            ),
+            ("/tracklist_history", TracklistHistoryHandler, {}),
+            ("/tracklist_history_restore", TracklistHistoryRestoreHandler, {}),
             (r"/(index.html)", server_params),
             (r"/", FileServer, server_params),
             (r"/(.*)", StaticFileHandler, {"path": root}),

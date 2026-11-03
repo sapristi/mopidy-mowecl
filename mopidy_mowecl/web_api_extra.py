@@ -1,8 +1,8 @@
-import logging
 import json
+import logging
+
 import pykka
 import tornado.web
-import musicbrainzngs
 
 logger = logging.getLogger(__name__)
 
@@ -190,21 +190,11 @@ class TidalFavoriteArtistsHandler(tornado.web.RequestHandler):
         backend = self.get_tidal_backend()
         if backend is None:
             self.set_status(503)
-            self.finish(
-                json.dumps(
-                    {"error": "Tidal backend not available"}
-                )
-            )
+            self.finish(json.dumps({"error": "Tidal backend not available"}))
             return
         favorites = backend.session.user.favorites
-        fav_artist_ids = [
-            str(a.id) for a in favorites.artists()
-        ]
-        self.finish(
-            json.dumps(
-                {"favorite_artist_ids": fav_artist_ids}
-            )
-        )
+        fav_artist_ids = [str(a.id) for a in favorites.artists()]
+        self.finish(json.dumps({"favorite_artist_ids": fav_artist_ids}))
 
     def options(self):
         self.set_status(204)
@@ -214,12 +204,8 @@ class TidalFavoriteArtistsHandler(tornado.web.RequestHandler):
 class TidalArtistEpSinglesHandler(tornado.web.RequestHandler):
     def set_default_headers(self):
         self.set_header("Access-Control-Allow-Origin", "*")
-        self.set_header(
-            "Access-Control-Allow-Headers", "x-requested-with"
-        )
-        self.set_header(
-            "Access-Control-Allow-Methods", "GET, OPTIONS"
-        )
+        self.set_header("Access-Control-Allow-Headers", "x-requested-with")
+        self.set_header("Access-Control-Allow-Methods", "GET, OPTIONS")
 
     def initialize(self, config, core):
         self.config = config
@@ -242,11 +228,7 @@ class TidalArtistEpSinglesHandler(tornado.web.RequestHandler):
         backend = self.get_tidal_backend()
         if backend is None:
             self.set_status(503)
-            self.finish(
-                json.dumps(
-                    {"error": "Tidal backend not available"}
-                )
-            )
+            self.finish(json.dumps({"error": "Tidal backend not available"}))
             return
         artist_uri = self.get_arguments("artist_uri")
         if len(artist_uri) == 0:
@@ -266,8 +248,7 @@ class TidalArtistEpSinglesHandler(tornado.web.RequestHandler):
             ]
         except Exception as e:
             logger.warning(
-                f"Failed to get EP/Singles for artist"
-                f" {artist_id}: {e}"
+                f"Failed to get EP/Singles for artist {artist_id}: {e}"
             )
             result = []
         self.finish(json.dumps(result))
@@ -280,18 +261,15 @@ class TidalArtistEpSinglesHandler(tornado.web.RequestHandler):
 class TracklistHistoryHandler(tornado.web.RequestHandler):
     def set_default_headers(self):
         self.set_header("Access-Control-Allow-Origin", "*")
-        self.set_header(
-            "Access-Control-Allow-Headers", "x-requested-with"
-        )
-        self.set_header(
-            "Access-Control-Allow-Methods", "GET, OPTIONS"
-        )
+        self.set_header("Access-Control-Allow-Headers", "x-requested-with")
+        self.set_header("Access-Control-Allow-Methods", "GET, OPTIONS")
 
     def _get_history_actor(self):
         from .tracklist_history import TracklistHistoryFrontend
-        return pykka.ActorRegistry.get_by_class(
-            TracklistHistoryFrontend
-        )[0].proxy()
+
+        return pykka.ActorRegistry.get_by_class(TracklistHistoryFrontend)[
+            0
+        ].proxy()
 
     def get(self):
         info = self._get_history_actor().get_info().get()
@@ -305,30 +283,22 @@ class TracklistHistoryHandler(tornado.web.RequestHandler):
 class TracklistHistoryRestoreHandler(tornado.web.RequestHandler):
     def set_default_headers(self):
         self.set_header("Access-Control-Allow-Origin", "*")
-        self.set_header(
-            "Access-Control-Allow-Headers", "x-requested-with"
-        )
-        self.set_header(
-            "Access-Control-Allow-Methods", "POST, OPTIONS"
-        )
+        self.set_header("Access-Control-Allow-Headers", "x-requested-with")
+        self.set_header("Access-Control-Allow-Methods", "POST, OPTIONS")
 
     def _get_history_actor(self):
         from .tracklist_history import TracklistHistoryFrontend
-        return pykka.ActorRegistry.get_by_class(
-            TracklistHistoryFrontend
-        )[0].proxy()
+
+        return pykka.ActorRegistry.get_by_class(TracklistHistoryFrontend)[
+            0
+        ].proxy()
 
     def post(self):
         direction = self.get_argument("direction")
         if direction not in ("back", "forward"):
             self.set_status(400)
             self.finish(
-                json.dumps(
-                    {
-                        "error": "direction must be"
-                        " 'back' or 'forward'"
-                    }
-                )
+                json.dumps({"error": "direction must be 'back' or 'forward'"})
             )
             return
         info = self._get_history_actor().restore(direction).get()

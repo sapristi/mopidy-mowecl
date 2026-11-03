@@ -1,6 +1,7 @@
-import tornado.web
 import logging
 import urllib
+
+import tornado.web
 
 logger = logging.getLogger(__name__)
 
@@ -8,6 +9,7 @@ logger = logging.getLogger(__name__)
 def sanitize_config(config):
     def sanitize_param(p):
         return p if p is not None else ""
+
     return {k: sanitize_param(v) for k, v in config.items()}
 
 
@@ -23,7 +25,7 @@ class FileServer(tornado.web.RequestHandler):
         template_params = {
             **config_sanitized,
             "static_settings_enabled": "true",
-            "mowecl_version": self.mowecl_version
+            "mowecl_version": self.mowecl_version,
         }
         return self.render("index.html", title="Mowecl", **template_params)
 

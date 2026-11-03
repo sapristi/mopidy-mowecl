@@ -51,10 +51,7 @@ class TracklistHistoryFrontend(pykka.ThreadingActor, core.CoreListener):
     def restore(self, direction):
         if direction == "back" and self._cursor > 0:
             self._cursor -= 1
-        elif (
-            direction == "forward"
-            and self._cursor < len(self._history) - 1
-        ):
+        elif direction == "forward" and self._cursor < len(self._history) - 1:
             self._cursor += 1
         else:
             return self._get_info()

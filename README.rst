@@ -14,7 +14,7 @@ Presentation
 - Dual panel library / tracklist
 - Library / playlists / search results displayed as a single tree view
 - Reorder tracklist with drag and drop
-- Uses the bookmarks_ extension 
+- Uses the bookmarks_ extension
 - Configurable hotkeys for playback and volume control
 - Basic color theming
 - Both global and per-client configuration
@@ -63,7 +63,7 @@ Here is are the available settings (and default values) of Mowecl in the Mopidy 
     disable_dnd = false
     small_screen = false
 
-    # theme config 
+    # theme config
     ## light or dark
     theme_type = light
     background_color = #fdf6e3
@@ -73,7 +73,7 @@ Here is are the available settings (and default values) of Mowecl in the Mopidy 
     # Hotkeys, use web config to find the right parameters
     key_play_pause = space+Control
     key_next_track = ArrowRight
-    key_previous_track = 
+    key_previous_track =
     key_rewind_track = ArrowLeft
     key_volume_up = ArrowUp
     key_volume_down = ArrowDown
