@@ -1,0 +1,38 @@
+name: Test backend
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+jobs:
+  test:
+    name: Test against ${{ matrix.toxenv }}
+    runs-on: ubuntu-latest
+    # Debian trixie ships Python 3.13 (required by Mopidy 4) with
+    # GStreamer / PyGObject system packages, used via tox sitepackages.
+    container: debian:trixie
+    strategy:
+      fail-fast: false
+      matrix:
+        toxenv: [mopidy3, mopidy4]
+    steps:
+      - name: Install system dependencies
+        run: |
+          apt-get update
+          apt-get install -y --no-install-recommends \
+            git ca-certificates tox python3-venv python3-gi \
+            gir1.2-gstreamer-1.0 gir1.2-gst-plugins-base-1.0 \
+            gstreamer1.0-plugins-base gstreamer1.0-plugins-good
+
+      - uses: actions/checkout@v4
+        with:
+          # full history so pdm-backend can derive the version from tags
+          fetch-depth: 0
+
+      - name: Mark workspace as safe for git
+        run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
+
+      - name: Run tests
+        run: tox -e ${{ matrix.toxenv }}

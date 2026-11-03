@@ -1,8 +1,13 @@
 import logging
 import pathlib
-import pkg_resources
 import sysconfig
 import re
+
+try:
+    from importlib.metadata import version, PackageNotFoundError
+except ImportError:
+    from importlib_metadata import version, PackageNotFoundError  # type: ignore
+
 from mopidy import config, ext
 
 from tornado.web import StaticFileHandler
@@ -19,7 +24,11 @@ from .web_api_extra import (
 )
 from .misc_utils import LastFMWrapper, MusicBrainzWrapper
 
-__version__ = pkg_resources.get_distribution("Mopidy-Mowecl").version
+try:
+    __version__ = version("Mopidy-Mowecl")
+except PackageNotFoundError:
+    # Package not installed (e.g. running from source without install).
+    __version__ = "0.0.0"
 
 logger = logging.getLogger(__name__)
 
