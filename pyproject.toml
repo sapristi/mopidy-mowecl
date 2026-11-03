@@ -25,6 +25,9 @@ dependencies = [
 [tool.pdm.version]
 source = "scm"
 
+[tool.uv.sources]
+mopidy-bookmarks = { path = "../mopidy-bookmarks", editable = true }
+
 [project.urls]
 Homepage = "https://github.com/sapristi/mopidy-mowecl"
 

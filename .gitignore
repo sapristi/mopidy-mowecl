@@ -18,3 +18,4 @@ mowecl_react/dist
 pdm.lock
 .projectile
 .env
+/uv.lock
