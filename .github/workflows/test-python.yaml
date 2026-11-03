@@ -26,7 +26,7 @@ jobs:
             gir1.2-gstreamer-1.0 gir1.2-gst-plugins-base-1.0 \
             gstreamer1.0-plugins-base gstreamer1.0-plugins-good
 
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           # full history so pdm-backend can derive the version from tags
           fetch-depth: 0
