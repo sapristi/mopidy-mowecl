@@ -57,7 +57,7 @@ export const useWsClient = (endpoint, init_callback, selector) => {
     new_client.on("websocket:close", (e) => {
       const now = Date.now();
       const secs = (t) => (t === null ? null : ((now - t) / 1000).toFixed(1));
-      log.warn(`close at ${new Date().toISOString()}`, {
+      log.info(`close at ${new Date().toISOString()}`, {
         code: e?.code,
         reason: e?.reason,
         wasClean: e?.wasClean,
