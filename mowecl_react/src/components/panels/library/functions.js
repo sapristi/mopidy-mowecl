@@ -1,3 +1,7 @@
+import { getLogger } from "@/logger";
+
+const log = getLogger("library");
+
 export const isLeaf = (node) =>
   node.type === "track" || node.__model__ == "Track";
 
@@ -9,7 +13,7 @@ const lookupAndSet = (mopidy, dispatch, path, items) => {
   mopidy.library.lookup({ uris: urisToLookUp }).then((tracksByUri) => {
     // some uris do not resolve to any track, e.g. some items in tidal playlists
     // that are no longer available
-    console.log(items, urisToLookUp, tracksByUri);
+    log.debug("lookup", { items, urisToLookUp, tracksByUri });
     const fullItems = items.map((item) => ({
       ...item,
       ...(shouldLookup(item.uri) ? tracksByUri[item.uri][0] || {} : {}),

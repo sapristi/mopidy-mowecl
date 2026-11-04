@@ -16,6 +16,9 @@ import Popover from "@mui/material/Popover";
 import SaveIcon from "@mui/icons-material/Save";
 import { Input } from "@/components/molecules";
 import { useConfirmDialogStore } from "@/components/molecules/confirmDialog";
+import { getLogger } from "@/logger";
+
+const log = getLogger("tracklist");
 
 export const defaultMenuState = {
   uri_scheme: null,
@@ -79,7 +82,7 @@ export const SaveMenu = () => {
         },
       });
     } else {
-      console.log("Creating", name, menuState.uri_scheme);
+      log.debug("Creating playlist", name, menuState.uri_scheme);
       createPlaylist(mopidy, name, tracklist, menuState.uri_scheme).then(
         (playlist) => menuState.create_callback(playlist),
       );

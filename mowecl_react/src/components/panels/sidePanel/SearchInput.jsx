@@ -16,6 +16,9 @@ import Select from "@mui/material/Select";
 import { getSearchUris } from "@/utils";
 import { handleSearchResults } from "./functions";
 import { useAppState } from "@/hooks";
+import { getLogger } from "@/logger";
+
+const log = getLogger("search");
 
 export const SearchInput = connect((state) => ({
   mopidyCli: state.mopidy.client,
@@ -45,7 +48,7 @@ export const SearchInput = connect((state) => ({
     mopidyCli.library
       .search({ query: { any: [input] }, ...uri })
       .then((raw_search_results) => {
-        console.log("search", raw_search_results);
+        log.debug("search results", raw_search_results);
         handleSearchResults(
           dispatch,
           raw_search_results,

@@ -13,6 +13,7 @@ import {
   useState,
 } from "react";
 import { useAppState } from "@/hooks.js";
+import { getLogger } from "@/logger";
 
 const stopClient = (client) => {
   client.removeAllListeners();
@@ -33,13 +34,13 @@ export const useWsClient = (endpoint, init_callback, selector) => {
 
   useEffect(() => {
     dispatch({ type: "CLIENT_DISCONNECTED", endpoint });
-    console.log(
-      "Connecting to ",
-      getWsAddress(mopidyHost, mopidyPort, endpoint),
-    );
+    const log = getLogger(`ws:${endpoint}`);
+    const wsAddress = getWsAddress(mopidyHost, mopidyPort, endpoint);
+    log.info("Connecting to", wsAddress);
     const new_client = new MopidyClient({
-      webSocketUrl: getWsAddress(mopidyHost, mopidyPort, endpoint),
+      webSocketUrl: wsAddress,
       autoConnect: false,
+      console: log,
     });
     // Diagnostics: log websocket close events, with time since the connection
     // opened and since the last message, to identify idle timeouts.
@@ -48,7 +49,7 @@ export const useWsClient = (endpoint, init_callback, selector) => {
     new_client.on("websocket:open", () => {
       openedAt = Date.now();
       lastMessageAt = openedAt;
-      console.info(`[ws:${endpoint}] open at ${new Date().toISOString()}`);
+      log.info(`open at ${new Date().toISOString()}`);
     });
     new_client.on("websocket:incomingMessage", () => {
       lastMessageAt = Date.now();
@@ -56,7 +57,7 @@ export const useWsClient = (endpoint, init_callback, selector) => {
     new_client.on("websocket:close", (e) => {
       const now = Date.now();
       const secs = (t) => (t === null ? null : ((now - t) / 1000).toFixed(1));
-      console.warn(`[ws:${endpoint}] close at ${new Date().toISOString()}`, {
+      log.warn(`close at ${new Date().toISOString()}`, {
         code: e?.code,
         reason: e?.reason,
         wasClean: e?.wasClean,
@@ -69,7 +70,7 @@ export const useWsClient = (endpoint, init_callback, selector) => {
     try {
       new_client.connect();
     } catch (error) {
-      console.log("Error when initializing mopidy client", error);
+      log.error("Error when initializing mopidy client", error);
       stopClient(new_client);
       dispatch({ type: "CONNECTION_ERROR", endpoint, error });
     }

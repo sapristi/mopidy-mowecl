@@ -21,6 +21,9 @@ import { HotKeysProvider } from "@/components/molecules/HotKeysProvider";
 import { ConfirmDialog } from "@/components/molecules/confirmDialog";
 import { match, createCustomTheme } from "@/utils";
 import { useSelector } from "react-redux";
+import { getLogger } from "@/logger";
+
+const log = getLogger("app");
 
 let AppContainer = memo(({ children }) => {
   const colors = useSelector((state) => state.settings.persistant.colors);
@@ -98,7 +101,7 @@ export const App = memo(
       .on("help", <HelpPanel />)
       .on("library", <LibraryPanel />)
       .on("explore", <ExplorePanel />)
-      .otherwise(() => console.error("Bad active panel name", activePanelName));
+      .otherwise(() => log.error("Bad active panel name", activePanelName));
 
     return (
       <AppContainer>
@@ -135,7 +138,7 @@ export const AppSmall = memo(
       .on("library", <LibraryPanel />)
       .on("tracklist", <TracklistPanel />)
       .on("explore", <ExplorePanel />)
-      .otherwise(() => console.error("Bad active panel name", activePanelName));
+      .otherwise(() => log.error("Bad active panel name", activePanelName));
 
     return (
       <AppContainer>

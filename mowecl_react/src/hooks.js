@@ -9,6 +9,9 @@ import {
 import { useSelector } from "react-redux";
 import { create } from "zustand";
 import { buildMopidyUrl } from "@/utils";
+import { getLogger } from "@/logger";
+
+const log = getLogger("trace-update");
 
 export function useTraceUpdate(props) {
   const prev = useRef(props);
@@ -20,7 +23,7 @@ export function useTraceUpdate(props) {
       return ps;
     }, {});
     if (Object.keys(changedProps).length > 0) {
-      console.log("Changed props:", changedProps);
+      log.debug("Changed props:", changedProps);
     }
     prev.current = props;
   });

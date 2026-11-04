@@ -29,10 +29,17 @@ export default [
       ...react.configs['jsx-runtime'].rules,
       ...reactHooks.configs.recommended.rules,
       'react/jsx-no-target-blank': 'off',
+      // Use getLogger from src/logger.js instead.
+      'no-console': 'error',
       'react-refresh/only-export-components': [
         'warn',
         { allowConstantExport: true },
       ],
     },
+  },
+  {
+    // The logger itself, the vendored Mopidy.js console fallback, and tests.
+    files: ['src/logger.js', 'src/mopidy-js/mopidy-js.js', '**/*.test.js'],
+    rules: { 'no-console': 'off' },
   },
 ]

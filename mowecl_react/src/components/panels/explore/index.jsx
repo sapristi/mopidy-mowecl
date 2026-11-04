@@ -26,6 +26,9 @@ import {
 import { useSelector } from "react-redux";
 import { useShallow } from "zustand/react/shallow";
 import { AddToTLButton, PlayNowButton } from "../library/buttons";
+import { getLogger } from "@/logger";
+
+const log = getLogger("explore");
 
 const AlbumItem = ({ name, uri }) => {
   const imageUrl = useMopidyImage(uri);
@@ -197,7 +200,6 @@ export const ExplorePanel = () => {
 
   // Not fetching artist image : too often missing anyway
   // const imageUrl = useMopidyImage(exploreUri)
-  console.log("Explore", explore, items);
   if (!explore) {
     return <Paper>Nothing here</Paper>;
   }
@@ -209,7 +211,7 @@ export const ExplorePanel = () => {
     } else if (item.type == "track") {
       tracks.push(item);
     } else {
-      console.warn("Unhandled type", item);
+      log.warn("Unhandled type", item);
     }
   }
 

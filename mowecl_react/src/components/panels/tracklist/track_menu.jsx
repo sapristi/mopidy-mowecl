@@ -15,7 +15,6 @@ const AddToPlaylistMenu = ({ item, mopidy, onParentClose, ...props }) => {
   const [playlists, setPlaylists] = useState(() => []);
   useEffect(() => {
     //TODO: cache playlists (or re-use from lib)
-    console.log("Loading playlists");
     mopidy.playlists.asList().then((playlists) => {
       setPlaylists(
         playlists.filter((pl_item) => pl_item.uri.startsWith("tidal:")),

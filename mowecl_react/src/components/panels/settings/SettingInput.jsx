@@ -99,7 +99,6 @@ const KeySettingInput = ({ schema, value, handleChange }) => {
   const [dialogOpen, setDialogOpen] = useState(() => false);
 
   const onClose = (action) => {
-    console.log("Closing with", action);
     if (action) handleChange({ target: { value: action.keys } });
     setDialogOpen(false);
   };

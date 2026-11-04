@@ -10,6 +10,14 @@ import {
 import Typography from "@mui/material/Typography";
 import Color from "color";
 import { match, ObjectComp } from "@/utils";
+import {
+  getLogger,
+  setLogLevel,
+  LOG_LEVELS,
+  DEFAULT_LOG_LEVEL,
+} from "@/logger";
+
+const log = getLogger("settings");
 
 const validate_hex_color = (str) => {
   if (!str || str.length !== 7) return false;
@@ -159,6 +167,14 @@ export const settingsSchema = {
       validate: (v) =>
         nonNull([parseBoolean(v), staticSettings.generic.small_screen]),
     },
+    log_level: {
+      type: "param",
+      inputType: "select",
+      choices: LOG_LEVELS,
+      name: "Log level",
+      help: "Minimum level of messages logged to the browser console (and captured for export, in production builds). Use 'debug' when reporting a problem.",
+      validate: (v) => (LOG_LEVELS.includes(v) ? v : DEFAULT_LOG_LEVEL),
+    },
   },
   colors: {
     name: "Theme colors",
@@ -260,6 +276,7 @@ export const load = (settings) => load_rec(settingsSchema, settings);
 
 const saved_settings = JSON.parse(localStorage.getItem("settings")) || {};
 const initialSettings = load(saved_settings);
+setLogLevel(initialSettings.generic.log_level);
 
 const defaultSettings = {
   active_panel: "library",
@@ -271,6 +288,7 @@ export const settingsReducer = (state = defaultSettings, action) =>
   match(action.type)
     .on("CLEAR_SETTINGS", () => {
       localStorage.removeItem("settings");
+      setLogLevel(DEFAULT_LOG_LEVEL);
       return {
         ...state,
         persistant: staticSettings,
@@ -278,7 +296,8 @@ export const settingsReducer = (state = defaultSettings, action) =>
     })
     .on("COMMIT_SETTINGS", () => {
       const newSettings = load(action.data);
-      console.log("Commit ", newSettings);
+      setLogLevel(newSettings.generic.log_level);
+      log.debug("Commit", newSettings);
       localStorage.setItem("settings", JSON.stringify(newSettings));
       // console.log("Set", state.persistant)
       return { ...state, persistant: newSettings };

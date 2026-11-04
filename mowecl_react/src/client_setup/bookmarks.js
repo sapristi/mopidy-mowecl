@@ -1,7 +1,10 @@
 import { match } from "@/utils";
+import { getLogger } from "@/logger";
+
+const log = getLogger("bookmarks-events");
 
 export const initBookmarksEventsDispatcher = (bookmarksCli, dispatch) => {
-  bookmarksCli.on("event", console.log);
+  bookmarksCli.on("event", (...args) => log.debug("event", ...args));
 
   bookmarksCli.on("requests:count", (value) => {
     dispatch({

@@ -37,7 +37,6 @@ const MopidyApp = () => {
   );
   const mopidy_error = useSelector((state) => state.mopidy.error);
   const activePanelName = useAppState((state) => state.activePanelName);
-  console.log(activePanelName);
 
   const mopidyHost = useSelector(
     (store) => store.settings.persistant.mopidy_host,

@@ -1,6 +1,9 @@
 import { notify, obj_reducer } from "@/utils";
 import { updateOrInsert } from "@/reducers/library/aux_functions";
 import { useAppState } from "@/hooks";
+import { getLogger } from "@/logger";
+
+const log = getLogger("mopidy-events");
 
 const fetchPlaybackInfo = async (mopidyCli, dispatch) => {
   const to_dispatch = [
@@ -53,7 +56,7 @@ export const initMopidyEventsDispatcher = (
   baseURL,
 ) => {
   let isFirstConnect = true;
-  mopidyCli.on("event", console.log);
+  mopidyCli.on("event", (...args) => log.debug("event", ...args));
   mopidyCli.on("requests:count", (value) => {
     dispatch({
       type: "PENDING_REQUESTS_COUNT",
@@ -201,12 +204,10 @@ export const initMopidyEventsDispatcher = (
       target: "tltrack",
       data: data.tl_track,
     });
-    console.log(data);
 
     const track = data.tl_track.track;
     mopidyCli.library.getImages({ uris: [track.uri] }).then((response) => {
       if (response) {
-        console.log(response);
         if (response[track.uri].length > 0) {
           let url = response[track.uri][0].uri;
           // uri returned by mopidy local is relative, so we have to take mopidy url into account
@@ -219,7 +220,6 @@ export const initMopidyEventsDispatcher = (
             url,
           );
         } else {
-          console.log("NOTIF", track);
           notify(
             track.name,
             `${(track?.artists || [])[0]?.name} - ${track?.album?.name}`,

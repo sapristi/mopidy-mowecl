@@ -22,6 +22,7 @@ import { HFlex, VFlex } from "@/components/atoms";
 import { SettingInput } from "./SettingInput";
 
 import { settingsSchema } from "@/reducers/settings";
+import { exportLogs } from "@/logger";
 
 const SettingsGroup = ({ schema, group, path, setInGroup }) => {
   // console.log("Settings group", group)
@@ -134,6 +135,7 @@ export const SettingsPanel = () => {
           <ButtonGroup style={{ padding: "10px" }}>
             <Button onClick={handleCommit}>Commit</Button>
             <Button onClick={handleClear}>Restore defaults</Button>
+            <Button onClick={exportLogs}>Export logs</Button>
           </ButtonGroup>
         </Paper>
       </VFlex>

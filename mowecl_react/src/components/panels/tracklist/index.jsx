@@ -46,6 +46,9 @@ import { TracklistItemMenu } from "@/components/panels/tracklist/track_menu";
 import { GIcon } from "@/components/molecules";
 import { useMenuAnchor, useAppState, useMopidyURL } from "@/hooks";
 import { TrackWithDuration } from "@/components/molecules/track";
+import { getLogger } from "@/logger";
+
+const log = getLogger("tracklist");
 
 const tracklistSwap = (e, mopidy) => {
   // console.log(e)
@@ -274,7 +277,7 @@ const TracklistInfoPanel = () => {
                 anchorEl: anchorElRef.current,
                 previousItems: "bookmarks",
                 create_callback: (bookmark) => {
-                  console.log("Start sync", bookmark);
+                  log.debug("Start sync", bookmark);
                   bookmarksCli.startSync({ uri: bookmark.uri });
                 },
               })
