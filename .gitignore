@@ -11,11 +11,10 @@
 mowecl_react/node_modules
 mowecl_react/build
 mowecl_react/dist
+/mopidy_mowecl/static/
 .tern-port
 .token
 
-.pdm-python
-pdm.lock
 .projectile
 .env
 /uv.lock

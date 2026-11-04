@@ -12,7 +12,7 @@ pnpm build
 cd ..
 
 # Build Python wheel
-pdm build
+uv build
 
 # Find the wheel that was just built
 WHEEL=$(ls -t dist/*.whl | head -1)

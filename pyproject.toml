@@ -24,9 +24,6 @@ dependencies = [
     "requests>=2.0",
 ]
 
-[tool.pdm.version]
-source = "scm"
-
 [tool.uv.sources]
 mopidy-bookmarks = { path = "../mopidy-bookmarks", editable = true }
 
@@ -34,19 +31,22 @@ mopidy-bookmarks = { path = "../mopidy-bookmarks", editable = true }
 Homepage = "https://github.com/sapristi/mopidy-mowecl"
 
 [build-system]
-requires = ["pdm-backend"]
-build-backend = "pdm.backend"
+requires = ["hatchling", "hatch-vcs"]
+build-backend = "hatchling.build"
 
-[tool.pdm]
-distribution = true
+[tool.hatch.version]
+source = "vcs"
 
-[tool.pdm.build]
-includes = ["mopidy_mowecl"]
-source-includes = ["mopidy_mowecl/static"]
+# mopidy_mowecl/static is the (git-ignored) frontend build output
+# (see mowecl_react/vite.config.js), shipped as package data.
+[tool.hatch.build]
+artifacts = ["/mopidy_mowecl/static"]
 
-[tool.pdm.build.wheel-data]
-data = [{path = "mopidy_mowecl/static/**/*", relative-to = "."}]
+[tool.hatch.build.targets.sdist]
+include = ["/mopidy_mowecl", "/tests", "/README.rst", "/LICENSE"]
 
+[tool.hatch.build.targets.wheel]
+packages = ["mopidy_mowecl"]
 
 [dependency-groups]
 test = [
@@ -57,6 +57,8 @@ dev = [
     {include-group = "test"},
     "pre-commit>=4.1.0",
     "ruff",
+    # Mopidy 3 (resolved on Python < 3.13) imports pkg_resources
+    "setuptools<81; python_version < '3.13'",
 ]
 
 [project.entry-points."mopidy.ext"]

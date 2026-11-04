@@ -49,3 +49,18 @@ def test_factory_returns_routes(tmp_path):
     paths = [route[0] for route in routes]
     assert "/tracklist_history" in paths
     assert r"/(.*)" in paths
+
+
+def test_factory_serves_packaged_static_files_by_default():
+    import pathlib
+
+    config = {
+        "mowecl": {
+            "dev_static_path": None,
+            "lastfm_api_key": None,
+            "lastfm_api_secret": None,
+        }
+    }
+    routes = Extension().factory(config, core=None)
+    static_root = dict((r[0], r[-1]) for r in routes)[r"/(.*)"]["path"]
+    assert static_root == pathlib.Path(mopidy_mowecl.__file__).parent / "static"

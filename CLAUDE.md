@@ -20,20 +20,23 @@ pnpm lint           # run eslint
 
 ### Python package (from repo root)
 ```bash
-pdm build           # build the Python wheel (includes frontend static files)
+uv sync            # create .venv with dev deps (mopidy-bookmarks from ../mopidy-bookmarks)
+uv build           # build sdist + wheel (includes frontend static files)
 ```
 
 ### Full build sequence
 ```bash
-cd mowecl_react && pnpm install && pnpm build && cd .. && pdm build
+cd mowecl_react && pnpm install && pnpm build && cd .. && uv build
 ```
 
 ### Linting/Testing (Python)
 ```bash
-python -m black --check .          # format check
-python -m flake8 --show-source     # lint
-python -m pytest --cov=mopidy_mowecl --cov-report=term-missing
+uv run pre-commit install                      # install git hooks (once)
+uv run pre-commit run --all-files              # ruff check/format, eslint, misc checks
+uvx --python /usr/bin/python3 tox -e mopidy3,mopidy4   # tests against Mopidy 3.4 and 4.0
 ```
+Tox needs a Python with system GStreamer/PyGObject (`gi`), hence the system interpreter.
+CI (`.github/workflows/test-python.yaml`) runs the same envs in a `debian:trixie` container.
 
 ## Architecture
 
@@ -43,7 +46,8 @@ python -m pytest --cov=mopidy_mowecl --cov-report=term-missing
 - `web_api_extra.py`: Extra Tornado HTTP endpoints for Tidal playlist management (`/add_to_playlist`), Last.fm data (`/get_lastfm_artist_data`), and MusicBrainz data (`/get_musicbrainz_artist_data`).
 - `misc_utils.py`: Wrapper classes for Last.fm and MusicBrainz APIs.
 - `ext.conf`: Default Mopidy config values for the extension.
-- Version is derived from SCM tags via `pdm-backend`.
+- Version is derived from git tags via `hatch-vcs` (build backend: hatchling).
+- Frontend static files: Vite builds into `mopidy_mowecl/static` (git-ignored), shipped as package data (hatch `artifacts`).
 
 ### React Frontend (`mowecl_react/src/`)
 - Uses `@` path alias (maps to `/src`) configured in `vite.config.js`.
@@ -60,14 +64,14 @@ python -m pytest --cov=mopidy_mowecl --cov-report=term-missing
 ## Conventions
 
 - Git commits: Do not include "Co-Authored-By: Claude" lines in commit messages
-- Python: black formatting (line length 80), isort, flake8
+- Python: ruff (lint + format, line length 80), configured in `pyproject.toml`; run via pre-commit
 - Frontend: ESLint config in `eslint.config.mjs`, uses JSX (not TypeScript)
 - The frontend communicates with Mopidy via WebSocket (mopidy-js protocol), not REST
 - Config flows from Mopidy config file -> server-side template injection -> Redux settings reducer -> localStorage for client overrides
 
 ## Release Process
 
-- Version is derived from git tags via `pdm-backend` SCM versioning
+- Version is derived from git tags via `hatch-vcs`
 - Tag format: `0.x.y` (no `v` prefix), alphas: `0.x.y-aN`
 - Pushing a tag triggers `.github/workflows/publish.yaml` which builds frontend + wheel and publishes to PyPI
 - Steps:

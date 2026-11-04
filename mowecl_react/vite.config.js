@@ -11,6 +11,11 @@ export default defineConfig({
         },
     },
     base: "./",
+    build: {
+        // served by the Python package (see Extension.factory)
+        outDir: "../mopidy_mowecl/static",
+        emptyOutDir: true,
+    },
     test: {
         resolve: {
             alias: {

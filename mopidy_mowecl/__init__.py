@@ -1,7 +1,6 @@
 import logging
 import pathlib
 import re
-import sysconfig
 
 try:
     from importlib.metadata import PackageNotFoundError, version
@@ -92,11 +91,7 @@ class Extension(ext.Extension):
         if config["mowecl"]["dev_static_path"]:
             root = pathlib.Path(config["mowecl"]["dev_static_path"])
         else:
-            root = (
-                pathlib.Path(sysconfig.get_path("data"))
-                / "mopidy_mowecl"
-                / "static"
-            )
+            root = pathlib.Path(__file__).parent / "static"
 
         logger.info(f"Serving files from '{root}'")
         server_params = {

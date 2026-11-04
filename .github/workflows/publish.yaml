@@ -29,16 +29,13 @@ jobs:
           pnpm install
           pnpm build
 
-      - name: Set up Python 3.12
-        uses: actions/setup-python@v7
-        with:
-          python-version: '3.12'
-      - name: Setup and build
+      - name: Install uv
+        uses: astral-sh/setup-uv@v10
+      - name: Build
         env:
-          PDM_BUILD_SCM_VERSION:  ${{github.ref_name}}
-        run: |
-          python -m pip install pdm
-          pdm build
+          # the checkout is shallow: take the version from the pushed tag
+          SETUPTOOLS_SCM_PRETEND_VERSION: ${{ github.ref_name }}
+        run: uv build
 
       - name: Publish distribution to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
