@@ -58,3 +58,36 @@ def test_undo_redo(frontend):
 
     proxy.restore("forward").get()
     assert fake_core.tracklist.uris == ["a", "b"]
+
+
+def _set(proxy, fake_core, uris):
+    fake_core.tracklist.uris = list(uris)
+    proxy.tracklist_changed().get()
+
+
+def test_empty_tracklist_not_saved(frontend):
+    proxy, fake_core = frontend
+    _set(proxy, fake_core, ["a"])
+    _set(proxy, fake_core, [])
+
+    assert proxy.get_info().get() == {"can_undo": False, "can_redo": False}
+
+
+def test_clear_then_same_tracklist_not_duplicated(frontend):
+    proxy, fake_core = frontend
+    _set(proxy, fake_core, ["x"])
+    _set(proxy, fake_core, ["a"])
+    _set(proxy, fake_core, [])
+    _set(proxy, fake_core, ["a"])
+
+    proxy.restore("back").get()
+    assert fake_core.tracklist.uris == ["x"]
+    assert proxy.get_info().get() == {"can_undo": False, "can_redo": True}
+
+
+def test_same_tracklist_not_duplicated(frontend):
+    proxy, fake_core = frontend
+    _set(proxy, fake_core, ["a"])
+    _set(proxy, fake_core, ["a"])
+
+    assert proxy.get_info().get() == {"can_undo": False, "can_redo": False}

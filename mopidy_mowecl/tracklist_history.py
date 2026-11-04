@@ -27,6 +27,12 @@ class TracklistHistoryFrontend(pykka.ThreadingActor, core.CoreListener):
         tl_tracks = self.core.tracklist.get_tl_tracks().get()
         uris = [t.track.uri for t in tl_tracks]
 
+        # Skip cleared tracklists: they are usually a transient state before
+        # new tracks are added, and saving them would defeat deduplication
+        # (e.g. [a] -> [] -> [a] would record [a] twice).
+        if not uris:
+            return
+
         if (
             self._history
             and self._cursor >= 0
