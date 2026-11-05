@@ -1,11 +1,4 @@
-import {
-  memo,
-  useEffect,
-  useRef,
-  useCallback,
-  createContext,
-  useState,
-} from "react";
+import { useCallback, useState } from "react";
 import { connect } from "react-redux";
 import Button from "@mui/material/Button";
 import ButtonGroup from "@mui/material/ButtonGroup";
@@ -24,7 +17,7 @@ import Icon from "@mdi/react";
 import { SidePanelUpper } from "./upper";
 import { useAppState } from "@/hooks";
 
-const SidePanel = ({ uri_schemes, search_history_length, small_screen }) => {
+const SidePanel = ({ small_screen }) => {
   const [availableVersion, setAvailableVersion] = useState(() => null);
 
   if (!availableVersion) {

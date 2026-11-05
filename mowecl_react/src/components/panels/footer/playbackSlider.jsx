@@ -1,11 +1,4 @@
-import {
-  memo,
-  useEffect,
-  useRef,
-  useCallback,
-  createContext,
-  useState,
-} from "react";
+import { useEffect } from "react";
 import { connect, useSelector, useDispatch } from "react-redux";
 
 import Slider from "@mui/material/Slider";

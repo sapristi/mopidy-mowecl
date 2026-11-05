@@ -1,11 +1,4 @@
-import {
-  memo,
-  useEffect,
-  useRef,
-  useCallback,
-  createContext,
-  useState,
-} from "react";
+import { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import { create } from "zustand";
 import { buildMopidyUrl } from "@/utils";
@@ -76,12 +69,7 @@ export const useMopidyImage = (uri) => {
   const [imageUrl, setImageUrl] = useState(null);
 
   useEffect(() => {
-    if (!mopidy.library) {
-      setImageUrl(null);
-      return;
-    }
-    if (!uri || uri == null) {
-      setImageUrl(null);
+    if (!mopidy.library || !uri) {
       return;
     }
     mopidy.library.getImages({ uris: [uri] }).then((response) => {
@@ -97,7 +85,7 @@ export const useMopidyImage = (uri) => {
       }
     });
   }, [uri]);
-  return imageUrl;
+  return mopidy.library && uri ? imageUrl : null;
 };
 
 export const useMopidyURL = () => {

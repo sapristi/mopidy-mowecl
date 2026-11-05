@@ -15,14 +15,7 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
-import {
-  memo,
-  useEffect,
-  useRef,
-  useCallback,
-  createContext,
-  useState,
-} from "react";
+import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useShallow } from "zustand/react/shallow";
 import { AddToTLButton, PlayNowButton } from "../library/buttons";
@@ -135,18 +128,23 @@ export const ExplorePanel = () => {
   const baseURL = useMopidyURL();
 
   const [items, setItems] = useState([]);
-  const [epItems, setEpItems] = useState([]);
-  const [lastFMArtistData, setLastFMArtistData] = useState(null);
-  const [MBArtistData, setMBArtistData] = useState(null);
+  // Fetched data is tagged with the uri it belongs to, so that data from a
+  // previously explored artist is never shown.
+  const [epResult, setEpResult] = useState(null);
+  const [lastFMResult, setLastFMResult] = useState(null);
+  const [MBResult, setMBResult] = useState(null);
+  const forCurrent = (result) =>
+    result && result.uri === explore?.uri ? result.data : null;
+  const epItems = forCurrent(epResult) ?? [];
+  const lastFMArtistData = forCurrent(lastFMResult);
+  const MBArtistData = forCurrent(MBResult);
 
   const [bioOpen, setBioOpen] = useState(true);
   const [mbOpen, setMbOpen] = useState(true);
   const [albumsOpen, setAlbumsOpen] = useState(true);
   const [epOpen, setEpOpen] = useState(false);
   const [tracksOpen, setTracksOpen] = useState(true);
-  const favoriteArtistIds = useAppState(
-    (state) => state.favoriteArtistIds,
-  );
+  const favoriteArtistIds = useAppState((state) => state.favoriteArtistIds);
   const fetchFavoriteArtists = useAppState(
     (state) => state.fetchFavoriteArtists,
   );
@@ -158,18 +156,15 @@ export const ExplorePanel = () => {
     if (!explore) {
       return;
     }
-    setLastFMArtistData(null);
-    setMBArtistData(null);
-    setEpItems([]);
+    const uri = explore.uri;
     mopidy.library.browse({ uri: explore.uri }).then(setItems);
     if (explore.uri.startsWith("tidal:")) {
       const url_ep = `${baseURL}/mowecl/tidal_artist_ep_singles?`;
       fetch(
-        url_ep +
-          new URLSearchParams({ artist_uri: explore.uri }).toString(),
+        url_ep + new URLSearchParams({ artist_uri: explore.uri }).toString(),
       ).then((response) => {
         response.json().then((data) => {
-          setEpItems(data);
+          setEpResult({ uri, data });
         });
       });
     }
@@ -179,7 +174,7 @@ export const ExplorePanel = () => {
         new URLSearchParams({ artist_name: explore.name }).toString(),
     ).then((response) => {
       response.json().then((data) => {
-        setLastFMArtistData(data);
+        setLastFMResult({ uri, data });
       });
     });
 
@@ -188,7 +183,7 @@ export const ExplorePanel = () => {
       url_mb + new URLSearchParams({ artist_name: explore.name }).toString(),
     ).then((response) => {
       response.json().then((data) => {
-        setMBArtistData(data);
+        setMBResult({ uri, data });
       });
     });
   }, [explore?.uri]);
@@ -236,8 +231,7 @@ export const ExplorePanel = () => {
     }
     useAppState.getState().setFavoriteArtistIds(newIds);
     fetch(
-      url_fav +
-        new URLSearchParams({ artist_uri: explore.uri }).toString(),
+      url_fav + new URLSearchParams({ artist_uri: explore.uri }).toString(),
       { method },
     ).then(() => {
       fetchFavoriteArtists(baseURL);
@@ -259,7 +253,9 @@ export const ExplorePanel = () => {
         <>
           <Typography variant="h4">
             LastFM data
-            <Button onClick={() => setBioOpen(!bioOpen)}>{collapseIcon(bioOpen)}</Button>{" "}
+            <Button onClick={() => setBioOpen(!bioOpen)}>
+              {collapseIcon(bioOpen)}
+            </Button>{" "}
           </Typography>
 
           {bioOpen && (
@@ -287,8 +283,7 @@ export const ExplorePanel = () => {
               <div>
                 <a href={lastFMArtistData.url} target="_blank">
                   Read more on Last.fm
-                </a>
-                {" "}
+                </a>{" "}
                 <Tooltip title="User-contributed text is available under the Creative Commons By-SA License; additional terms may apply.">
                   <Typography
                     component="span"
@@ -307,7 +302,9 @@ export const ExplorePanel = () => {
         <>
           <Typography variant="h4">
             MusicBrainz data
-            <Button onClick={() => setMbOpen(!mbOpen)}>{collapseIcon(mbOpen)}</Button>{" "}
+            <Button onClick={() => setMbOpen(!mbOpen)}>
+              {collapseIcon(mbOpen)}
+            </Button>{" "}
           </Typography>
 
           {mbOpen && <MusicBrainzInfoSection {...MBArtistData} />}
@@ -316,7 +313,9 @@ export const ExplorePanel = () => {
 
       <Typography variant="h4">
         Albums
-        <Button onClick={() => setAlbumsOpen(!albumsOpen)}>{collapseIcon(albumsOpen)}</Button>
+        <Button onClick={() => setAlbumsOpen(!albumsOpen)}>
+          {collapseIcon(albumsOpen)}
+        </Button>
       </Typography>
       {albumsOpen && (
         <div style={{ display: "flex", flexWrap: "wrap", gap: 10 }}>
@@ -329,7 +328,9 @@ export const ExplorePanel = () => {
         <>
           <Typography variant="h4">
             EPs & Singles
-            <Button onClick={() => setEpOpen(!epOpen)}>{collapseIcon(epOpen)}</Button>
+            <Button onClick={() => setEpOpen(!epOpen)}>
+              {collapseIcon(epOpen)}
+            </Button>
           </Typography>
           {epOpen && (
             <div style={{ display: "flex", flexWrap: "wrap", gap: 10 }}>
@@ -342,7 +343,9 @@ export const ExplorePanel = () => {
       )}
       <Typography variant="h4">
         Top tracks
-        <Button onClick={() => setTracksOpen(!tracksOpen)}>{collapseIcon(tracksOpen)}</Button>
+        <Button onClick={() => setTracksOpen(!tracksOpen)}>
+          {collapseIcon(tracksOpen)}
+        </Button>
       </Typography>
       {tracksOpen && (
         <div style={{ display: "flex", gap: 5, flexDirection: "column" }}>

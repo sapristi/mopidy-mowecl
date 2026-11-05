@@ -4,14 +4,7 @@ import equal from "fast-deep-equal";
 import { buildMopidyUrl, getWsAddress, match } from "@/utils";
 import MopidyClient from "./mopidy-js.js";
 
-import {
-  memo,
-  useEffect,
-  useRef,
-  useCallback,
-  createContext,
-  useState,
-} from "react";
+import { useEffect } from "react";
 import { useAppState } from "@/hooks.js";
 import { getLogger } from "@/logger";
 
@@ -21,8 +14,7 @@ const stopClient = (client) => {
   client.off();
 };
 
-export const useWsClient = (endpoint, init_callback, selector) => {
-  // const client = useSelector(selector)
+export const useWsClient = (endpoint, init_callback) => {
   const mopidyHost = useSelector(
     (store) => store.settings.persistant.mopidy_host,
   );

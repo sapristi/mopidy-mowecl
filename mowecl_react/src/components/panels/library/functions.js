@@ -103,7 +103,7 @@ export const rec_expand_node = async (lib_items, mopidy) => {
           case "search_result":
             return lib_item.children.map((item) => item.uri);
 
-          default:
+          default: {
             let uri_expanded = await mopidy.library.browse({
               uri: lib_item.uri,
             });
@@ -112,6 +112,7 @@ export const rec_expand_node = async (lib_items, mopidy) => {
               uri_expanded = lib_item.children;
             }
             return await rec_expand_node(uri_expanded, mopidy);
+          }
         }
       }
     }),
@@ -157,7 +158,7 @@ export const addToTracklistAndPlay = async (node, mopidy, shuffled) => {
   }
 };
 
-export const exploreItem = async (item, dispatch, mopidy) => {
+export const exploreItem = async (item, dispatch) => {
   const addToItems = (newItem, prevItems) => {
     for (const item of prevItems) {
       if (item.uri == newItem.uri) {

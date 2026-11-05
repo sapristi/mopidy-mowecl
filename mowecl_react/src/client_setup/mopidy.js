@@ -178,7 +178,7 @@ export const initMopidyEventsDispatcher = (
     });
   });
 
-  mopidyCli.on("event:trackPlaybackEnded", (data) => {
+  mopidyCli.on("event:trackPlaybackEnded", () => {
     dispatch({ type: "CLEAR_PLAYBACK_INFO" });
     dispatch({
       type: "PLAYBACK_INFO",

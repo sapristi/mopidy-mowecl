@@ -1,11 +1,3 @@
-import {
-  memo,
-  useEffect,
-  useRef,
-  useCallback,
-  createContext,
-  useState,
-} from "react";
 import styled from "@emotion/styled";
 
 const MyBar = styled.div`

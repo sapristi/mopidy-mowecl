@@ -1,12 +1,3 @@
-import {
-  memo,
-  useEffect,
-  useRef,
-  useCallback,
-  createContext,
-  useState,
-} from "react";
-
 import Typography from "@mui/material/Typography";
 import Color from "color";
 import { match, ObjectComp } from "@/utils";
@@ -23,7 +14,7 @@ const validate_hex_color = (str) => {
   if (!str || str.length !== 7) return false;
   try {
     return Color(str).hex();
-  } catch (err) {
+  } catch {
     return false;
   }
 };
@@ -65,7 +56,7 @@ const getDefaultMopidyConnection = () => {
     : window.location.hostname;
   // Behind a reverse proxy, use the proxy's port (empty for standard 80/443).
   // Otherwise default to Mopidy's standard port.
-  const port = prefix ? (parseInt(window.location.port) || null) : 6680;
+  const port = prefix ? parseInt(window.location.port) || null : 6680;
   return { host, port };
 };
 
@@ -213,8 +204,8 @@ export const settingsSchema = {
     name: "Shortcut keys",
     description: (
       <Typography>
-        Leave a field blank to deactivate. Click the "Input keys" button to
-        assign a new shortcut.
+        Leave a field blank to deactivate. Click the &quot;Input keys&quot;
+        button to assign a new shortcut.
       </Typography>
     ),
     play_pause: {

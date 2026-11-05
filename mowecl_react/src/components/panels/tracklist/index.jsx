@@ -1,13 +1,5 @@
-import {
-  memo,
-  useEffect,
-  useRef,
-  useCallback,
-  createContext,
-  useState,
-} from "react";
-import { HFlex, VFlex } from "@/components/atoms";
-import { useSelector, useDispatch } from "react-redux";
+import { memo, useRef } from "react";
+import { useSelector } from "react-redux";
 import { ReactSortable } from "react-sortablejs";
 
 import ButtonGroup from "@mui/material/ButtonGroup";
@@ -15,7 +7,6 @@ import Button from "@mui/material/Button";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import AudiotrackIcon from "@mui/icons-material/Audiotrack";
 import ClearAllIcon from "@mui/icons-material/ClearAll";
-import ClearIcon from "@mui/icons-material/Clear";
 import SyncIcon from "@mui/icons-material/Sync";
 import { mdiBookmarkMusicOutline } from "@mdi/js";
 import BookmarkBorderIcon from "@mui/icons-material/BookmarkBorder";
@@ -188,9 +179,12 @@ const TracklistInfoPanel = () => {
   const baseURL = useMopidyURL();
 
   const handleRestore = (direction) => {
-    fetch(`${baseURL}/mowecl/tracklist_history_restore?direction=${direction}`, {
-      method: "POST",
-    })
+    fetch(
+      `${baseURL}/mowecl/tracklist_history_restore?direction=${direction}`,
+      {
+        method: "POST",
+      },
+    )
       .then((r) => r.json())
       .then((data) => useAppState.setState({ tracklistHistory: data }))
       .catch(() => {});

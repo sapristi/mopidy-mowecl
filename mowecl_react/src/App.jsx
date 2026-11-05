@@ -126,12 +126,7 @@ export const App = memo(
 );
 
 export const AppSmall = memo(
-  ({
-    activePanelName,
-    mopidy_ws_url,
-    mopidy_has_ever_connected,
-    mopidy_error,
-  }) => {
+  ({ activePanelName, mopidy_has_ever_connected }) => {
     const activePanel = match(activePanelName)
       .on("control", <SettingsPanel />)
       .on("help", <HelpPanel />)

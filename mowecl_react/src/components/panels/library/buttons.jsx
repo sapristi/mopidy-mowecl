@@ -1,11 +1,3 @@
-import {
-  memo,
-  useEffect,
-  useRef,
-  useCallback,
-  createContext,
-  useState,
-} from "react";
 import { useSelector, useDispatch } from "react-redux";
 
 import ButtonGroup from "@mui/material/ButtonGroup";
@@ -16,9 +8,9 @@ import Tooltip from "@mui/material/Tooltip";
 import PlaylistAddIcon from "@mui/icons-material/PlaylistAdd";
 import PlaylistPlayIcon from "@mui/icons-material/PlaylistPlay";
 import ListItemIcon from "@mui/material/ListItemIcon";
-// import ClearIcon from '@mui/icons-material/Clear'
-// import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline'
-// import MoreVertIcon from '@mui/icons-material/MoreVert'
+// import ClearIcon from '@mui/icons-material/Clear';
+// import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
+// import MoreVertIcon from '@mui/icons-material/MoreVert';
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
@@ -27,11 +19,7 @@ import Icon from "@mdi/react";
 import { mdiPlaylistRemove } from "@mdi/js";
 
 import { useConfirmDialogStore } from "@/components/molecules/confirmDialog";
-import {
-  expand_node,
-  addToTracklist,
-  addToTracklistAndPlay,
-} from "./functions";
+import { expand_node, addToTracklistAndPlay } from "./functions";
 import { useMenuAnchor } from "@/hooks";
 import { Menu } from "@mui/material";
 

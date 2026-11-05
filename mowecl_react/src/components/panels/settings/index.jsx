@@ -1,11 +1,4 @@
-import {
-  memo,
-  useEffect,
-  useRef,
-  useCallback,
-  createContext,
-  useState,
-} from "react";
+import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Button from "@mui/material/Button";
 import ButtonGroup from "@mui/material/ButtonGroup";
@@ -30,34 +23,28 @@ const SettingsGroup = ({ schema, group, path, setInGroup }) => {
   const headerComponent = "h" + (path.length + 1);
   const headerVariant = "h" + (path.length + 4);
 
-  const Header = () => {
-    if (path.length === 0) {
-      return (
-        <Typography variant={headerVariant} component={headerComponent}>
-          {schema.name}
-        </Typography>
-      );
-    } else {
-      return (
-        /* eslint-disable-next-line */
-        <a onClick={() => setOpen((prev) => !prev)}>
-          <HFlex style={{ alignItems: "center" }}>
-            <Typography variant={headerVariant} component={headerComponent}>
-              {schema.name}
-            </Typography>
-            {open ? <ExpandLessIcon /> : <ExpandMoreIcon />}
-          </HFlex>
-        </a>
-      );
-    }
-  };
+  const header =
+    path.length === 0 ? (
+      <Typography variant={headerVariant} component={headerComponent}>
+        {schema.name}
+      </Typography>
+    ) : (
+      <a onClick={() => setOpen((prev) => !prev)}>
+        <HFlex style={{ alignItems: "center" }}>
+          <Typography variant={headerVariant} component={headerComponent}>
+            {schema.name}
+          </Typography>
+          {open ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+        </HFlex>
+      </a>
+    );
 
   const body = (
     <>
       {schema.description && schema.description}
       <List style={{ maxHeight: "100%" }}>
         {Object.entries(schema)
-          .filter(([key, value]) => ["param", "group"].includes(value.type))
+          .filter(([, value]) => ["param", "group"].includes(value.type))
           .map(([key, subSchema]) => (
             <ListItem key={key}>
               {subSchema.type === "group" ? (
@@ -87,7 +74,7 @@ const SettingsGroup = ({ schema, group, path, setInGroup }) => {
 
   return (
     <Paper elevation={path.length} style={{ width: "100%" }}>
-      <Header />
+      {header}
       {open && body}
     </Paper>
   );
