@@ -49,6 +49,16 @@ const fetchTracklistOptions = (mopidyCli, dispatch) => {
   });
 };
 
+// Below this downtime, a reconnection keeps the library as loaded (expanded
+// nodes, fetched children) instead of re-initialising it. Changes missed while
+// disconnected (e.g. playlist changes) are then only seen after a reload.
+export const LIBRARY_RELOAD_MIN_DOWNTIME_MS = 10_000;
+
+export const shouldReloadLibrary = (isFirstConnect, disconnectedAt, now) =>
+  isFirstConnect ||
+  disconnectedAt === null ||
+  now - disconnectedAt >= LIBRARY_RELOAD_MIN_DOWNTIME_MS;
+
 export const initMopidyEventsDispatcher = (
   mopidyCli,
   dispatch,
@@ -56,6 +66,8 @@ export const initMopidyEventsDispatcher = (
   baseURL,
 ) => {
   let isFirstConnect = true;
+  // time of the first disconnection since the last successful connection
+  let disconnectedAt = null;
   mopidyCli.on("event", (...args) => log.debug("event", ...args));
   mopidyCli.on("requests:count", (value) => {
     dispatch({
@@ -72,6 +84,17 @@ export const initMopidyEventsDispatcher = (
     dispatch({ type: "UPDATE_CLIENT", endpoint: "mopidy", client: mopidyCli });
     useAppState.getState().fetchFavoriteArtists(baseURL);
     useAppState.getState().fetchTracklistHistory(baseURL);
+    const reloadLibrary = shouldReloadLibrary(
+      isFirstConnect,
+      disconnectedAt,
+      Date.now(),
+    );
+    if (!reloadLibrary) {
+      log.info(
+        `reconnected after ${Date.now() - disconnectedAt}ms: keeping library`,
+      );
+    }
+    disconnectedAt = null;
     if (isFirstConnect) {
       setActivePanel("library");
       isFirstConnect = false;
@@ -81,6 +104,7 @@ export const initMopidyEventsDispatcher = (
         type: "TRACKLIST_INITIALISE",
         data: tltracks,
       });
+      if (!reloadLibrary) return;
       const playlistsAll = await mopidyCli.playlists.asList();
       const playlists = playlistsAll.filter(
         (pl) => !pl.uri.startsWith("bookmark:"),
@@ -108,12 +132,14 @@ export const initMopidyEventsDispatcher = (
       }),
     );
 
-    mopidyCli.library.browse({ uri: null }).then((library) =>
-      dispatch({
-        type: "MOPIDY_LIBRARY_INITIALISE",
-        data: library,
-      }),
-    );
+    if (reloadLibrary) {
+      mopidyCli.library.browse({ uri: null }).then((library) =>
+        dispatch({
+          type: "MOPIDY_LIBRARY_INITIALISE",
+          data: library,
+        }),
+      );
+    }
 
     mopidyCli.getUriSchemes().then((schemes) =>
       dispatch({
@@ -126,12 +152,14 @@ export const initMopidyEventsDispatcher = (
     fetchTracklistOptions(mopidyCli, dispatch);
   });
 
-  mopidyCli.on("state:offline", () =>
+  mopidyCli.on("state:offline", () => {
+    // also emitted on each failed reconnection attempt: keep the first time
+    if (disconnectedAt === null) disconnectedAt = Date.now();
     dispatch({
       type: "CLIENT_DISCONNECTED",
       endpoint: "mopidy",
-    }),
-  );
+    });
+  });
 
   mopidyCli.on("event:trackPlaybackResumed", (data) => {
     dispatch({

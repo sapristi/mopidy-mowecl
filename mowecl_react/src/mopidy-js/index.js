@@ -35,19 +35,36 @@ export const useWsClient = (endpoint, init_callback) => {
       console: log,
     });
     // Diagnostics: log websocket close events, with time since the connection
-    // opened and since the last message, to identify idle timeouts.
+    // opened and since the last message, to identify idle timeouts, and on
+    // reconnection, how long the connection was down.
     let openedAt = null;
     let lastMessageAt = null;
+    let disconnectedAt = null;
+    let failedAttempts = 0;
     new_client.on("websocket:open", () => {
       openedAt = Date.now();
       lastMessageAt = openedAt;
-      log.info(`open at ${new Date().toISOString()}`);
+      if (disconnectedAt === null) {
+        log.info(`open at ${new Date().toISOString()}`);
+      } else {
+        log.info(`reopen at ${new Date().toISOString()}`, {
+          downForSec: ((openedAt - disconnectedAt) / 1000).toFixed(1),
+          failedAttempts,
+        });
+      }
+      disconnectedAt = null;
+      failedAttempts = 0;
     });
     new_client.on("websocket:incomingMessage", () => {
       lastMessageAt = Date.now();
     });
     new_client.on("websocket:close", (e) => {
       const now = Date.now();
+      if (openedAt === null) {
+        // a reconnection attempt failed: the connection was never open
+        failedAttempts += 1;
+        return;
+      }
       const secs = (t) => (t === null ? null : ((now - t) / 1000).toFixed(1));
       log.info(`close at ${new Date().toISOString()}`, {
         code: e?.code,
@@ -58,6 +75,8 @@ export const useWsClient = (endpoint, init_callback) => {
         visibility: document.visibilityState,
         online: navigator.onLine,
       });
+      disconnectedAt = now;
+      openedAt = null;
     });
     try {
       new_client.connect();
