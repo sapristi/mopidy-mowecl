@@ -4,7 +4,7 @@ import { getLogger } from "@/logger";
 const log = getLogger("bookmarks-events");
 
 export const initBookmarksEventsDispatcher = (bookmarksCli, dispatch) => {
-  bookmarksCli.on("event", (...args) => log.debug("event", ...args));
+  bookmarksCli.on("event", (name, data) => log.debug(name, data));
 
   bookmarksCli.on("requests:count", (value) => {
     dispatch({

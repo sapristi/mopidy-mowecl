@@ -45,9 +45,9 @@ export const useWsClient = (endpoint, init_callback) => {
       openedAt = Date.now();
       lastMessageAt = openedAt;
       if (disconnectedAt === null) {
-        log.info(`open at ${new Date().toISOString()}`);
+        log.info(`Connected at ${new Date().toISOString()}`);
       } else {
-        log.info(`reopen at ${new Date().toISOString()}`, {
+        log.info(`Reconnected at ${new Date().toISOString()}`, {
           downForSec: ((openedAt - disconnectedAt) / 1000).toFixed(1),
           failedAttempts,
         });
@@ -66,7 +66,7 @@ export const useWsClient = (endpoint, init_callback) => {
         return;
       }
       const secs = (t) => (t === null ? null : ((now - t) / 1000).toFixed(1));
-      log.info(`close at ${new Date().toISOString()}`, {
+      log.info(`Disconnected at ${new Date().toISOString()}`, {
         code: e?.code,
         reason: e?.reason,
         wasClean: e?.wasClean,
@@ -81,7 +81,7 @@ export const useWsClient = (endpoint, init_callback) => {
     try {
       new_client.connect();
     } catch (error) {
-      log.error("Error when initializing mopidy client", error);
+      log.error("Failed to initialize client", error);
       stopClient(new_client);
       dispatch({ type: "CONNECTION_ERROR", endpoint, error });
     }

@@ -206,7 +206,7 @@ export const ExplorePanel = () => {
     } else if (item.type == "track") {
       tracks.push(item);
     } else {
-      log.warn("Unhandled type", item);
+      log.warn(`Ignoring item of unhandled type "${item.type}"`, item);
     }
   }
 

@@ -10,6 +10,9 @@ The root level is driven by the "Log level" setting. Per-area levels can be
 changed from the devtools console, e.g. `moweclLog.getLogger("ws").setLevel("debug")`
 (persisted in localStorage).
 
+Console messages from named loggers are prefixed with the logger name, e.g.
+"[ws:mopidy] Connecting to ...".
+
 In production builds, recent messages are also kept in memory so users can
 export them from the settings panel for bug reports. This wraps the console
 methods, which hides the call site in devtools: it is skipped in development.
@@ -54,6 +57,19 @@ const formatLine = (level, name, args) =>
     ...args.map(formatArg),
   ].join(" ");
 
+// Binding the prefix (rather than wrapping the method) keeps the devtools
+// call site pointing at the code that logged.
+export const installPrefix = (logger) => {
+  const originalFactory = logger.methodFactory;
+  logger.methodFactory = (methodName, logLevel, loggerName) => {
+    const rawMethod = originalFactory(methodName, logLevel, loggerName);
+    return loggerName
+      ? rawMethod.bind(undefined, `[${String(loggerName)}]`)
+      : rawMethod;
+  };
+  logger.rebuild();
+};
+
 export const installBuffer = (logger, buffer) => {
   const originalFactory = logger.methodFactory;
   logger.methodFactory = (methodName, logLevel, loggerName) => {
@@ -68,8 +84,11 @@ export const installBuffer = (logger, buffer) => {
 
 const buffer = createLogBuffer(BUFFER_CAPACITY);
 
+// Both must run before any child logger is created: they inherit
+// methodFactory. The prefix goes first so that the buffer, which adds the
+// logger name itself, records the original arguments.
+installPrefix(log);
 if (!import.meta.env.DEV) {
-  // Must run before any child logger is created: they inherit methodFactory.
   installBuffer(log, buffer);
   // Uncaught errors are already shown by the browser console; only record them.
   window.addEventListener("error", (e) =>

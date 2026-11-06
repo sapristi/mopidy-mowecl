@@ -68,7 +68,7 @@ export const initMopidyEventsDispatcher = (
   let isFirstConnect = true;
   // time of the first disconnection since the last successful connection
   let disconnectedAt = null;
-  mopidyCli.on("event", (...args) => log.debug("event", ...args));
+  mopidyCli.on("event", (name, data) => log.debug(name, data));
   mopidyCli.on("requests:count", (value) => {
     dispatch({
       type: "PENDING_REQUESTS_COUNT",
@@ -90,9 +90,8 @@ export const initMopidyEventsDispatcher = (
       Date.now(),
     );
     if (!reloadLibrary) {
-      log.info(
-        `reconnected after ${Date.now() - disconnectedAt}ms: keeping library`,
-      );
+      const downForSec = ((Date.now() - disconnectedAt) / 1000).toFixed(1);
+      log.info(`Reconnected after ${downForSec}s down: keeping library`);
     }
     disconnectedAt = null;
     if (isFirstConnect) {

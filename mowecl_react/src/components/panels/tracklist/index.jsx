@@ -271,7 +271,7 @@ const TracklistInfoPanel = () => {
                 anchorEl: anchorElRef.current,
                 previousItems: "bookmarks",
                 create_callback: (bookmark) => {
-                  log.debug("Start sync", bookmark);
+                  log.debug("Starting sync of bookmark", bookmark.uri);
                   bookmarksCli.startSync({ uri: bookmark.uri });
                 },
               })

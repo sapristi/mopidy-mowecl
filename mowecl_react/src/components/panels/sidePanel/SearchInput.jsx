@@ -40,7 +40,7 @@ export const SearchInput = connect((state) => ({
     mopidyCli.library
       .search({ query: { any: [input] }, ...uri })
       .then((raw_search_results) => {
-        log.debug("search results", raw_search_results);
+        log.debug("Search results for", input, raw_search_results);
         handleSearchResults(
           dispatch,
           raw_search_results,

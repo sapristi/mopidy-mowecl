@@ -13,7 +13,7 @@ const lookupAndSet = (mopidy, dispatch, path, items) => {
   mopidy.library.lookup({ uris: urisToLookUp }).then((tracksByUri) => {
     // some uris do not resolve to any track, e.g. some items in tidal playlists
     // that are no longer available
-    log.debug("lookup", { items, urisToLookUp, tracksByUri });
+    log.debug("Looked up tracks", { items, urisToLookUp, tracksByUri });
     const fullItems = items.map((item) => ({
       ...item,
       ...(shouldLookup(item.uri) ? tracksByUri[item.uri][0] || {} : {}),

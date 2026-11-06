@@ -74,7 +74,7 @@ export const SaveMenu = () => {
         },
       });
     } else {
-      log.debug("Creating playlist", name, menuState.uri_scheme);
+      log.debug(`Creating ${menuState.uri_scheme} playlist`, name);
       createPlaylist(mopidy, name, tracklist, menuState.uri_scheme).then(
         (playlist) => menuState.create_callback(playlist),
       );

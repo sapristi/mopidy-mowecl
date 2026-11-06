@@ -288,7 +288,7 @@ export const settingsReducer = (state = defaultSettings, action) =>
     .on("COMMIT_SETTINGS", () => {
       const newSettings = load(action.data);
       setLogLevel(newSettings.generic.log_level);
-      log.debug("Commit", newSettings);
+      log.debug("Saving settings", newSettings);
       localStorage.setItem("settings", JSON.stringify(newSettings));
       // console.log("Set", state.persistant)
       return { ...state, persistant: newSettings };

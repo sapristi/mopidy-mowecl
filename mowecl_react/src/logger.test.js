@@ -1,7 +1,11 @@
 // @vitest-environment jsdom
 import { describe, it, expect, beforeEach, vi } from "vitest";
 import loglevel from "loglevel";
-import { createLogBuffer, formatArg, installBuffer } from "./logger";
+import {
+  createLogBuffer,
+  formatArg,
+  installBuffer,
+} from "./logger";
 
 describe("formatArg", () => {
   it("keeps strings as-is", () => {
@@ -69,5 +73,40 @@ describe("installBuffer", () => {
   it("does not record messages below the logger level", () => {
     logger.debug("noise");
     expect(buffer.entries()).toEqual([]);
+  });
+});
+
+describe("logger name prefix", () => {
+  // Importing ./logger installs the prefix on the root logger: child loggers
+  // inherit it.
+  let n = 0;
+
+  beforeEach(() => {
+    vi.restoreAllMocks();
+    vi.spyOn(console, "warn").mockImplementation(() => {});
+  });
+
+  it("prefixes console messages with the logger name", () => {
+    const logger = loglevel.getLogger(`prefix${n++}`);
+    logger.setLevel("info", false);
+    logger.warn("close", { code: 1006 });
+    expect(console.warn).toHaveBeenCalledExactlyOnceWith(
+      `[${logger.name}]`,
+      "close",
+      { code: 1006 },
+    );
+  });
+
+  it("is not recorded twice in the buffer", () => {
+    const logger = loglevel.getLogger(`prefix${n++}`);
+    logger.setLevel("info", false);
+    const buffer = createLogBuffer(10);
+    installBuffer(logger, buffer);
+    logger.warn("close");
+    expect(buffer.entries()[0]).toMatch(/ WARN \[prefix\d+\] close$/);
+    expect(console.warn).toHaveBeenCalledExactlyOnceWith(
+      `[${logger.name}]`,
+      "close",
+    );
   });
 });

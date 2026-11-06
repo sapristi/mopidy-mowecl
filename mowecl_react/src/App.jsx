@@ -101,7 +101,7 @@ export const App = memo(
       .on("help", <HelpPanel />)
       .on("library", <LibraryPanel />)
       .on("explore", <ExplorePanel />)
-      .otherwise(() => log.error("Bad active panel name", activePanelName));
+      .otherwise(() => log.error("Unknown active panel:", activePanelName));
 
     return (
       <AppContainer>
@@ -133,7 +133,7 @@ export const AppSmall = memo(
       .on("library", <LibraryPanel />)
       .on("tracklist", <TracklistPanel />)
       .on("explore", <ExplorePanel />)
-      .otherwise(() => log.error("Bad active panel name", activePanelName));
+      .otherwise(() => log.error("Unknown active panel:", activePanelName));
 
     return (
       <AppContainer>
